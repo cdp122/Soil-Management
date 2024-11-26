@@ -1,1 +1,0 @@
-Esta sección es para agregar el proyecto.
