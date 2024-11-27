@@ -2,6 +2,7 @@
 const bodyparser = require('body-parser')
 const path = require('path')
 const os = require('os')
+const bdd = require('./modules/bdd.js')
 //#endregion
 
 //#region Función para obtener la IP LAN
@@ -28,5 +29,13 @@ console.log(`>>El Backend empezará a ejecutarse localmente en => http://localho
 console.log(`>>EN LAN será por el ip => http://${localIP}:${PORT}`)
 app.listen(PORT, () => {
     console.log(">>Backend status = 'UP'")
+})
+
+app.get('/parcela', async (req, res) => {
+    const parcela = await bdd.Parcelas.findAll();
+
+    console.log(parcela)
+
+    res.send(parcela)
 })
 //#endregion
