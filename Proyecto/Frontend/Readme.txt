@@ -1,1 +1,0 @@
-aquí se despliega el front por separado

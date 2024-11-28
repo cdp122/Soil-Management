@@ -1,3 +1,30 @@
 
 /Proyecto/Backend/.vs
 /Proyecto/Backend/.vscode
+
+# Front
+
+# Logs
+Proyecto/Frontend/logs
+Proyecto/Frontend/*.log
+Proyecto/Frontend/npm-debug.log*
+Proyecto/Frontend/yarn-debug.log*
+Proyecto/Frontend/yarn-error.log*
+Proyecto/Frontend/pnpm-debug.log*
+Proyecto/Frontend/lerna-debug.log*
+
+Proyecto/Frontend/node_modules/
+Proyecto/Frontend/dist
+Proyecto/Frontend/dist-ssr
+Proyecto/Frontend/*.local
+
+# Editor directories and files
+Proyecto/Frontend/.vscode/*
+Proyecto/Frontend/!.vscode/extensions.json
+Proyecto/Frontend/.idea
+Proyecto/Frontend/.DS_Store
+Proyecto/Frontend/*.suo
+Proyecto/Frontend/*.ntvs*
+Proyecto/Frontend/*.njsproj
+Proyecto/Frontend/*.sln
+Proyecto/Frontend/*.sw?
