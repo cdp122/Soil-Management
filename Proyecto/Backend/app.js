@@ -2,6 +2,7 @@
 const bodyparser = require('body-parser')
 const path = require('path')
 const os = require('os')
+const cors = require('cors')
 const bdd = require('./modules/bdd.js')
 //#endregion
 
@@ -23,6 +24,8 @@ const getLocalIP = () => {
 const PORT = process.env.PORT || 3000;
 const express = require('express');
 const app = express();
+app.use(cors());
+
 const localIP = getLocalIP();
 
 console.log(`>>El Backend empezará a ejecutarse localmente en => http://localhost:${PORT}`)
@@ -34,6 +37,7 @@ app.listen(PORT, () => {
 app.get('/parcela', async (req, res) => {
     const parcela = await bdd.Parcelas.findAll();
 
+    console.log(">>Solicitud de data:\n")
     console.log(parcela)
 
     res.send(parcela)
