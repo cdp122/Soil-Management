@@ -1,0 +1,79 @@
+.sc-up-container {
+    display: flex;
+    margin: 25px;
+    gap: 50px;
+}
+
+.sc-info-container {
+    margin: 25px;
+}
+
+.sc-add-soil {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 5px;
+    background-color: rgb(155, 253, 253);
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 10px;
+    width: 25%;
+}
+
+.sc-search-soil {
+    width: 75%;
+}
+
+.sc-add-soil:hover {
+    background-color: rgba(0, 255, 255, 0.623);
+}
+
+.sc-table-content {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sc-table-content th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.sc-table-content th {
+    background-color: #f2f2f2;
+}
+
+.sc-add-soil img {
+    height: 20px;
+}
+
+.sc-actions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center; 
+    align-items: center;     
+    gap: 5px;
+}
+
+.sc-actions li {
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+
+.sc-actions li:hover {
+    transform: scale(1.1);
+}
+
+.sc-actions img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
