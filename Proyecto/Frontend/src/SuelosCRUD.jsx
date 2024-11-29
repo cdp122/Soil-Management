@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import plus from './assets/plus.svg';
 import info from './assets/info.svg';
 import edit from './assets/edit.svg';
@@ -19,6 +19,24 @@ function SuelosCRUD() {
     const [previousAnalyses, setPreviousAnalyses] = useState([
         { ph: '6.5', materiaOrganica: '3%', nitrogeno: '0.1%', fosforo: '10 ppm', potasio: '50 ppm', salinidad: '0.2 dS/m' },
     ]);
+
+    
+    useEffect(() => {
+        fetch('http://186.71.12.133:3000/parcela')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Datos obtenidos:', data);
+                setTableData(data);
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error);
+            });
+    }, []);
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -104,7 +122,8 @@ function SuelosCRUD() {
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Coordenadas</th>
+                            <th>Latitud</th>
+                            <th>Longitud</th>
                             <th>Tamaño</th>
                             <th>Tipo de Suelo</th>
                             <th>Acciones</th>
@@ -113,16 +132,17 @@ function SuelosCRUD() {
                     <tbody>
                         {tableData.map((data, index) => (
                             <tr key={index}>
-                                <td>{data.id}</td>
-                                <td>{data.nombre}</td>
-                                <td>{data.coordenadas}</td>
-                                <td>{data.tamaño}</td>
-                                <td>{data.tipoSuelo}</td>
+                                <td>{data.ID}</td>
+                                <td>{data.Nombre}</td>
+                                <td>{data.Latitud}</td>
+                                <td>{data.Longitud}</td>
+                                <td>{data.Tamaño}</td>
+                                <td>{data.Tipo}</td>
                                 <td>
                                     <ul className='sc-actions'>
-                                        <li><img src={info} alt="info-icon" onClick={() => openAnalysisModal(data.id)} /></li>
-                                        <li><img src={edit} alt="edit-icon" onClick={() => openEditModal(data.id)} /></li>
-                                        <li><img src={del} alt="del-icon" onClick={() => deleteParcela(data.id)} /></li>
+                                        <li><img src={info} alt="info-icon" onClick={() => openAnalysisModal(data.ID)} /></li>
+                                        <li><img src={edit} alt="edit-icon" onClick={() => openEditModal(data.ID)} /></li>
+                                        <li><img src={del} alt="del-icon" onClick={() => deleteParcela(data.ID)} /></li>
                                     </ul>
                                 </td>
                             </tr>

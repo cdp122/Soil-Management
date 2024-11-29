@@ -104,7 +104,7 @@ function ModalAnalysis({ isOpen, onClose, parcelaId, onSave, previousAnalyses })
                                 <li key={index} className="modal-a-analysis">
                                     <p><strong>pH:</strong> {analysis.ph}</p>
                                     <p><strong>Materia Orgánica:</strong> {analysis.materiaOrganica}</p>
-                                    <button className='model-a-button' onClick={() => alert('Ver más detalles')}>Ver detalles</button>
+                                    <button className='model-a-button' onClick={() => alert('Suelo Neutro, poca materia orgánica, requiere fertilización.')}>Ver detalles</button>
                                 </li>
                             ))}
                         </ul>
@@ -112,7 +112,7 @@ function ModalAnalysis({ isOpen, onClose, parcelaId, onSave, previousAnalyses })
                 </div>
 
                 <div className="modal-a-footer">
-                    <button className='model-a-button' onClick={onClose}>Cerrar</button>
+                    <button className='model-a-button   ' onClick={onClose}>Cerrar</button>
                 </div>
             </div>
         </div>

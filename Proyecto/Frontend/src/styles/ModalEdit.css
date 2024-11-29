@@ -11,6 +11,7 @@
 }
 
 .modal-e-content {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     background-color: white;
     padding: 15px;
     border-radius: 8px;
@@ -29,7 +30,6 @@
 .modal-e-data label {
     display: flex;
     flex-direction: column;
-    font-weight: bold;
     margin-bottom: 5px;
 }
 
