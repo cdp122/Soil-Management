@@ -31,6 +31,10 @@ const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_U
     host: process.env.DB_HOST_LOCAL,
     dialect: 'postgres',
     logging: console.log,
+    ssl: {
+        require: true,
+        rejectUnauthorized: false, // Esto permite aceptar certificados no verificados si el certificado de Render no es reconocido.
+    },
     retry: {
         max: 3,
         match: [/ECONNRESET/, /ETIMEDOUT/], // Errores a los que responder
@@ -45,7 +49,7 @@ const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_U
     }
 });
 
-let sequelize = sequelizeRender;
+let sequelize = null;
 
 // Probar conexión RENDER
 (async () => {
@@ -84,117 +88,3 @@ let sequelize = sequelizeRender;
     }
 })();
 //#endregion
-
-//#region Definición de Tablas y Campos
-const Parcelas = sequelize.define('Parcelas', {
-    ID: {
-        type: DataTypes.SMALLINT,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        field: 'parcelaid',
-    },
-    Nombre: {
-        type: DataTypes.STRING(25),
-        allowNull: false,
-        field: 'nombreparcela',
-    },
-    Latitud: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'coordenadaslaparcela',
-    },
-    Longitud: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'coordenadasloparcela',
-    },
-    Tamaño: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'tamañoparcela',
-    },
-    Tipo: {
-        type: DataTypes.STRING(25),
-        allowNull: false,
-        field: 'tipossuelosparcela',
-    }
-}, {
-    tableName: 'parcelas',
-    timestamps: false,
-});
-
-const Analisis = sequelize.define('Analisis', {
-    ID: {
-        type: DataTypes.SMALLINT,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        field: 'analisisid',
-    },
-    ParcelaID: {
-        type: DataTypes.SMALLINT,
-        allowNull: false,
-        field: 'parcelaid',
-        references: {
-            model: Parcelas,
-            key: 'parcelaid',
-        }
-    },
-    Fecha: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'fechaanalisis',
-    },
-    PH: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'phanalisis',
-    },
-    MateriaOrganica: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'materiaorganicaanalisis',
-    },
-    Nitrogeno: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'nitrogenoanalisis',
-    },
-    Fosforo: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'fosforoanalisis',
-    },
-    Potasio: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'potasioanalisis',
-    },
-    Salinidad: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: 'salinidadanalisis',
-    },
-}, {
-    tableName: 'analisis_suelos',
-    timestamps: false,
-});
-//#endregion
-
-//#region definición de relaciones
-Parcelas.hasMany(Analisis, {
-    foreignKey: 'parcelaid',
-    sourceKey: 'ID',
-});
-
-Analisis.belongsTo(Parcelas, {
-    foreignKey: 'parcelaid',
-    targetKey: 'ID',
-});
-//#endregion
-
-//#region Exportación de las BDD
-module.exports = {
-    Parcelas, Analisis
-}

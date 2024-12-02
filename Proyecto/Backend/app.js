@@ -43,4 +43,8 @@ app.get('/parcela', async (req, res) => {
 
     res.send(parcela)
 })
+
+app.get('/testing', (req, res) => {
+    res.send("Hola Mundo");
+})
 //#endregion
