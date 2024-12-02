@@ -28,3 +28,4 @@ Proyecto/Frontend/*.ntvs*
 Proyecto/Frontend/*.njsproj
 Proyecto/Frontend/*.sln
 Proyecto/Frontend/*.sw?
+/Proyecto/Backend/.vs

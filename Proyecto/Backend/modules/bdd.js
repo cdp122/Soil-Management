@@ -1,20 +1,39 @@
 //#region Iniciar la BDD
+require('dotenv').config({ path: '../.env' });
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Configuración de la base de datos
-const sequelize = new Sequelize('BDD-Soil-Management-4-Soft', 'dev_test_bdd', 'Soil-Management-4-Soft', {
-    host: 'localhost', // O la IP del servidor PostgreSQL
+// Configuración de la base de datos RENDER
+const sequelizeRender = new Sequelize(process.env.DB_NAME_RENDER, process.env.DB_USER_RENDER, process.env.DB_PASSWORD_RENDER, {
+    host: process.env.DB_HOST_RENDER,
     dialect: 'postgres',
-    logging: false, // Opcional: deshabilitar logs de SQL
+    logging: false,
 });
 
-// Probar conexión
+// Configuración de la base de datos LOCAL
+const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_USER_LOCAL, process.env.DB_PASSWORD_LOCAL, {
+    host: process.env.DB_HOST_LOCAL,
+    dialect: 'postgres',
+    logging: false,
+});
+
+let sequelize = sequelizeLocal;
+
+// Probar conexión RENDER
 (async () => {
     try {
-        await sequelize.authenticate();
-        console.log('Conexión a PostgreSQL establecida exitosamente.');
+        await sequelizeRender.authenticate();
+        console.log('BDD >> Conexión a PostgreSQL RENDER establecida exitosamente.');
+        sequelize = sequelizeRender; // Usar la conexión de RENDER si es exitosa
     } catch (error) {
-        console.error('Error conectándose a PostgreSQL:', error);
+        console.error('BDD >> Error conectándose a PostgreSQL RENDER:', error.message);
+        console.log('BDD >> Intentando conexión a base de datos LOCAL...');
+        try {
+            await sequelizeLocal.authenticate();
+            console.log('BDD >> Conexión a PostgreSQL LOCAL establecida exitosamente.');
+            sequelize = sequelizeLocal; // Usar la conexión local si RENDER falla
+        } catch (localError) {
+            console.error('BDD >> Error conectándose a PostgreSQL LOCAL:', localError.message);
+        }
     }
 })();
 //#endregion
@@ -132,9 +151,9 @@ Analisis.belongsTo(Parcelas, {
 (async () => {
     try {
         await sequelize.sync();
-        console.log('>> [BDD] > Tablas sincronizadas correctamente.');
+        console.log('BDD > Tablas sincronizadas correctamente.');
     } catch (error) {
-        console.error('>> [BDD] > Error sincronizando las tablas:', error);
+        console.error('BDD > Error sincronizando las tablas:', error);
     }
 })();
 //#endregion

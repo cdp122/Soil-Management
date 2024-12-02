@@ -1,4 +1,5 @@
 //#region Dependencias
+require('dotenv').config({ path: './.env' });
 const bodyparser = require('body-parser')
 const path = require('path')
 const os = require('os')
@@ -28,16 +29,16 @@ app.use(cors());
 
 const localIP = getLocalIP();
 
-console.log(`>>El Backend empezará a ejecutarse localmente en => http://localhost:${PORT}`)
-console.log(`>>EN LAN será por el ip => http://${localIP}:${PORT}`)
+console.log(`MAIN >> El Backend empezará a ejecutarse localmente en => http://localhost:${PORT}`)
+console.log(`MAIN >> EN LAN será por el ip => http://${localIP}:${PORT}`)
 app.listen(PORT, () => {
-    console.log(">>Backend status = 'UP'")
+    console.log("MAIN >> Backend status = 'UP'")
 })
 
 app.get('/parcela', async (req, res) => {
     const parcela = await bdd.Parcelas.findAll();
 
-    console.log(">>Solicitud de data:\n")
+    console.log("MAIN >> Solicitud de data:\n")
     console.log(parcela)
 
     res.send(parcela)
