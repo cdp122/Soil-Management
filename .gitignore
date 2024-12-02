@@ -29,3 +29,5 @@ Proyecto/Frontend/*.njsproj
 Proyecto/Frontend/*.sln
 Proyecto/Frontend/*.sw?
 /Proyecto/Backend/.vs
+/Proyecto/Backend/.vs/Backend/v17
+/Proyecto/Backend/.vs/Backend/v17
