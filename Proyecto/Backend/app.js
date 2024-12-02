@@ -45,6 +45,7 @@ app.get('/parcela', async (req, res) => {
 })
 
 app.get('/testing', (req, res) => {
+    console.log("Alguien está solicitando un testing")
     res.send("Hola Mundo");
 })
 //#endregion

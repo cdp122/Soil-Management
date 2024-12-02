@@ -5,7 +5,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 // Configuración de la base de datos RENDER
 const sequelizeRender = new Sequelize(process.env.DB_RENDER_URL, {
     dialect: 'postgres',
-    logging: console.log,
+    logging: false, //si se requiere un loggin solo se pone console.log sin "()"
     ssl: {
         require: true,
         rejectUnauthorized: false, // Esto permite aceptar certificados no verificados si el certificado de Render no es reconocido.
@@ -28,7 +28,7 @@ const sequelizeRender = new Sequelize(process.env.DB_RENDER_URL, {
 const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_USER_LOCAL, process.env.DB_PASSWORD_LOCAL, {
     host: process.env.DB_HOST_LOCAL,
     dialect: 'postgres',
-    logging: console.log,
+    logging: false, //si se requiere un loggin solo se pone console.log sin "()"
     ssl: {
         require: true,
         rejectUnauthorized: false, // Esto permite aceptar certificados no verificados si el certificado de Render no es reconocido.

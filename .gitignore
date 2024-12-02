@@ -31,3 +31,5 @@ Proyecto/Frontend/*.sw?
 /Proyecto/Backend/.vs
 /Proyecto/Backend/.vs/Backend/v17
 /Proyecto/Backend/.vs/Backend/v17
+Proyecto/Backend/ngrok.exe
+Proyecto/Backend/ngrok.txt
