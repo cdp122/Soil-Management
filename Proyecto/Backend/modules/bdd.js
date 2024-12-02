@@ -6,14 +6,26 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelizeRender = new Sequelize(process.env.DB_NAME_RENDER, process.env.DB_USER_RENDER, process.env.DB_PASSWORD_RENDER, {
     host: process.env.DB_HOST_RENDER,
     dialect: 'postgres',
-    logging: false,
+    logging: console.log,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,  // 30 segundos de espera para adquirir la conexión
+        idle: 10000,
+    }
 });
 
 // Configuración de la base de datos LOCAL
 const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_USER_LOCAL, process.env.DB_PASSWORD_LOCAL, {
     host: process.env.DB_HOST_LOCAL,
     dialect: 'postgres',
-    logging: false,
+    logging: console.log,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,  // 30 segundos de espera para adquirir la conexión
+        idle: 10000,
+    }
 });
 
 let sequelize = sequelizeLocal;
