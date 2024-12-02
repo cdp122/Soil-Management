@@ -19,6 +19,7 @@ Proyecto/Frontend/dist-ssr
 Proyecto/Frontend/*.local
 
 # Editor directories and files
+Proyecto/Frontend/.vite
 Proyecto/Frontend/.vscode/*
 Proyecto/Frontend/!.vscode/extensions.json
 Proyecto/Frontend/.idea
