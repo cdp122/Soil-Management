@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import './styles/ModalAnalysis.css'
+import { useState } from 'react';
+import PropTypes from 'prop-types'; // Importa PropTypes
+import './styles/ModalAnalysis.css';
 
 function ModalAnalysis({ isOpen, onClose, parcelaId, onSave, previousAnalyses }) {
-    if (!isOpen) return null;
-
+    // Mover el hook useState fuera de la condición
     const [formData, setFormData] = useState({
         ph: '',
         materiaOrganica: '',
@@ -12,6 +12,9 @@ function ModalAnalysis({ isOpen, onClose, parcelaId, onSave, previousAnalyses })
         potasio: '',
         salinidad: ''
     });
+
+    // Ahora se puede manejar la condición después de llamar a useState
+    if (!isOpen) return null;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -112,11 +115,20 @@ function ModalAnalysis({ isOpen, onClose, parcelaId, onSave, previousAnalyses })
                 </div>
 
                 <div className="modal-a-footer">
-                    <button className='model-a-button   ' onClick={onClose}>Cerrar</button>
+                    <button className='model-a-button' onClick={onClose}>Cerrar</button>
                 </div>
             </div>
         </div>
     );
 }
+
+// Agregar PropTypes para validación
+ModalAnalysis.propTypes = {
+    isOpen: PropTypes.bool.isRequired,           // La propiedad isOpen debe ser un booleano y es obligatoria
+    onClose: PropTypes.func.isRequired,          // La propiedad onClose debe ser una función y es obligatoria
+    parcelaId: PropTypes.string.isRequired,      // La propiedad parcelaId debe ser una cadena y es obligatoria
+    onSave: PropTypes.func.isRequired,           // La propiedad onSave debe ser una función y es obligatoria
+    previousAnalyses: PropTypes.array.isRequired // La propiedad previousAnalyses debe ser un array y es obligatoria
+};
 
 export default ModalAnalysis;

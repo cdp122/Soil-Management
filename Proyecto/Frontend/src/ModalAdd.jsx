@@ -1,9 +1,9 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
-import './styles/ModalAdd.css'
+import './styles/ModalAdd.css';
 
 function ModalAdd({ isOpen, onClose, onSave }) {
-    if (!isOpen) return null;
-
+    // El hook se llama siempre, antes de la verificación de la condición
     const [formData, setFormData] = useState({
         ID: '',
         Nombre: '',
@@ -11,22 +11,25 @@ function ModalAdd({ isOpen, onClose, onSave }) {
         Longitud: '',
         Tamaño: '',
         Tipo: ''
-    })
+    });
+
+    // Condición para no renderizar el modal si no está abierto
+    if (!isOpen) return null;
 
     const handleChange = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
-        }))
-    }
+        }));
+    };
 
     const handleSave = () => {
         onSave(formData);
         onClose();
     };
 
-    return(
+    return (
         <>
             <div className='modal-overlay'>
                 <div className='modal-content'>
@@ -49,9 +52,9 @@ function ModalAdd({ isOpen, onClose, onSave }) {
                         </label>
                         <label>
                             Tipo de Suelo
-                            <select 
-                                name="Tipo" 
-                                value={formData.Tipo} 
+                            <select
+                                name="Tipo"
+                                value={formData.Tipo}
                                 onChange={handleChange}
                             >
                                 <option value="">Seleccionar</option>
@@ -70,7 +73,13 @@ function ModalAdd({ isOpen, onClose, onSave }) {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
-export default ModalAdd
+ModalAdd.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired
+};
+
+export default ModalAdd;

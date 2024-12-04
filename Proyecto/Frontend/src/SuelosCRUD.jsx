@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import plus from './assets/plus.svg';
 import info from './assets/info.svg';
 import edit from './assets/edit.svg';
@@ -9,18 +9,18 @@ import ModalAnalysis from './ModalAnalysis';
 import './styles/SuelosCRUD.css';
 
 function SuelosCRUD() {
-    const [isModalOpen, setIsModalOpen] = useState(false); 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
     const [selectedParcelaId, setSelectedParcelaId] = useState(null);
     const [editingParcela, setEditingParcela] = useState(null);
     const [tableData, setTableData] = useState([]);
 
-    const [previousAnalyses, setPreviousAnalyses] = useState([
-        { ph: '6.5', materiaOrganica: '3%', nitrogeno: '0.1%', fosforo: '10 ppm', potasio: '50 ppm', salinidad: '0.2 dS/m' },
-    ]);
+    // Eliminar 'previousAnalyses' si no se usa
+    // const [previousAnalyses, setPreviousAnalyses] = useState([
+    //     { ph: '6.5', materiaOrganica: '3%', nitrogeno: '0.1%', fosforo: '10 ppm', potasio: '50 ppm', salinidad: '0.2 dS/m' },
+    // ]);
 
-    
     useEffect(() => {
         fetch('http://186.71.12.133:3000/parcela')
             .then(response => {
@@ -49,7 +49,7 @@ function SuelosCRUD() {
     const openEditModal = (parcelaId) => {
         const parcelaToEdit = tableData.find(data => data.id === parcelaId);
         setEditingParcela(parcelaToEdit);
-        setSelectedParcelaId(parcelaId);  
+        setSelectedParcelaId(parcelaId);
         setIsEditModalOpen(true);
     };
 
@@ -92,20 +92,21 @@ function SuelosCRUD() {
         <>
             <ModalAdd isOpen={isModalOpen} onClose={closeModal} onSave={saveDataToTable} />
 
-            <ModalEdit 
-                isOpen={isEditModalOpen} 
-                onClose={closeEditModal} 
-                parcelaId={selectedParcelaId} 
+            <ModalEdit
+                isOpen={isEditModalOpen}
+                onClose={closeEditModal}
+                parcelaId={selectedParcelaId}
                 parcelaData={editingParcela}
-                onSave={saveEditData} 
+                onSave={saveEditData}
             />
 
-            <ModalAnalysis 
-                isOpen={isAnalysisModalOpen} 
-                onClose={closeAnalysisModal} 
-                parcelaId={selectedParcelaId} 
+            <ModalAnalysis
+                isOpen={isAnalysisModalOpen}
+                onClose={closeAnalysisModal}
+                parcelaId={selectedParcelaId}
                 onSave={saveAnalysisData}
-                previousAnalyses={previousAnalyses}
+            // Elimina 'previousAnalyses' si no es necesario
+            // previousAnalyses={previousAnalyses}
             />
 
             <div className="sc-up-container">

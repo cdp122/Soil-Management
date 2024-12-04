@@ -1,10 +1,11 @@
-import soilLogo from './assets/soil-logo.svg'
-import './styles/Menu.css'
+import PropTypes from 'prop-types'; // Importa PropTypes
+import soilLogo from './assets/soil-logo.svg';
+import './styles/Menu.css';
 
 function Menu({ onTabSelect }) {
     const handleMenuClick = (tab) => {
-        onTabSelect(tab)
-    }
+        onTabSelect(tab);
+    };
 
     return (
         <>
@@ -18,10 +19,18 @@ function Menu({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("suelos")}>
                         SUELOS
                     </li>
+                    <li onClick={() => handleMenuClick("login")}>
+                        Login
+                    </li>
                 </ul>
             </div>
         </>
-    )
+    );
 }
 
-export default Menu
+// Agrega PropTypes para la validación de la propiedad
+Menu.propTypes = {
+    onTabSelect: PropTypes.func.isRequired,  // La propiedad onTabSelect debe ser una función y es obligatoria
+};
+
+export default Menu;

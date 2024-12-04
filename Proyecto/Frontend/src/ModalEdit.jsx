@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types'; // Importamos PropTypes
 import './styles/ModalEdit.css';
 
 function ModalEdit({ isOpen, onClose, parcelaId, parcelaData, onSave }) {
-    if (!isOpen) return null;
-
+    // Hook useState siempre debe ir antes de cualquier condicional
     const [formData, setFormData] = useState({
         nombre: '',
         coordenadas: '',
@@ -11,6 +11,7 @@ function ModalEdit({ isOpen, onClose, parcelaId, parcelaData, onSave }) {
         tipoSuelo: ''
     });
 
+    // useEffect siempre debe ir antes de cualquier condicional
     useEffect(() => {
         if (parcelaData) {
             setFormData({
@@ -21,6 +22,9 @@ function ModalEdit({ isOpen, onClose, parcelaId, parcelaData, onSave }) {
             });
         }
     }, [parcelaData]);
+
+    // Aquí va la condición para no renderizar el modal si isOpen es false
+    if (!isOpen) return null;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -89,5 +93,19 @@ function ModalEdit({ isOpen, onClose, parcelaId, parcelaData, onSave }) {
         </div>
     );
 }
+
+// Agregar PropTypes para validación
+ModalEdit.propTypes = {
+    isOpen: PropTypes.bool.isRequired,                // isOpen debe ser un booleano y es obligatorio
+    onClose: PropTypes.func.isRequired,               // onClose debe ser una función y es obligatorio
+    parcelaId: PropTypes.string.isRequired,           // parcelaId debe ser una cadena de texto y es obligatorio
+    parcelaData: PropTypes.shape({                    // parcelaData debe ser un objeto con las siguientes propiedades
+        nombre: PropTypes.string.isRequired,          // nombre debe ser una cadena de texto
+        coordenadas: PropTypes.string.isRequired,     // coordenadas debe ser una cadena de texto
+        tamaño: PropTypes.string.isRequired,          // tamaño debe ser una cadena de texto
+        tipoSuelo: PropTypes.string.isRequired         // tipoSuelo debe ser una cadena de texto
+    }).isRequired,
+    onSave: PropTypes.func.isRequired                 // onSave debe ser una función y es obligatorio
+};
 
 export default ModalEdit;
