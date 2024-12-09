@@ -18,6 +18,9 @@ function Menu({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("suelos")}>
                         SUELOS
                     </li>
+                    <li onClick={() => handleMenuClick("suelos")}>
+                        
+                    </li>
                 </ul>
             </div>
         </>

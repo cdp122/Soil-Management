@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './styles/ModalEdit.css';
 
 function ModalEdit({ isOpen, onClose, parcelaId, parcelaData, onSave }) {

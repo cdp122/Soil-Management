@@ -1,51 +1,90 @@
 import { useState } from 'react';
-import './styles/ModalAdd.css'
+import './styles/ModalAdd.css';
 
 function ModalAdd({ isOpen, onClose, onSave }) {
     if (!isOpen) return null;
 
     const [formData, setFormData] = useState({
-        ID: '',
         Nombre: '',
         Latitud: '',
         Longitud: '',
         Tamaño: '',
         Tipo: ''
-    })
+    });
 
     const handleChange = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
-        }))
-    }
-
-    const handleSave = () => {
-        onSave(formData);
-        onClose();
+        }));
     };
 
-    return(
+    const handleSave = () => {
+        fetch('https://soil-management-4-soft-utn.onrender.com/parcela', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al guardar los datos');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos guardados exitosamente:', data);
+            onSave(formData);
+            onClose();
+        })
+        .catch(error => {
+            console.error('Error al guardar los datos:', error);
+        });
+    };
+
+    return (
         <>
             <div className='modal-overlay'>
                 <div className='modal-content'>
                     <h2>Datos</h2>
                     <div className='modal-data'>
                         <label>
-                            ID  <input type="text" name="ID" value={formData.ID} onChange={handleChange} />
+                            Nombre  
+                            <input 
+                                type="text" 
+                                name="Nombre" 
+                                value={formData.Nombre} 
+                                onChange={handleChange} 
+                            />
                         </label>
                         <label>
-                            Nombre  <input type="text" name="Nombre" value={formData.Nombre} onChange={handleChange} />
+                            Latitud  
+                            <input 
+                                type="number" 
+                                name="Latitud" 
+                                value={formData.Latitud} 
+                                onChange={handleChange} 
+                            />
                         </label>
                         <label>
-                            Latitud  <input type="number" name="Latitud" value={formData.Latitud} onChange={handleChange} />
+                            Longitud  
+                            <input 
+                                type="number" 
+                                name="Longitud" 
+                                value={formData.Longitud} 
+                                onChange={handleChange} 
+                            />
                         </label>
                         <label>
-                            Longitud  <input type="number" name="Longitud" value={formData.Longitud} onChange={handleChange} />
-                        </label>
-                        <label>
-                            Tamaño  <input type="number" name="Tamaño" value={formData.Tamaño} onChange={handleChange} />
+                            Tamaño  
+                            <input 
+                                type="number" 
+                                name="Tamaño" 
+                                value={formData.Tamaño} 
+                                onChange={handleChange} 
+                            />
                         </label>
                         <label>
                             Tipo de Suelo
@@ -70,7 +109,7 @@ function ModalAdd({ isOpen, onClose, onSave }) {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
-export default ModalAdd
+export default ModalAdd;

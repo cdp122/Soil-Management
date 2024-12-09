@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './styles/ModalAnalysis.css'
 
 function ModalAnalysis({ isOpen, onClose, parcelaId, onSave, previousAnalyses }) {

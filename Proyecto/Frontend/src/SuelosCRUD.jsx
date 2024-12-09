@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import plus from './assets/plus.svg';
 import info from './assets/info.svg';
 import edit from './assets/edit.svg';
@@ -22,7 +22,7 @@ function SuelosCRUD() {
 
     
     useEffect(() => {
-        fetch('http://186.71.12.133:3000/parcela')
+        fetch('https://soil-management-4-soft-utn.onrender.com/parcela')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error en la solicitud');
