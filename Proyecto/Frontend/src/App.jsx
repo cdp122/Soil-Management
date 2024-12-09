@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Registro from "./Registro"
 import Tab from "./Tab"
 import './styles/App.css'
 
@@ -12,7 +13,8 @@ function App() {
   return (
     <>
       <div className='main-container'>
-        <Tab selectedTab={selectedTab} onTabSelect={handleTabSelection} />
+      <Registro />
+        {/* <Tab selectedTab={selectedTab} onTabSelect={handleTabSelection} /> */}
       </div>
     </>
   )
