@@ -1,7 +1,7 @@
 import { useState } from "react"
-import Registro from "./Registro"
 import Tab from "./Tab"
 import './styles/App.css'
+import SuelosCRUD from "./SuelosCRUD"
 
 function App() {
   const [selectedTab, setSelectedTab] = useState("inicio")
@@ -13,8 +13,7 @@ function App() {
   return (
     <>
       <div className='main-container'>
-      <Registro />
-        {/* <Tab selectedTab={selectedTab} onTabSelect={handleTabSelection} /> */}
+      <Tab selectedTab={selectedTab} onTabSelect={handleTabSelection} />
       </div>
     </>
   )

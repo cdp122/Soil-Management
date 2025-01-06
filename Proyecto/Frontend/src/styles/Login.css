@@ -1,26 +1,77 @@
-.mn-container {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+.content {
+    color: rgb(0, 0, 0);
+    display: flexbox;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    width: 450px;
+    height: 450px;
+    margin: auto;
+    margin-top: 50px;
+    background: linear-gradient(#b4ff6fcb, #ffffff37) padding-box,
+        linear-gradient(145deg, transparent 10%, #47d7a2e4, #4cfe1ff2) border-box;
+    padding: 20px;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.form-group {
+    width: 100%;
+    margin: auto;
+    padding: auto;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    gap: 20px;
-    background-color: greenyellow;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
 }
 
-.mn-options {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-    margin-left: auto;
-}
-
-.mn-options li {
-    cursor: pointer;
-}
-
-.soil-logo {
+.btn {
+    width: 180px;
     height: 50px;
+    border-radius: 50px;
+    background-image: linear-gradient(135deg, #38f241 0%, #20e881 100%);
+    box-shadow: 0 20px 30px -6px rgba(62, 67, 61, 0.5);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    color: white;
+    margin-top: 10px;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Bebas Neue', sans-serif;
+    text-decoration: none;
+    text-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:hover {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+.btn:active {
+    opacity: 0.5;
+}
+
+.username,
+.contraseña {
+    width: auto;
+    padding: auto;
+    margin: auto;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 30px;
+    transition: font-size 0.5s;
+}
+
+.username:focus {
+    animation: borderAnimationDay 2s infinite;
+    border: solid 2px #33fd01;
+}
+
+.contraseña:focus {
+    animation: borderAnimationDay 2s infinite;
+    border: solid 2px #33fd01;
 }
