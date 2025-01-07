@@ -2,6 +2,7 @@ import SuelosCRUD from "./SuelosCRUD"
 import Registro from "./Registro"
 import Login from "./Login"
 import Menu from "./Menu"
+import Perfil from "./Perfil"
 
 function Tab({ selectedTab, onTabSelect }) {
     const renderContent = () => {
@@ -12,6 +13,8 @@ function Tab({ selectedTab, onTabSelect }) {
                 return <SuelosCRUD />
             case "registro":
                 return <Registro />
+            case "Perfil":
+                return <Perfil />
             case "login":
                 return <Login />
             default:

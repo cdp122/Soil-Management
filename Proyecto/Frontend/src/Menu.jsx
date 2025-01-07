@@ -24,6 +24,9 @@ function Menu({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("login")}>
                         LOGIN
                     </li>
+                    <li onClick={() => handleMenuClick("Perfil")}>
+                        PERFIL
+                    </li>
                 </ul>
             </div>
         </>
