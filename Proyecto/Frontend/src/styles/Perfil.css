@@ -1,0 +1,39 @@
+.Main {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+}
+
+.contenedorPerfil {
+    float: left;
+    margin: 10px;
+    width: 200px;
+    height: 80vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: #8ff64f;
+    box-sizing: border-box;
+    position: sticky;
+
+}
+
+.ContenedorImg {
+    background-color: rgb(122, 178, 227);
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 4%;
+}
+
+.GrupoAcciones {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    border: solid 2px;
+    width: 200px;
+    height: 80vh;
+    align-items: flex-start;
+    margin-left: auto;
+}
