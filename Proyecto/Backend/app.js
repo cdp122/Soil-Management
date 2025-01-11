@@ -36,12 +36,23 @@ app.listen(PORT, () => {
 })
 
 app.get('/parcela', async (req, res) => {
-    const parcela = await bdd.Parcelas.findAll();
+    //Prueba unicamente para ver si se puede hacer una consulta a la base de datos
 
-    console.log("MAIN >> Solicitud de data:\n")
-    console.log(parcela)
+    //try {
+    //    await bdd.Unidades.create({
+    //        uni_id: 1,
+    //        uni_simbolo: '%',
+    //        uni_nombre: 'Porcentaje'
+    //    });
+    //    const unidades = await bdd.Unidades.findAll();
+    //    console.log("MAIN >> Solicitud de data:\n")
+    //    console.log(unidades)
 
-    res.send(parcela)
+    //    res.send(unidades)
+    //} catch (error) {
+    //    console.error("Error al crear la unidad:", error);
+    //    res.status(500).send("Error al crear la unidad");
+    //}
 })
 
 app.get('/testing', (req, res) => {
