@@ -20,12 +20,12 @@ function Tab({ selectedTab, onTabSelect }) {
     }
 
     return (
-        <>
+        <div className="tab-container">
             <Menu onTabSelect={onTabSelect} />
             <div className="tab-content">
                 {renderContent()}
             </div>
-        </>
+        </div> 
     )
 }
 

@@ -1,7 +1,6 @@
 import { useState } from "react"
 import Tab from "./Tab"
 import './styles/App.css'
-import SuelosCRUD from "./SuelosCRUD"
 
 function App() {
   const [selectedTab, setSelectedTab] = useState("inicio")
