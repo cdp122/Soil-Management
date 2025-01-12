@@ -1,15 +1,15 @@
 //#region Dependencias
 require('dotenv').config({ path: './.env' });
-const bodyparser = require('body-parser')
-const path = require('path')
-const os = require('os')
-const cors = require('cors')
-const bdd = require('./modules/bdd.js')
+const bodyparser = require('body-parser');
+const cors = require('cors');
+const express = require('express');
+const routes = require('./modules/routes'); 
+routes.TestBDD();
 //#endregion
 
 //#region Función para obtener la IP LAN
 const getLocalIP = () => {
-    const interfaces = os.networkInterfaces();
+    const interfaces = require('os').networkInterfaces();
     for (const name of Object.keys(interfaces)) {
         for (const iface of interfaces[name]) {
             if (iface.family === 'IPv4' && !iface.internal) {
@@ -23,40 +23,18 @@ const getLocalIP = () => {
 
 //#region Start Up del Server
 const PORT = process.env.PORT || 3000;
-const express = require('express');
 const app = express();
 app.use(cors());
+app.use(bodyparser.json()); // Asegúrate de que el bodyparser esté configurado
 
 const localIP = getLocalIP();
 
 console.log(`MAIN >> El Backend empezará a ejecutarse localmente en => http://localhost:${PORT}`)
 console.log(`MAIN >> EN LAN será por el ip => http://${localIP}:${PORT}`)
+
 app.listen(PORT, () => {
-    console.log("MAIN >> Backend status = 'UP'")
-})
-
-app.get('/parcela', async (req, res) => {
-    //Prueba unicamente para ver si se puede hacer una consulta a la base de datos
-
-    //try {
-    //    await bdd.Unidades.create({
-    //        uni_id: 1,
-    //        uni_simbolo: '%',
-    //        uni_nombre: 'Porcentaje'
-    //    });
-    //    const unidades = await bdd.Unidades.findAll();
-    //    console.log("MAIN >> Solicitud de data:\n")
-    //    console.log(unidades)
-
-    //    res.send(unidades)
-    //} catch (error) {
-    //    console.error("Error al crear la unidad:", error);
-    //    res.status(500).send("Error al crear la unidad");
-    //}
-})
-
-app.get('/testing', (req, res) => {
-    console.log("Alguien está solicitando un testing")
-    res.send("Hola Mundo");
-})
+    console.log("MAIN >> Backend status = 'UP");
+});
+// Usa las rutas definidas en el archivo de rutas
+app.use('/', routes.router);
 //#endregion
