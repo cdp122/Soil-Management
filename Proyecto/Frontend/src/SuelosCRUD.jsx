@@ -1,156 +1,122 @@
-import { useState, useEffect } from 'react';
-import plus from './assets/plus.svg';
-import info from './assets/info.svg';
-import edit from './assets/edit.svg';
-import del from './assets/delete.svg';
-import ModalAdd from './ModalAdd';
-import ModalEdit from './ModalEdit';
-import ModalAnalysis from './ModalAnalysis';
-import './styles/SuelosCRUD.css';
+import React, { useState, useEffect } from "react";
+import Zonas from "./Zonas";
+import "./styles/SuelosCRUD.css";
 
 function SuelosCRUD() {
-    const [isModalOpen, setIsModalOpen] = useState(false); 
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
-    const [selectedParcelaId, setSelectedParcelaId] = useState(null);
-    const [editingParcela, setEditingParcela] = useState(null);
-    const [tableData, setTableData] = useState([]);
+    const [zonas, setZonas] = useState([]); // Lista de zonas
+    const [parcelas, setParcelas] = useState([]); // Lista de parcelas de la zona seleccionada
+    const [zonaSeleccionada, setZonaSeleccionada] = useState(null); // Zona seleccionada
+    const [loading, setLoading] = useState(false); // Estado de carga
 
-    const [previousAnalyses, setPreviousAnalyses] = useState([
-        { ph: '6.5', materiaOrganica: '3%', nitrogeno: '0.1%', fosforo: '10 ppm', potasio: '50 ppm', salinidad: '0.2 dS/m' },
-    ]);
-
-    
     useEffect(() => {
-        fetch('https://soil-management-4-soft-utn.onrender.com/parcela')
-            .then(response => {
+        const fetchZonas = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch("https://soil-management-4-soft-utn.onrender.com/zonas?userid=1", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+    
+                // Validar si la respuesta es exitosa
                 if (!response.ok) {
-                    throw new Error('Error en la solicitud');
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
                 }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Datos obtenidos:', data);
-                setTableData(data);
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos:', error);
-            });
+    
+                // Validar que la respuesta sea JSON
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("La respuesta no es JSON.");
+                }
+    
+                const data = await response.json();
+                console.log("Zonas recibidas:", data); // Depuración
+                setZonas(data);
+            } catch (error) {
+                console.error("Error al cargar las zonas:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchZonas();
     }, []);
+    
 
-    const openModal = () => {
-        setIsModalOpen(true);
+    // Obtener las parcelas de una zona específica
+    const fetchParcelas = async (zonaId) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`http://localhost:3000/zonas/${zonaId}/parcelas`); // Endpoint de parcelas
+            const data = await response.json();
+            setParcelas(data);
+        } catch (error) {
+            console.error("Error al cargar las parcelas:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const openEditModal = (parcelaId) => {
-        const parcelaToEdit = tableData.find(data => data.id === parcelaId);
-        setEditingParcela(parcelaToEdit);
-        setSelectedParcelaId(parcelaId);  
-        setIsEditModalOpen(true);
-    };
-
-    const closeEditModal = () => {
-        setIsEditModalOpen(false);
-    };
-
-    const saveDataToTable = (formData) => {
-        setTableData(prevData => [...prevData, formData]);
-    };
-
-    const saveEditData = (formData, parcelaId) => {
-        const updatedData = tableData.map(data =>
-            data.id === parcelaId ? { ...data, ...formData } : data
-        );
-        setTableData(updatedData);
-        closeEditModal();
-    };
-
-    const openAnalysisModal = (parcelaId) => {
-        setSelectedParcelaId(parcelaId);
-        setIsAnalysisModalOpen(true);
-    };
-
-    const closeAnalysisModal = () => {
-        setIsAnalysisModalOpen(false);
-    };
-
-    const saveAnalysisData = (formData, parcelaId) => {
-        console.log('Datos del análisis guardados para parcela:', parcelaId, formData);
-        closeAnalysisModal();
-    };
-
-    const deleteParcela = (parcelaId) => {
-        const updatedTableData = tableData.filter(data => data.id !== parcelaId);
-        setTableData(updatedTableData);
+    // Manejar la selección de una zona
+    const handleZonaClick = (zonaId) => {
+        setZonaSeleccionada(zonaId);
+        if (zonaId) {
+            fetchParcelas(zonaId);
+        } else {
+            setParcelas([]);
+        }
     };
 
     return (
-        <>
-            <ModalAdd isOpen={isModalOpen} onClose={closeModal} onSave={saveDataToTable} />
-
-            <ModalEdit 
-                isOpen={isEditModalOpen} 
-                onClose={closeEditModal} 
-                parcelaId={selectedParcelaId} 
-                parcelaData={editingParcela}
-                onSave={saveEditData} 
-            />
-
-            <ModalAnalysis 
-                isOpen={isAnalysisModalOpen} 
-                onClose={closeAnalysisModal} 
-                parcelaId={selectedParcelaId} 
-                onSave={saveAnalysisData}
-                previousAnalyses={previousAnalyses}
-            />
-
-            <div className="sc-up-container">
-                <button className='sc-add-soil' onClick={openModal}>
-                    <img src={plus} alt="plus-icon" />
-                    Añadir Parcela
-                </button>
-                <input type="text" className='sc-search-soil' />
+        <div className="sueloscrud-container">
+            <Zonas zonas={zonas} onZonaClick={handleZonaClick} />
+            <div className="sueloscrud-content">
+                {loading ? (
+                    <div className="sueloscrud-loading">Cargando...</div>
+                ) : zonaSeleccionada ? (
+                    <>
+                        <div className="sueloscrud-header">
+                            <h2 className="sueloscrud-title">
+                                {zonas.find((z) => z.id === zonaSeleccionada)?.nombre}
+                            </h2>
+                            <div className="sueloscrud-search">
+                                <input
+                                    type="text"
+                                    placeholder="Búsqueda"
+                                    className="sueloscrud-search-input"
+                                />
+                                <button className="sueloscrud-search-button">🔍</button>
+                            </div>
+                            <div className="sueloscrud-buttons">
+                                <button className="sueloscrud-btn">Comparar Parcelas</button>
+                                <button className="sueloscrud-btn">Añadir Parcela</button>
+                            </div>
+                        </div>
+                        <div className="sueloscrud-parcels">
+                            {parcelas.length > 0 ? (
+                                parcelas.map((parcela) => (
+                                    <div key={parcela.id} className="sueloscrud-parcel">
+                                        <div className="sueloscrud-parcel-image"></div>
+                                        <label className="sueloscrud-parcel-label">
+                                            <input type="checkbox" /> {parcela.nombre}
+                                        </label>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="sueloscrud-placeholder">
+                                    No hay parcelas disponibles en esta zona.
+                                </div>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <div className="sueloscrud-placeholder">
+                        <h2>Selecciona una zona para ver las parcelas</h2>
+                    </div>
+                )}
             </div>
-
-            <div className='sc-info-container'>
-                <table className='sc-table-content'>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Latitud</th>
-                            <th>Longitud</th>
-                            <th>Tamaño</th>
-                            <th>Tipo de Suelo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData.map((data, index) => (
-                            <tr key={index}>
-                                <td>{data.ID}</td>
-                                <td>{data.Nombre}</td>
-                                <td>{data.Latitud}</td>
-                                <td>{data.Longitud}</td>
-                                <td>{data.Tamaño}</td>
-                                <td>{data.Tipo}</td>
-                                <td>
-                                    <ul className='sc-actions'>
-                                        <li><img src={info} alt="info-icon" onClick={() => openAnalysisModal(data.ID)} /></li>
-                                        <li><img src={edit} alt="edit-icon" onClick={() => openEditModal(data.ID)} /></li>
-                                        <li><img src={del} alt="del-icon" onClick={() => deleteParcela(data.ID)} /></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </>
+        </div>
     );
 }
 
