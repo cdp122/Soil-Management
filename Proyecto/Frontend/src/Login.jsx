@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Para redirecciones
 import './styles/Login.css';
 
-function Login() {
+function Login({ onSwitchToRegister }) {
     const [formData, setFormData] = useState({
         cedula: '',
         password: ''
     });
 
     const [token, setToken] = useState(null); // Estado para almacenar el token
+    const navigate = useNavigate(); // Hook para redirección
 
     // Cargar token desde localStorage al iniciar el componente
     useEffect(() => {
@@ -56,10 +58,13 @@ function Login() {
                 // Guardar el token en localStorage y en el estado
                 localStorage.setItem('token', result.token);
                 setToken(result.token);
-                //guardado del user
+                // Guardado del usuario
                 localStorage.setItem("cedula", formData.cedula);
 
                 alert('Inicio de sesión exitoso');
+                
+                // Redirigir al componente principal después del login
+                navigate('/app'); // Ruta definida en las rutas de react-router-dom
             })
             .catch(error => {
                 console.error('Error al iniciar sesión:', error);
@@ -87,18 +92,24 @@ function Login() {
                     <label htmlFor="password"><b>Contraseña</b></label>
                     <input
                         type="password"
-                        className="contraseña"
+                        className="password"
                         id="password"
                         required
                         pattern=".{0,}"
                         title="Ingrese su contraseña"
                         onChange={handleInputChange}
                     />
+                    <a href="">Recuperar contraseña</a>
                 </div>
                 <div className="form-group">
                     <button className="btn" type="submit">Iniciar Sesión</button>
-                    <a href="" className="btn">Registrarse</a>
-                    <a href="" className="btn recuperar">Recuperar Contraseña</a>
+                    <button
+                        type="button"
+                        className="btn"
+                        onClick={onSwitchToRegister} // Cambiar a la vista de registro
+                    >
+                        Registrarse
+                    </button>
                 </div>
             </form>
         </div>

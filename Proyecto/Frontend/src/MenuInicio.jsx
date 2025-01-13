@@ -1,7 +1,7 @@
 import soilLogo from './assets/soil-logo.svg'
 import './styles/Menu.css'
 
-function Menu({ onTabSelect }) {
+function MenuInicio({ onTabSelect }) {
     const handleMenuClick = (tab) => {
         onTabSelect(tab)
     }
@@ -15,11 +15,11 @@ function Menu({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("inicio")}>
                         INICIO
                     </li>
-                    <li onClick={() => handleMenuClick("suelos")}>
-                        SUELOS
+                    <li onClick={() => handleMenuClick("contacto")}>
+                        CONTACTO
                     </li>
-                    <li onClick={() => handleMenuClick("perfil")}>
-                        PERFIL
+                    <li onClick={() => handleMenuClick("login")}>
+                        LOGIN
                     </li>
                 </ul>
             </div>
@@ -27,4 +27,4 @@ function Menu({ onTabSelect }) {
     )
 }
 
-export default Menu
+export default MenuInicio;

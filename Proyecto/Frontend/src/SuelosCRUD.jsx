@@ -3,56 +3,112 @@ import Zonas from "./Zonas";
 import "./styles/SuelosCRUD.css";
 
 function SuelosCRUD() {
+    const [authorized, setAuthorized] = useState(false);
+    const [userData, setUserData] = useState([]); // Información del usuario
+    const token = localStorage.getItem('token'); // Recuperar token
+    const cedula = localStorage.getItem('cedula'); // Recuperar cédula
+    const user_id = localStorage.getItem('user_id'); // Recuperar userid
     const [zonas, setZonas] = useState([]); // Lista de zonas
-    const [parcelas, setParcelas] = useState([]); // Lista de parcelas de la zona seleccionada
+    const [parcelas, setParcelas] = useState([]); // Lista de parcelas
     const [zonaSeleccionada, setZonaSeleccionada] = useState(null); // Zona seleccionada
     const [loading, setLoading] = useState(false); // Estado de carga
 
+    // Validar el token y cargar datos del usuario
+    useEffect(() => {
+        const validateToken = async () => {
+            if (!token) {
+                console.error('No hay token disponible. Redirigiendo al login.');
+                setAuthorized(false);
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://soil-management-4-soft-utn.onrender.com/profile?user=${cedula}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Datos del usuario recibidos:', data);
+                    setUserData(data); // Guardar datos del usuario
+                    setAuthorized(true);
+                } else {
+                    console.error('Token inválido o expirado. Redirigiendo al login.');
+                    setAuthorized(false);
+                    localStorage.removeItem('token'); // Limpiar token si es inválido
+                }
+            } catch (error) {
+                console.error('Error al validar el token:', error);
+                setAuthorized(false);
+            }
+        };
+
+        validateToken();
+    }, [token, cedula]);
+
+    // Cargar las zonas
     useEffect(() => {
         const fetchZonas = async () => {
+            if (!authorized) return; // No cargar zonas si el usuario no está autorizado
+
             setLoading(true);
             try {
-                const response = await fetch("https://soil-management-4-soft-utn.onrender.com/zonas?userid=1", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-    
-                // Validar si la respuesta es exitosa
+                const response = await fetch(
+                    `https://soil-management-4-soft-utn.onrender.com/zonas?userid=${user_id}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
                 if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                    throw new Error(`Error del servidor: ${response.status}`);
                 }
-    
-                // Validar que la respuesta sea JSON
-                const contentType = response.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error("La respuesta no es JSON.");
-                }
-    
+
                 const data = await response.json();
-                console.log("Zonas recibidas:", data); // Depuración
+                console.log('Zonas recibidas:', data);
                 setZonas(data);
             } catch (error) {
-                console.error("Error al cargar las zonas:", error);
+                console.error('Error al cargar las zonas:', error);
             } finally {
                 setLoading(false);
             }
         };
-    
+
         fetchZonas();
-    }, []);
-    
+    }, [authorized, token, cedula]);
 
     // Obtener las parcelas de una zona específica
     const fetchParcelas = async (zonaId) => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:3000/zonas/${zonaId}/parcelas`); // Endpoint de parcelas
+            const response = await fetch(
+                `https://soil-management-4-soft-utn.onrender.com/zonas/${zonaId}/parcelas`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: token,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+
             const data = await response.json();
             setParcelas(data);
         } catch (error) {
-            console.error("Error al cargar las parcelas:", error);
+            console.error('Error al cargar las parcelas:', error);
         } finally {
             setLoading(false);
         }
@@ -67,6 +123,10 @@ function SuelosCRUD() {
             setParcelas([]);
         }
     };
+
+    if (!authorized) {
+        return <div>No tienes acceso. Por favor, inicia sesión.</div>;
+    }
 
     return (
         <div className="sueloscrud-container">

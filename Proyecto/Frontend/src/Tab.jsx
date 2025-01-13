@@ -11,12 +11,8 @@ function Tab({ selectedTab, onTabSelect }) {
                 return <div>INICIO</div>
             case "suelos":
                 return <SuelosCRUD />
-            case "registro":
-                return <Registro />
-            case "Perfil":
+            case "perfil":
                 return <Perfil />
-            case "login":
-                return <Login />
             default:
                 return <div>DEFAULT</div>
         }

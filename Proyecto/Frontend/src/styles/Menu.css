@@ -1,5 +1,5 @@
 .mn-container {
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     display: flex;
     align-items: center;
     padding-left: 20px;
@@ -8,6 +8,7 @@
     background-color: greenyellow;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    flex-shrink: 0; /* Evita que el menú se reduzca */
 }
 
 .mn-options {
@@ -19,6 +20,15 @@
 
 .mn-options li {
     cursor: pointer;
+    padding: 10px 15px; /* Espaciado interno para los elementos */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s, color 0.3s; /* Animación suave */
+}
+
+.mn-options li:hover {
+    background-color: #4caf50; /* Cambia el fondo al pasar el mouse */
+    color: white; /* Cambia el color del texto */
+    transform: scale(1.1); /* Aumenta ligeramente el tamaño */
 }
 
 .soil-logo {

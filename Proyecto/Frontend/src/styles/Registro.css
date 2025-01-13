@@ -1,71 +1,93 @@
 .rg-container {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    width: 100%;
-    height: 100%;
+    color: rgb(0, 0, 0);
     display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    background-color: greenyellow;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    width: 750px; /* Ancho ajustado */
+    background: linear-gradient(#b4ff6fcb, #ffffff37) padding-box,
+        linear-gradient(145deg, transparent 10%, #47d7a2e4, #4cfe1ff2) border-box;
+    padding: 30px; /* Padding reducido para no exceder */
+    flex-direction: column;
+    box-sizing: border-box;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    margin: auto;
 }
 
 .rg-form {
-    border-radius: 8px;
-    background-color: white;
-    padding: 15px;
-    height: 80%;
-    width: 30%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Reducido para más espacio */
 }
 
 .rg-title {
     text-align: center;
+    font-size: 24px; /* Tamaño ajustado */
+    font-weight: bold;
+    margin-bottom: 15px; /* Espaciado menor */
+    color: #333;
 }
 
 .rg-form-data {
-    margin-top: 7px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Diseño en dos columnas */
+    gap: 15px 40px; /* Más espacio horizontal (40px) entre las columnas */
 }
 
-.rg-form-data input {
-    height: 15px;
+.rg-form-data label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.rg-form-data input,
+.rg-form-data select {
     width: 100%;
-    border-radius: 9px;
-    border-width: 1px;
-    border-color: black;
-    padding: 2px;
+    padding: 8px; /* Padding menor para ajustarse al alto */
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    outline: none;
+    font-size: 14px; /* Fuente más pequeña */
+    transition: border-color 0.3s;
+}
+
+.rg-form-data input:focus,
+.rg-form-data select:focus {
+    border: 2px solid #33fd01;
+}
+
+/* Para el botón centrado */
+.rg-btn-container {
+    grid-column: span 2; /* Ocupa las dos columnas */
+    display: flex;
+    justify-content: center;
 }
 
 .rg-btn {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 16px;
-    border-color: black;
-    border-width: 1px;
-    border-radius: 5px;
-    margin-top: 15px;
-    background-color: rgb(155, 253, 253);
-    padding-top: 7px;
-    padding-bottom: 7px;
-    padding-left: 8px;
-    padding-right: 8px;
-    gap: 10px;
-    width: 25%;
-}
-
-
-select {
     width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
+    max-width: 150px; /* Ancho reducido */
+    height: 40px; /* Altura más baja */
+    border-radius: 50px;
+    background-image: linear-gradient(135deg, #38f241 0%, #20e881 100%);
+    box-shadow: 0 10px 20px -6px rgba(62, 67, 61, 0.5);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    font-size: 14px; /* Fuente más pequeña */
+    color: white;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Bebas Neue', sans-serif;
+    text-align: center;
 }
 
-select:focus {
-    border-color: #007bff;
-    outline: none;
+.rg-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(62, 67, 61, 0.4);
+}
+
+.rg-btn:active {
+    opacity: 0.8;
 }
