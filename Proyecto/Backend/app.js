@@ -36,5 +36,12 @@ app.listen(PORT, () => {
     console.log("MAIN >> Backend status = 'UP");
 });
 // Usa las rutas definidas en el archivo de rutas
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.error('Bad JSON');
+        return res.status(400).send({ error: 'Bad JSON' });
+    }
+    next();
+});
 app.use('/', routes.router);
 //#endregion

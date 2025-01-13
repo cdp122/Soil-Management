@@ -5,12 +5,13 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 router.use(bodyParser.json());
 var BDD;
+const { encryptPassword, verifyPassword } = require('./auth.js'); 
 //#endregion
 
 async function TestBDD() {
     if (!BDD && !conexion.bdd) {
         BDD = await conexion.Conectar();
-        console.log("RUTAS >> TESTBDD > Consiguiendo conexión...");
+        console.log("RUTAS >> TESTBDD > ¡Conexión Conseguida!");
     }
     return;
 }
@@ -128,6 +129,64 @@ router.post('/registrarzona', async (req, res) => {
     catch (error) {
         console.error("Error al registrar la zona:", error);
         res.status(500).send({ error: "Error al registrar la zona" });
+    }
+});
+
+//Solicitud de roles
+router.get('/roles', async (req, res) => {
+    //await TestBDD();
+    var query = `select * from tipos_usuarios;`
+
+    const consulta = await conexion.Consultar(BDD, query);
+    console.log("RUTAS >> ROLES > Consulta de roles realizada");
+    console.log(consulta);
+
+    res.setHeader('Content-Type', 'application/json');
+    if (consulta.length > 0) res.send(JSON.stringify(consulta));
+    else res.status(400).send({error: "No hay roles registrados en la BDD"});
+});
+
+//Registro de Usuario
+router.post('/register', async (req, res) => {
+    if (!req.body) { res.status(400).send({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body["rol"]) { res.status(400).send({ error: "No se ha proporcionado el rol" }); return; }
+    if (!req.body["cedula"]) { res.status(400).send({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.body["nombre"]) { res.status(400).send({ error: "No se ha proporcionado el nombre" }); return; }
+    if (!req.body["apellido"]) { res.status(400).send({ error: "No se ha proporcionado el apellido" }); return; }
+    if (!req.body["correo"]) { res.status(400).send({ error: "No se ha proporcionado el correo" }); return; }
+    if (!req.body["password"]) { res.status(400).send({ error: "No se ha proporcionado la contraseña" }); return; }
+    if (!req.body["telefono"]) { res.status(400).send({ error: "No se ha proporcionado el número de teléfono" }); return; }
+    console.log("RUTAS >> USUARIOS > Registrando nuevo usuario...");
+    const usuario = req.body;
+    console.log(usuario);
+    const Rol = usuario["rol"].toUpperCase();
+    const indexRol = await conexion.Consultar(BDD, `select * from tipos_usuarios where tipus_detalles = '${Rol}'`);
+
+    const Cedula = usuario["cedula"];
+    const Nombre = usuario["nombre"];
+    const Apellido = usuario["apellido"];
+    const Correo = usuario["correo"];
+    const Password = await encryptPassword(usuario["password"]);
+    const Telefono = usuario["telefono"];
+
+    var query = `insert into usuarios 
+(tipus_id, user_cedula, user_nombre, user_apellido, user_email, user_password, user_telefono, user_estado, created_at, updated_at) values 
+({{INDEX_ROL}}, '{{CEDULA}}', '{{NOMBRE}}', '{{APELLIDO}}', '{{CORREO}}', '{{CONTRASEÑA}}', '{{TELEFONO}}', true, now(), now());`;
+    query = query.replace("{{INDEX_ROL}}", indexRol[0].tipus_id);
+    query = query.replace("{{CEDULA}}", Cedula);
+    query = query.replace("{{NOMBRE}}", Nombre);
+    query = query.replace("{{APELLIDO}}", Apellido);
+    query = query.replace("{{CORREO}}", Correo);
+    query = query.replace("{{CONTRASEÑA}}", Password);
+    query = query.replace("{{TELEFONO}}", Telefono);
+    console.log(query);
+    try {
+        await conexion.Consultar(BDD, query);
+        res.send({ status: "OK" });
+    }
+    catch (error) {
+        console.error("Error al registrar el usuario:", error);
+        res.status(500).send({ error: "Error al registrar el usuario" });
     }
 });
 //#endregion
