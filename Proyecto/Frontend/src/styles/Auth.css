@@ -1,0 +1,16 @@
+.au-container {
+    display: flex;
+    flex-direction: column; /* Dirección de los elementos: columna */
+    padding: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 15px;
+    height: calc(100vh - 30px); /* Altura total de la ventana menos márgenes */
+}
+
+.au-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Hace que este div ocupe todo el espacio disponible */
+}

@@ -29,4 +29,4 @@ Proyecto/Frontend/*.ntvs*
 Proyecto/Frontend/*.njsproj
 Proyecto/Frontend/*.sln
 Proyecto/Frontend/*.sw?
-Proyecto/Frontend/src/clie.http
+Proyecto/Frontend/src/*.http

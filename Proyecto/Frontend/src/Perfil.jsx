@@ -97,7 +97,7 @@ function Perfil() {
                         onClick={() => {
                             localStorage.removeItem('token'); // Eliminar el token al cerrar sesión
                             setAuthorized(false); // Bloquear acceso
-                            window.location.href = '/login'; // Redirigir al login
+                            window.location.href = '/'; // Redirigir al login
                         }}
                     >
                         Cerrar Sesión

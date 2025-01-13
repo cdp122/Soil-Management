@@ -1,7 +1,11 @@
 .tab-container {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
+    flex-direction: column; /* Dirección de los elementos: columna */
+    padding: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 15px;
+    height: calc(100vh - 30px); /* Altura total de la ventana menos márgenes */
 }
 
 .menu {
@@ -9,6 +13,9 @@
 }
 
 .tab-content {
-    flex-grow: 1;
-    overflow: auto;
+    flex-grow: 1; /* Hace que este div ocupe todo el espacio disponible */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente el contenido */
+    align-items: center; /* Centra verticalmente el contenido */
+    overflow: auto; /* Habilita el scroll si es necesario */
 }
