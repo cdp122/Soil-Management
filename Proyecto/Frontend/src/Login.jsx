@@ -37,7 +37,7 @@ function Login() {
         console.log('Datos enviados al backend (login):', payload);
 
         // Enviar los datos al backend
-        fetch('https://5108-186-71-12-133.ngrok-free.app/login', {
+        fetch('https://soil-management-4-soft-utn.onrender.com/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -56,6 +56,8 @@ function Login() {
                 // Guardar el token en localStorage y en el estado
                 localStorage.setItem('token', result.token);
                 setToken(result.token);
+                //guardado del user
+                localStorage.setItem("cedula", formData.cedula);
 
                 alert('Inicio de sesión exitoso');
             })

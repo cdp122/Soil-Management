@@ -1,6 +1,54 @@
-import './styles/Perfil.css'
+import { useEffect, useState } from 'react';
+import './styles/Perfil.css';
 
 function Perfil() {
+    const [authorized, setAuthorized] = useState(false); // Estado para controlar el acceso
+    const [userData, setUserData] = useState(null); // Estado para almacenar datos del usuario
+    const token = localStorage.getItem('token'); // Recuperar el token del localStorage
+    const cedula = localStorage.getItem('cedula'); // Recuperar el token del localStorage
+
+    useEffect(() => {
+        // Verificar el token al cargar la página
+        const validateToken = async () => {
+            if (!token) {
+                // Si no hay token, redirigir o bloquear acceso
+                console.error('No hay token disponible. Redirigiendo al login.');
+                setAuthorized(false);
+                return;
+            }
+
+            try {
+                const response = await fetch('https://soil-management-4-soft-utn.onrender.com/profile?user=' + cedula, {  //cedula del user 
+                    method: 'GET',
+                    headers: {
+                        'Authorization': token // Enviar token en los headers
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Datos del usuario recibidos:', data); // Depuración
+                    setUserData(data); // Guardar datos del usuario si el token es válido
+                    setAuthorized(true); // Permitir acceso a la página
+                } else {
+                    console.error('Token inválido o expirado. Redirigiendo al login.');
+                    setAuthorized(false);
+                    localStorage.removeItem('token'); // Limpiar token si no es válido
+                }
+            } catch (error) {
+                console.error('Error al validar el token:', error);
+                setAuthorized(false);
+            }
+        };
+
+        validateToken();
+    }, [token]);
+
+    if (!authorized) {
+        // Mostrar un mensaje o redirigir al usuario si no está autorizado
+        return <div>No tienes acceso. Por favor, inicia sesión.</div>;
+    }
+
     return (
         <main className="perfil-main">
             <div className="perfil-container">
@@ -12,8 +60,8 @@ function Perfil() {
                             className="perfil-img"
                         />
                     </div>
-                    <h1 className="perfil-name">Nombre del Usuario</h1>
-                    <p className="perfil-role">Rol: Usuario Estándar</p>
+                    <h1 className="perfil-name">{userData?.name || 'Nombre del Usuario'}</h1>
+                    <p className="perfil-role">Rol: {userData?.role || 'Usuario Estándar'}</p>
                 </div>
 
                 <div className="perfil-info">
@@ -21,15 +69,15 @@ function Perfil() {
                     <div className="perfil-info-grid">
                         <div className="perfil-info-item">
                             <h3>Email</h3>
-                            <p>usuario@email.com</p>
+                            <p>{userData?.email || 'usuario@email.com'}</p>
                         </div>
                         <div className="perfil-info-item">
                             <h3>Teléfono</h3>
-                            <p>+123 456 7890</p>
+                            <p>{userData?.telefono || '+123 456 7890'}</p>
                         </div>
                         <div className="perfil-info-item">
                             <h3>Fecha de Registro</h3>
-                            <p>01/01/2023</p>
+                            <p>{userData?.registro || '01/01/2023'}</p>
                         </div>
                     </div>
                 </div>
@@ -37,19 +85,20 @@ function Perfil() {
                 <div className="perfil-actions">
                     <button className="btnPerfil">Modificar Datos</button>
                     <button className="btnPerfil">Suspender Cuenta</button>
-                    <button className="btnDanger">Cerrar Sesión</button>
+                    <button
+                        className="btnDanger"
+                        onClick={() => {
+                            localStorage.removeItem('token'); // Eliminar el token al cerrar sesión
+                            setAuthorized(false); // Bloquear acceso
+                            window.location.href = '/login'; // Redirigir al login
+                        }}
+                    >
+                        Cerrar Sesión
+                    </button>
                 </div>
             </div>
         </main>
-
-
-
-    )
+    );
 }
 
 export default Perfil;
-
-
-
-
-
