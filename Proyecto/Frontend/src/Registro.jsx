@@ -10,10 +10,10 @@ function Registro() {
         apellido: '',
         password: '',
         telefono: '',
-        role: ''
+        role: '' // Este campo capturará el valor del select
     });
 
-    // Fetch de roles desde el backend
+    // Fetch de roles desde el backend (este bloque se conserva por si en el futuro se usara)
     useEffect(() => {
         fetch('https://soil-management-4-soft-utn.onrender.com/roles') // Cambia la URL por la de tu backend
             .then(response => {
@@ -24,16 +24,16 @@ function Registro() {
             })
             .then(data => {
                 var datroles = JSON.parse(data);
-                for (var i = 0; i < datroles.length; i++) {
-                    console.log('Rol:', datroles[i].tipus_detalles); // Depuración
-                }
+                console.log('Roles obtenidos desde el backend:', datroles); // Depuración
+                setRoles(datroles); // Actualizar el estado (aunque en este caso no se usa directamente)
             })
             .catch(error => {
                 console.error('Error al cargar los roles:', error);
-                setRoles([]); // En caso de error, mantén el estado como un array vacío
+                setRoles([]); // En caso de error, mantener un array vacío
             });
     }, []);
 
+    // Manejar cambios en los inputs
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -42,27 +42,30 @@ function Registro() {
         });
     };
 
+    // Enviar datos al backend
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
+        // Crear el objeto que se enviará
         const payload = {
-            rol: roles.find(role => role.tipus_id.toString() === formData.role)?.tipus_detalles || '',
             cedula: formData.cedula,
             nombre: formData.nombre,
             apellido: formData.apellido,
             correo: formData.email,
             password: formData.password,
-            telefono: formData.telefono
+            telefono: formData.telefono,
+            rol: formData.role // Captura el valor del select
         };
 
         console.log('Datos enviados al backend (registro):', payload);
 
+        // Solicitud POST al backend
         fetch('https://soil-management-4-soft-utn.onrender.com/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload) // Convertir a JSON
         })
             .then(response => {
                 if (!response.ok) {
@@ -87,12 +90,58 @@ function Registro() {
                     <h1 className='rg-title'>Registro</h1>
                     <hr />
                     <form className='rg-form-data' onSubmit={handleSubmit}>
-                        <label>Cédula de Identidad<br /><input type="text" name="cedula" maxLength={10} required onChange={handleInputChange} /></label>
-                        <label>Correo Electrónico<br /><input type="email" name="email" required onChange={handleInputChange} /></label>
-                        <label>Nombre<br /><input type="text" name="nombre" maxLength={50} required onChange={handleInputChange} /></label>
-                        <label>Apellido<br /><input type="text" name="apellido" maxLength={50} required onChange={handleInputChange} /></label>
-                        <label>Contraseña<br /><input type="password" name="password" required onChange={handleInputChange} /></label>
-                        <label>Teléfono<br /><input type="text" name="telefono" maxLength={10} required onChange={handleInputChange} /></label>
+                        <label>Cédula de Identidad<br />
+                            <input
+                                type="text"
+                                name="cedula"
+                                maxLength={10}
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
+                        <label>Correo Electrónico<br />
+                            <input
+                                type="email"
+                                name="email"
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
+                        <label>Nombre<br />
+                            <input
+                                type="text"
+                                name="nombre"
+                                maxLength={50}
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
+                        <label>Apellido<br />
+                            <input
+                                type="text"
+                                name="apellido"
+                                maxLength={50}
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
+                        <label>Contraseña<br />
+                            <input
+                                type="password"
+                                name="password"
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
+                        <label>Teléfono<br />
+                            <input
+                                type="text"
+                                name="telefono"
+                                maxLength={10}
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
 
                         {/* Combo Box de Roles */}
                         <label>Rol<br />
@@ -103,11 +152,9 @@ function Registro() {
                                 required
                             >
                                 <option value="">Seleccione un rol</option>
-                                {Array.isArray(roles) && roles.length > 0 && roles.map((role) => (
-                                    <option key={role.tipus_id} value={role.tipus_id.toString()}>
-                                        {role.tipus_detalles}
-                                    </option>
-                                ))}
+                                <option value="ING AGRO">ING AGRO</option>
+                                <option value="AGRICULTOR">AGRICULTOR</option>
+                                <option value="ESTUDIANTE">ESTUDIANTE</option>
                             </select>
                         </label>
 
