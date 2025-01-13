@@ -11,16 +11,16 @@ const opcionesRol = ['Ro1', 'Rol2']
 
 const ParcelaModel = {
   nombre: '',
-  tipoSueloID: 0,
-  latitud: 0,
-  longitud: 0,
-  area: 0,
-  nivelpH: 0,
-  conductividadElectrica: 0,
-  salinidad: 0,
-  materiaOrganica: 0,
-  intercambioCationico: 0,
-  userID: 0,
+  tipoSueloID: '',
+  latitud: '',
+  longitud: '',
+  area: '',
+  nivelpH: '',
+  conductividadElectrica: '',
+  salinidad: '',
+  materiaOrganica: '',
+  intercambioCationico: '',
+  userID: '',
   descripcion: '',
 };
 
@@ -52,6 +52,7 @@ const FormParcela = () => {
   };
 
   const handleSubmit = () => {
+    console.log(parcelaModel);
     console.log("Aqui se envia los datos...");
   };
 

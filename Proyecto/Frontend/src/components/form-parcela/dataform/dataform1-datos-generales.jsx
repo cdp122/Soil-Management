@@ -4,9 +4,6 @@ import InputText from "../../form/input-text";
 import styles from './df1.module.css'
 
 const DataForm1Parcela = ({model, modelProperties, opcionesSelect, changeHandler}) =>{
-    console.log(model);
-    console.log(modelProperties);
-    console.log(model[modelProperties[0]]);
 
     const containerStyle = styles['container'];
     return (

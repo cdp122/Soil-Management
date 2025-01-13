@@ -2,7 +2,6 @@ import InputNumber from "../../form/input-number";
 import styles from './df2.module.css';
 
 const DataForm2Parcela = ({model, modelProperties, changeHandler}) => {
-  console.log(model)
   
   const containerStyle = styles['container'];
   const subcontainer1Style = styles['subcontainer1'];

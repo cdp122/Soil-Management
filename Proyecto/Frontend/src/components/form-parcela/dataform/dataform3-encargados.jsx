@@ -3,7 +3,6 @@ import InputText from "../../form/input-text";
 import styles from './df3.module.css';
 
 const DataForm3Parcela = ({model, modelProperties, opcionesRol, changeHandler}) => {
-  console.log(model)
   
   const containerStyle = styles['container'];
   const subcontainer1Style = styles['subcontainer1'];
