@@ -55,7 +55,7 @@
 }
 
 .username,
-.contraseña {
+.password {
     width: auto;
     padding: auto;
     margin: auto;
@@ -71,7 +71,7 @@
     border: solid 2px #33fd01;
 }
 
-.contraseña:focus {
+.password:focus {
     animation: borderAnimationDay 2s infinite;
     border: solid 2px #33fd01;
 }

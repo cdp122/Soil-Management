@@ -1,5 +1,5 @@
 .rg-container {
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     width: 100%;
     height: 100%;
     display: flex;
@@ -40,7 +40,7 @@
 }
 
 .rg-btn {
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 16px;
     border-color: black;
     border-width: 1px;
@@ -53,4 +53,19 @@
     padding-right: 8px;
     gap: 10px;
     width: 25%;
+}
+
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+select:focus {
+    border-color: #007bff;
+    outline: none;
 }
