@@ -16,31 +16,9 @@ async function TestBDD() {
     return;
 }
 
-//#region Ejemplo:
-//app.get('/parcela', async (req, res) => {
-    //Prueba unicamente para ver si se puede hacer una consulta a la base de datos
-
-    //try {
-    //    await bdd.Unidades.create({
-    //        uni_id: 1,
-    //        uni_simbolo: '%',
-    //        uni_nombre: 'Porcentaje'
-    //    });
-    //    const unidades = await bdd.Unidades.findAll();
-    //    console.log("MAIN >> Solicitud de data:\n")
-    //    console.log(unidades)
-
-    //    res.json(unidades)
-    //} catch (error) {
-    //    console.error("Error al crear la unidad:", error);
-    //    res.status(500).json("Error al crear la unidad");
-    //}
-//});
-//#endregion
-
 //#region Rutas relativas a parcelas
 //Solicitud de todas las zonas de un usuario
-router.get('/zonas', async (req, res) => {
+router.get('/zonas', validateToken, async (req, res) => {
     if (!req.query.userid) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
     //await TestBDD();
@@ -61,7 +39,7 @@ router.get('/zonas', async (req, res) => {
 });
 
 //Solictud de todas las parcelas de una zona
-router.get('/parcelas', async (req, res) => {
+router.get('/parcelas', validateToken, async (req, res) => {
     if (req.query.zonaid){
         //await TestBDD();
         var query = `select * from sm_parcelas where cons_id = {{ID}};`
@@ -90,7 +68,7 @@ router.get('/parcelas', async (req, res) => {
 });
 
 //Solicitd de toda una parcela
-router.post('/registrarzona', async (req, res) => {
+router.post('/registrarzona', validateToken, async (req, res) => {
     if (!req.body) { req.status(400).json({ error: "No se ha proporcionado información" }); return; }
     if (!req.body["nombreConsulta"]) { res.status(400).json({ error: "No se ha proporcionado el nombre de la consulta" }); return; }
     if (!req.body["probDetalle"]) { res.status(400).json({ error: "No se ha proporcionado el detalle del problema" }); return; }
@@ -131,9 +109,11 @@ router.post('/registrarzona', async (req, res) => {
         res.status(500).json({ error: "Error al registrar la zona" });
     }
 });
+//#endregion
 
+//#region Rutas relativas a usuarios
 //Solicitud de roles
-router.get('/roles', async (req, res) => {
+router.get('/roles', validateToken, async (req, res) => {
     //await TestBDD();
     var query = `select * from tipos_usuarios;`
 
@@ -147,7 +127,7 @@ router.get('/roles', async (req, res) => {
 });
 
 //Registro de Usuario
-router.post('/register', async (req, res) => {
+router.post('/register', validateToken, async (req, res) => {
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
     if (!req.body["rol"]) { res.status(400).json({ error: "No se ha proporcionado el rol" }); return; }
     if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
@@ -161,6 +141,8 @@ router.post('/register', async (req, res) => {
     console.log(usuario);
     const Rol = usuario["rol"].toUpperCase();
     const indexRol = await conexion.Consultar(BDD, `select * from tipos_usuarios where tipus_detalles = '${Rol}'`);
+    if (indexRol.length === 0) { res.status(400).json({ error: "Rol no encontrado" }); return; }
+
 
     const Cedula = usuario["cedula"];
     const Nombre = usuario["nombre"];
@@ -204,7 +186,7 @@ router.post('/login', async (req, res) => {
     console.log("RUTAS >> USUARIOS > Iniciando sesión...");
     const correo = req.body["cedula"];
     const password = req.body["password"];
-    const query = `select * from usuarios where user_email = '${correo}';`;
+    const query = `select * from usuarios where user_cedula = '${correo}';`;
     const usuario = await conexion.Consultar(BDD, query);
     console.log(usuario);
     if (usuario.length === 0) {
@@ -215,7 +197,7 @@ router.post('/login', async (req, res) => {
     const match = await verifyPassword(password, usuario[0].user_password);
     if (match) {
         console.log("RUTAS >> USUARIOS > Usuario autenticado");
-        res.json({ status: "OK" });
+        res.json({ token: generateAccessToken({username : usuario[0].user_cedula}) });
     }
     else {
         console.log("RUTAS >> USUARIOS > Contraseña incorrecta");
@@ -223,6 +205,5 @@ router.post('/login', async (req, res) => {
     }
 });
 //#endregion
-
 
 module.exports = { router, TestBDD };

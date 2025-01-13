@@ -1,4 +1,5 @@
 //#region [IMPORT]
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const saltRounds = 10;
@@ -28,26 +29,34 @@ const verifyPassword = async (password, hash) => {
 
 //#region Generación de tokens
 function generateAccessToken(user) {
-    return jwt.sign(user, "telepass", { expiresIn: "60m" });
+    if (typeof user !== 'object' || user === null) {
+        throw new Error('Expected "user" to be a plain object.');
+    }
+    return jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: "60m" });
 }
 
 function validateToken(req, res, next) {
     try {
         const token = req.headers['authorization'];
-        if (!token) res.redirect('error/404');
+        console.log(req.headers);
+        if (!token) {
+            return res.status(401).json({ message: "No se proporcionó un token de autorización" });
+        }
 
-        jwt.verify(token, "telepass", (err, user) => {
+        jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
             if (err) {
                 console.log("Autenticación por usuario fallida.");
-                res.json({ message: "AUTENTICACIÓN FALLIDA" });
+                return res.status(403).json({ message: "AUTENTICACIÓN FALLIDA" });
             } else {
                 console.log("Autenticación exitosa.");
                 req.user = user;
                 next();
             }
-        })
+        });
+    } catch (error) {
+        console.error('Error validando el token:', error);
+        return res.status(500).json({ message: "Error interno del servidor" });
     }
-    catch { res.redirect('error/404'); }
 }
 
 module.exports = { encryptPassword, verifyPassword, generateAccessToken, validateToken };
