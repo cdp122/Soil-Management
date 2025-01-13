@@ -30,10 +30,10 @@ async function TestBDD() {
     //    console.log("MAIN >> Solicitud de data:\n")
     //    console.log(unidades)
 
-    //    res.send(unidades)
+    //    res.json(unidades)
     //} catch (error) {
     //    console.error("Error al crear la unidad:", error);
-    //    res.status(500).send("Error al crear la unidad");
+    //    res.status(500).json("Error al crear la unidad");
     //}
 //});
 //#endregion
@@ -41,7 +41,7 @@ async function TestBDD() {
 //#region Rutas relativas a parcelas
 //Solicitud de todas las zonas de un usuario
 router.get('/zonas', async (req, res) => {
-    if (!req.query.userid) { res.status(400).send({ error: "No se ha proporcionado un ID de usuario" }); return; }
+    if (!req.query.userid) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
     //await TestBDD();
     var query = `SELECT
@@ -56,8 +56,8 @@ router.get('/zonas', async (req, res) => {
     const consulta = await conexion.Consultar(BDD, query);
     console.log("RUTAS >> ZONAS > Consulta de zonas realizada del usuario", req.query.userid);
     console.log(consulta);
-    if (consulta.length > 0) res.send(consulta);
-    else res.status(400).send({ error: "No se encontraron zonas para el usuario" });
+    if (consulta.length > 0) res.json(consulta);
+    else res.status(400).json({ error: "No se encontraron zonas para el usuario" });
 });
 
 //Solictud de todas las parcelas de una zona
@@ -71,8 +71,8 @@ router.get('/parcelas', async (req, res) => {
         const consulta = await conexion.Consultar(BDD, query);
         console.log("RUTAS >> ZONAS > Consulta de parcelas realizada de la zona", req.query.zonaid);
         console.log(consulta);
-        if (consulta.length > 0) res.send(consulta);
-        else res.status(400).send({ error: "No se encontraron parcelas en la zona mencionada" });
+        if (consulta.length > 0) res.json(consulta);
+        else res.status(400).json({ error: "No se encontraron parcelas en la zona mencionada" });
     }
     else if (req.query.idparcela) {
         //await TestBDD();
@@ -83,17 +83,17 @@ router.get('/parcelas', async (req, res) => {
         const consulta = await conexion.Consultar(BDD, query);
         console.log("RUTAS >> ZONAS > Consulta de la parcela de id", req.query.idparcela);
         console.log(consulta);
-        if (consulta.length > 0) res.send(consulta);
-        else res.status(400).send({ error: "No se encontró la parcela" });
+        if (consulta.length > 0) res.json(consulta);
+        else res.status(400).json({ error: "No se encontró la parcela" });
     }
-    else res.status(400).send({ error: "No se ha proporcionado un ID de zona o de parcela" });
+    else res.status(400).json({ error: "No se ha proporcionado un ID de zona o de parcela" });
 });
 
 //Solicitd de toda una parcela
 router.post('/registrarzona', async (req, res) => {
-    if (!req.body) { req.status(400).send({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body["nombreConsulta"]) { res.status(400).send({ error: "No se ha proporcionado el nombre de la consulta" }); return; }
-    if (!req.body["probDetalle"]) { res.status(400).send({ error: "No se ha proporcionado el detalle del problema" }); return; }
+    if (!req.body) { req.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body["nombreConsulta"]) { res.status(400).json({ error: "No se ha proporcionado el nombre de la consulta" }); return; }
+    if (!req.body["probDetalle"]) { res.status(400).json({ error: "No se ha proporcionado el detalle del problema" }); return; }
 
     console.log("RUTAS >> ZONAS > Registrando nueva zona...");
 
@@ -124,11 +124,11 @@ router.post('/registrarzona', async (req, res) => {
     console.log(query);
     try {
         await conexion.Consultar(BDD, query);
-        res.send({ status: "OK" });
+        res.json({ status: "OK" });
     }
     catch (error) {
         console.error("Error al registrar la zona:", error);
-        res.status(500).send({ error: "Error al registrar la zona" });
+        res.status(500).json({ error: "Error al registrar la zona" });
     }
 });
 
@@ -142,20 +142,20 @@ router.get('/roles', async (req, res) => {
     console.log(consulta);
 
     res.setHeader('Content-Type', 'application/json');
-    if (consulta.length > 0) res.send(JSON.stringify(consulta));
-    else res.status(400).send({error: "No hay roles registrados en la BDD"});
+    if (consulta.length > 0) res.json(JSON.stringify(consulta));
+    else res.status(400).json({error: "No hay roles registrados en la BDD"});
 });
 
 //Registro de Usuario
 router.post('/register', async (req, res) => {
-    if (!req.body) { res.status(400).send({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body["rol"]) { res.status(400).send({ error: "No se ha proporcionado el rol" }); return; }
-    if (!req.body["cedula"]) { res.status(400).send({ error: "No se ha proporcionado la cédula" }); return; }
-    if (!req.body["nombre"]) { res.status(400).send({ error: "No se ha proporcionado el nombre" }); return; }
-    if (!req.body["apellido"]) { res.status(400).send({ error: "No se ha proporcionado el apellido" }); return; }
-    if (!req.body["correo"]) { res.status(400).send({ error: "No se ha proporcionado el correo" }); return; }
-    if (!req.body["password"]) { res.status(400).send({ error: "No se ha proporcionado la contraseña" }); return; }
-    if (!req.body["telefono"]) { res.status(400).send({ error: "No se ha proporcionado el número de teléfono" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body["rol"]) { res.status(400).json({ error: "No se ha proporcionado el rol" }); return; }
+    if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.body["nombre"]) { res.status(400).json({ error: "No se ha proporcionado el nombre" }); return; }
+    if (!req.body["apellido"]) { res.status(400).json({ error: "No se ha proporcionado el apellido" }); return; }
+    if (!req.body["correo"]) { res.status(400).json({ error: "No se ha proporcionado el correo" }); return; }
+    if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseña" }); return; }
+    if (!req.body["telefono"]) { res.status(400).json({ error: "No se ha proporcionado el número de teléfono" }); return; }
     console.log("RUTAS >> USUARIOS > Registrando nuevo usuario...");
     const usuario = req.body;
     console.log(usuario);
@@ -182,11 +182,17 @@ router.post('/register', async (req, res) => {
     console.log(query);
     try {
         await conexion.Consultar(BDD, query);
-        res.send({ status: "OK" });
+        res.json({ status: "OK" });
     }
     catch (error) {
-        console.error("Error al registrar el usuario:", error);
-        res.status(500).send({ error: "Error al registrar el usuario" });
+        if (error.code === "23505") {
+            console.log("Se intentó registrar un usuario con un correo existente, abortando registro.");
+            res.status(400).json({ error: "Ya existe un usuario con ese correo" });
+        }
+        else {
+            console.error("Error al registrar el usuario:", error);
+            res.status(500).json({ error: "Error al registrar el usuario" });
+        }
     }
 });
 //#endregion
