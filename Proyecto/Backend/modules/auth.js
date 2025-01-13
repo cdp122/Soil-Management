@@ -50,4 +50,4 @@ function validateToken(req, res, next) {
     catch { res.redirect('error/404'); }
 }
 
-module.exports = { encryptPassword, verifyPassword };
+module.exports = { encryptPassword, verifyPassword, generateAccessToken, validateToken };

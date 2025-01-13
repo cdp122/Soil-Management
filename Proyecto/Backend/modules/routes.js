@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 router.use(bodyParser.json());
 var BDD;
-const { encryptPassword, verifyPassword } = require('./auth.js'); 
+const { encryptPassword, verifyPassword, generateAccessToken, validateToken } = require('./auth.js'); 
 //#endregion
 
 async function TestBDD() {
@@ -193,6 +193,33 @@ router.post('/register', async (req, res) => {
             console.error("Error al registrar el usuario:", error);
             res.status(500).json({ error: "Error al registrar el usuario" });
         }
+    }
+});
+
+//Iniciar Sesión
+router.post('/login', async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseña" }); return; }
+    console.log("RUTAS >> USUARIOS > Iniciando sesión...");
+    const correo = req.body["cedula"];
+    const password = req.body["password"];
+    const query = `select * from usuarios where user_email = '${correo}';`;
+    const usuario = await conexion.Consultar(BDD, query);
+    console.log(usuario);
+    if (usuario.length === 0) {
+        console.log("RUTAS >> USUARIOS > No se encontró el usuario");
+        res.status(400).json({ error: "Usuario no encontrado" });
+        return;
+    }
+    const match = await verifyPassword(password, usuario[0].user_password);
+    if (match) {
+        console.log("RUTAS >> USUARIOS > Usuario autenticado");
+        res.json({ status: "OK" });
+    }
+    else {
+        console.log("RUTAS >> USUARIOS > Contraseña incorrecta");
+        res.status(400).json({ error: "Contraseña incorrecta" });
     }
 });
 //#endregion
