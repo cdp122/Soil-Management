@@ -3,7 +3,7 @@ import './styles/Perfil.css';
 
 function Perfil() {
     const [authorized, setAuthorized] = useState(false); // Estado para controlar el acceso
-    const [userData, setUserData] = useState(null); // Estado para almacenar datos del usuario
+    const [userData, setUserData] = useState([]); // Cambiado a un array vacío
     const token = localStorage.getItem('token'); // Recuperar el token del localStorage
     const cedula = localStorage.getItem('cedula'); // Recuperar el token del localStorage
 
@@ -29,6 +29,7 @@ function Perfil() {
                     const data = await response.json();
                     console.log('Datos del usuario recibidos:', data); // Depuración
                     setUserData(data); // Guardar datos del usuario si el token es válido
+                    //console.log('datos.' + data.user_email + data.user_apellido);
                     setAuthorized(true); // Permitir acceso a la página
                 } else {
                     console.error('Token inválido o expirado. Redirigiendo al login.');
@@ -60,8 +61,14 @@ function Perfil() {
                             className="perfil-img"
                         />
                     </div>
-                    <h1 className="perfil-name">{userData?.name || 'Nombre del Usuario'}</h1>
-                    <p className="perfil-role">Rol: {userData?.role || 'Usuario Estándar'}</p>
+                    <h1 className="perfil-name">
+                        {userData[0]?.user_nombre || 'Nombre del Usuario'}{' '}
+                        {userData[0]?.user_apellido || ''}
+                    </h1>
+                    <p className="perfil-role">
+                        Rol: {userData[0]?.tipus_id}  {/* Cambiar por tipus_detalles */}
+                    </p>
+
                 </div>
 
                 <div className="perfil-info">
@@ -69,15 +76,15 @@ function Perfil() {
                     <div className="perfil-info-grid">
                         <div className="perfil-info-item">
                             <h3>Email</h3>
-                            <p>{userData?.email || 'usuario@email.com'}</p>
+                            <p>{userData[0]?.user_email || 'usuario@email.com'}</p>
                         </div>
                         <div className="perfil-info-item">
                             <h3>Teléfono</h3>
-                            <p>{userData?.telefono || '+123 456 7890'}</p>
+                            <p>{userData[0]?.user_telefono || '+123 456 7890'}</p>
                         </div>
                         <div className="perfil-info-item">
                             <h3>Fecha de Registro</h3>
-                            <p>{userData?.registro || '01/01/2023'}</p>
+                            <p>{new Date(userData[0]?.created_at).toLocaleDateString() || '01/01/2023'}</p>
                         </div>
                     </div>
                 </div>
