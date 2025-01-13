@@ -32,7 +32,7 @@ function ConectarAzure() {
     return new Promise((resolve, reject) => {
         bddAzure.connect((error) => {
             if (error) {
-                console.error("BDD >> Conexión Azure error: ", error.routine);
+                console.error("BDD >> Conexión Azure error:\n", error.routine);
                 return reject(error);
             }
             resolve(bddAzure);
