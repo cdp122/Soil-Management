@@ -113,7 +113,7 @@ router.post('/registrarzona', validateToken, async (req, res) => {
 
 //#region Rutas relativas a usuarios
 //Solicitud de roles
-router.get('/roles', validateToken, async (req, res) => {
+router.get('/roles', async (req, res) => {
     //await TestBDD();
     var query = `select * from tipos_usuarios;`
 
@@ -127,7 +127,7 @@ router.get('/roles', validateToken, async (req, res) => {
 });
 
 //Registro de Usuario
-router.post('/register', validateToken, async (req, res) => {
+router.post('/register', async (req, res) => {
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
     if (!req.body["rol"]) { res.status(400).json({ error: "No se ha proporcionado el rol" }); return; }
     if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
@@ -203,6 +203,16 @@ router.post('/login', async (req, res) => {
         console.log("RUTAS >> USUARIOS > Contraseña incorrecta");
         res.status(400).json({ error: "Contraseña incorrecta" });
     }
+});
+
+//Perfil de usuario
+router.get('/profile', validateToken, async (req, res) => {
+    if (!req.query.user) { res.status(400).json({ error: "No se ha proporcionado un usuario" }); return; }
+    console.log("RUTAS >> USUARIOS > Perfil de usuario");
+    const consulta = await conexion.Consultar(BDD, `select * from usuarios where user_cedula = '${req.query.user}';`);
+    console.log("RUTAS >> USUARIOS > Consulta del perfil", req.query.user, "realizada");
+    console.log(consulta);
+    res.json(consulta);
 });
 //#endregion
 
