@@ -33,7 +33,7 @@ console.log(`MAIN >> El Backend empezará a ejecutarse localmente en => http://l
 console.log(`MAIN >> EN LAN será por el ip => http://${localIP}:${PORT}`)
 
 app.listen(PORT, () => {
-    console.log("MAIN >> Backend status = 'UP");
+    console.log("MAIN >> Backend status = 'UP'");
 });
 // Usa las rutas definidas en el archivo de rutas
 app.use((err, req, res, next) => {

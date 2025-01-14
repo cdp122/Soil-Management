@@ -1,19 +1,29 @@
 //#region [IMPORT]
 const express = require('express');
-const conexion = require('./bdd.js'); // Asegúrate de que la ruta sea correcta
+const conexion = require('./bdd.js');
 const bodyParser = require('body-parser');
 const router = express.Router();
 router.use(bodyParser.json());
-var BDD;
+var BDD, PermisosUsuarios, TiposSuelos, Problemas, Consultas, Unidades, Elementos, Usuarios, Parcelas, Muestras, VariablesSecundarias;
 const { encryptPassword, verifyPassword, generateAccessToken, validateToken } = require('./auth.js'); 
 const Clases = require('./clases.js');
-console.log(Clases.Permisos.Buscar(Clases.Permisos.detalle, '1'));
 //#endregion
 
 async function TestBDD() {
-    if (!BDD && !conexion.bdd) {
+    if (!BDD || !conexion.sequelize) {
         BDD = await conexion.Conectar();
-        console.log("RUTAS >> TESTBDD > ¡Conexión Conseguida!");
+        PermisosUsuarios = await conexion.DefinirPermisos();
+        TiposUsuarios = await conexion.DefinirTiposUsuarios();
+        TiposSuelos = await conexion.DefinirTiposSuelos();
+        Problemas = await conexion.DefinirProblemas();
+        Consultas = await conexion.DefinirConsultas();
+        Unidades = await conexion.DefinirUnidades();
+        Elementos = await conexion.DefinirElementos();
+        Usuarios = await conexion.DefinirUsuarios();
+        Parcelas = await conexion.DefinirParcelas();
+        Muestras = await conexion.DefinirMuestras();
+        VariablesSecundarias = await conexion.DefinirVariables();
+        console.log("RUTAS >> TESTBDD > BDD Conectada y Sincronizada!");
     }
     return;
 }
@@ -23,52 +33,59 @@ async function TestBDD() {
 router.get('/zonas', validateToken, async (req, res) => {
     if (!req.query.userid) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
-    //await TestBDD();
-    var query = `SELECT
-            c.cons_id AS ID,
-            c.cons_nombre AS Nombre
-        FROM sm_parcelas p
-        INNER JOIN sm_q_consultas c ON c.cons_id = p.cons_id
-        WHERE p.user_id = {{ID}}`
+    try {
+        const zonas = await Consultas.findAll({
+            include: [{
+                model: Parcelas,
+                where: { user_id: req.query.userid },
+                attributes: []
+            }],
+            attributes: ['cons_id', 'cons_nombre']
+        });
 
-    query = query.replace("{{ID}}", req.query.userid);
+        console.log(zonas);
 
-    const consulta = await conexion.Consultar(BDD, query);
-    console.log("RUTAS >> ZONAS > Consulta de zonas realizada del usuario", req.query.userid);
-    if (consulta.length > 0) res.json(consulta);
-    else res.status(400).json({ error: "No se encontraron zonas para el usuario" });
+        console.log("RUTAS >> ZONAS > Consulta de zonas realizada del usuario", req.query.userid);
+        if (zonas.length > 0) res.json(zonas);
+        else res.status(400).json({ error: "No se encontraron zonas para el usuario" });
+    } catch (error) {
+        console.error("RUTAS >> ZONAS > Error al consultar zonas:", error);
+        res.status(500).json({ error: "Error al consultar zonas" });
+    }
 });
 
 //Solictud de todas las parcelas de una zona
 router.get('/parcelas', validateToken, async (req, res) => {
-    if (req.query.zonaid){
-        //await TestBDD();
-        var query = `select * from sm_parcelas where cons_id = {{ID}};`
+    try {
+        let parcelas;
+        if (req.query.zonaid) {
+            parcelas = await Parcelas.findAll({
+                where: { cons_id: req.query.zonaid }
+            });
+            console.log("RUTAS >> ZONAS > Consulta de parcelas realizada de la zona", req.query.zonaid);
+        } else if (req.query.idparcela) {
+            parcelas = await Parcelas.findOne({
+                where: { parc_id: req.query.idparcela }
+            });
+            console.log("RUTAS >> ZONAS > Consulta de la parcela de id", req.query.idparcela);
+        } else {
+            res.status(400).json({ error: "No se ha proporcionado un ID de zona o de parcela" });
+            return;
+        }
 
-        query = query.replace("{{ID}}", req.query.zonaid);
-
-        const consulta = await conexion.Consultar(BDD, query);
-        console.log("RUTAS >> ZONAS > Consulta de parcelas realizada de la zona", req.query.zonaid);
-        if (consulta.length > 0) res.json(consulta);
-        else res.status(400).json({ error: "No se encontraron parcelas en la zona mencionada" });
+        if (parcelas) res.json(parcelas);
+        else res.status(400).json({ error: "No se encontraron parcelas" });
+    } catch (error) {
+        console.error("RUTAS >> PARCELAS > Error al consultar parcelas:", error);
+        res.status(500).json({ error: "Error al consultar parcelas" });
     }
-    else if (req.query.idparcela) {
-        //await TestBDD();
-        var query = `select * from sm_parcelas where parc_id = {{ID}};`
-
-        query = query.replace("{{ID}}", req.query.idparcela);
-
-        const consulta = await conexion.Consultar(BDD, query);
-        console.log("RUTAS >> ZONAS > Consulta de la parcela de id", req.query.idparcela);
-        if (consulta.length > 0) res.json(consulta);
-        else res.status(400).json({ error: "No se encontró la parcela" });
-    }
-    else res.status(400).json({ error: "No se ha proporcionado un ID de zona o de parcela" });
 });
 
 //Solicitd de toda una parcela
 router.post('/registrarzona', validateToken, async (req, res) => {
-    if (!req.body) { req.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    console.log(req.body);
+
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
     if (!req.body["nombreConsulta"]) { res.status(400).json({ error: "No se ha proporcionado el nombre de la consulta" }); return; }
     if (!req.body["probDetalle"]) { res.status(400).json({ error: "No se ha proporcionado el detalle del problema" }); return; }
 
@@ -78,30 +95,14 @@ router.post('/registrarzona', validateToken, async (req, res) => {
     const Consulta = nuevaZona["nombreConsulta"];
     const Problema = nuevaZona["probDetalle"];
 
-    query = `BEGIN;
-            DO $$
-            DECLARE
-                new_prob_id INTEGER;
-            BEGIN
-                -- Inserta un nuevo problema y recupera su ID
-                INSERT INTO sm_q_problema (prob_detalle)
-                VALUES ('{{Problema}}')
-                RETURNING prob_id INTO new_prob_id;
-
-                -- Usa el ID recuperado para insertar en sm_q_consultas
-                INSERT INTO sm_q_consultas (cons_nombre, prob_id)
-                VALUES ('{{CONSULTA}}', new_prob_id);
-            END $$;
-            -- Si todo se ejecuta correctamente, confirma la transacción
-            COMMIT;`
-
-    query = query.replace("{{Problema}}", Problema);
-    query = query.replace("{{CONSULTA}}", Consulta);
     try {
-        await conexion.Consultar(BDD, query);
+        await BDD.transaction(async (t) => {
+            const problema = await Problemas.create({ prob_detalle: Problema }, { transaction: t });
+            await Consultas.create({ cons_nombre: Consulta, prob_id: problema.prob_id }, { transaction: t });
+        });
+        console.log("RUTAS >> ZONAS > Zona registrada correctamente");
         res.json({ status: "OK" });
-    }
-    catch (error) {
+    } catch (error) {
         console.error("RUTAS >> REGISTRAR ZONA > Error al registrar la zona:", error);
         res.status(500).json({ error: "Error al registrar la zona" });
     }
@@ -112,14 +113,17 @@ router.post('/registrarzona', validateToken, async (req, res) => {
 //Solicitud de roles
 router.get('/roles', async (req, res) => {
     //await TestBDD();
-    var query = `select * from tipos_usuarios;`
+    try {
+        const roles = await TiposUsuarios.findAll();
+        console.log("RUTAS >> ROLES > Consulta de roles realizada");
 
-    const consulta = await conexion.Consultar(BDD, query);
-    console.log("RUTAS >> ROLES > Consulta de roles realizada");
-
-    res.setHeader('Content-Type', 'application/json');
-    if (consulta.length > 0) res.json(JSON.stringify(consulta));
-    else res.status(400).json({error: "No hay roles registrados en la BDD"});
+        res.setHeader('Content-Type', 'application/json');
+        if (roles.length > 0) res.json(roles);
+        else res.status(400).json({ error: "No hay roles registrados en la BDD" });
+    } catch (error) {
+        console.error("RUTAS >> ROLES > Error al consultar roles:", error);
+        res.status(500).json({ error: "Error al consultar roles" });
+    }
 });
 
 //Registro de Usuario
@@ -133,11 +137,11 @@ router.post('/register', async (req, res) => {
     if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseña" }); return; }
     if (!req.body["telefono"]) { res.status(400).json({ error: "No se ha proporcionado el número de teléfono" }); return; }
     console.log("RUTAS >> USUARIOS > Registrando nuevo usuario...");
+
     const usuario = req.body;
     const Rol = usuario["rol"].toUpperCase();
-    const indexRol = await conexion.Consultar(BDD, `select * from tipos_usuarios where tipus_detalles = '${Rol}'`);
-    if (indexRol.length === 0) { res.status(400).json({ error: "Rol no encontrado" }); return; }
-
+    const indexRol = await TiposUsuarios.findOne({ where: { tipus_detalles: Rol } });
+    if (!indexRol) { res.status(400).json({ error: "Rol no encontrado" }); return; }
 
     const Cedula = usuario["cedula"];
     const Nombre = usuario["nombre"];
@@ -146,26 +150,27 @@ router.post('/register', async (req, res) => {
     const Password = await encryptPassword(usuario["password"]);
     const Telefono = usuario["telefono"];
 
-    var query = `insert into usuarios 
-(tipus_id, user_cedula, user_nombre, user_apellido, user_email, user_password, user_telefono, user_estado, created_at, updated_at) values 
-({{INDEX_ROL}}, '{{CEDULA}}', '{{NOMBRE}}', '{{APELLIDO}}', '{{CORREO}}', '{{CONTRASEÑA}}', '{{TELEFONO}}', true, now(), now());`;
-    query = query.replace("{{INDEX_ROL}}", indexRol[0].tipus_id);
-    query = query.replace("{{CEDULA}}", Cedula);
-    query = query.replace("{{NOMBRE}}", Nombre);
-    query = query.replace("{{APELLIDO}}", Apellido);
-    query = query.replace("{{CORREO}}", Correo);
-    query = query.replace("{{CONTRASEÑA}}", Password);
-    query = query.replace("{{TELEFONO}}", Telefono);
     try {
-        await conexion.Consultar(BDD, query);
+        await Usuarios.create({
+            tipus_id: indexRol.tipus_id,
+            user_cedula: Cedula,
+            user_nombre: Nombre,
+            user_apellido: Apellido,
+            user_email: Correo,
+            user_password: Password,
+            user_telefono: Telefono,
+            user_estado: true,
+            created_at: new Date(),
+            updated_at: new Date()
+        });
+
+        console.log("RUTAS >> USUARIOS > Usuario registrado correctamente");
         res.json({ status: "OK" });
-    }
-    catch (error) {
-        if (error.code === "23505") {
+    } catch (error) {
+        if (error.name === "SequelizeUniqueConstraintError") {
             console.log("RUTAS >> REGISTRAR USUARIO > Se intentó registrar un usuario con un correo existente, abortando registro.");
             res.status(400).json({ error: "Ya existe un usuario con ese correo" });
-        }
-        else {
+        } else {
             console.error("RUTAS >> REGISTRAR USUARIO > Error al registrar el usuario:", error);
             res.status(500).json({ error: "Error al registrar el usuario" });
         }
@@ -178,32 +183,44 @@ router.post('/login', async (req, res) => {
     if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
     if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseña" }); return; }
     console.log("RUTAS >> LOGIN > Iniciando sesión...");
-    const correo = req.body["cedula"];
+
+    const cedula = req.body["cedula"];
     const password = req.body["password"];
-    const query = `select * from usuarios where user_cedula = '${correo}';`;
-    const usuario = await conexion.Consultar(BDD, query);
-    if (usuario.length === 0) {
-        console.log("RUTAS >> LOGIN > No se encontró el usuario");
-        res.status(400).json({ error: "Usuario no encontrado" });
-        return;
-    }
-    const match = await verifyPassword(password, usuario[0].user_password);
-    if (match) {
-        console.log("RUTAS >> LOGIN > Usuario autenticado");
-        res.json({ token: generateAccessToken({username : usuario[0].user_cedula}) });
-    }
-    else {
-        console.log("RUTAS >> LOGIN > Contraseña incorrecta");
-        res.status(400).json({ error: "Contraseña incorrecta" });
+
+    try {
+        const usuario = await Usuarios.findOne({ where: { user_cedula: cedula } });
+        if (!usuario) {
+            console.log("RUTAS >> LOGIN > No se encontró el usuario");
+            res.status(400).json({ error: "Usuario no encontrado" });
+            return;
+        }
+
+        const match = await verifyPassword(password, usuario.user_password);
+        if (match) {
+            console.log("RUTAS >> LOGIN > Usuario autenticado");
+            res.json({ token: generateAccessToken({ username: usuario.user_cedula }) });
+        } else {    
+            console.log("RUTAS >> LOGIN > Contraseña incorrecta");
+            res.status(400).json({ error: "Contraseña incorrecta" });
+        }
+    } catch (error) {
+        console.error("RUTAS >> LOGIN > Error al iniciar sesión:", error);
+        res.status(500).json({ error: "Error al iniciar sesión" });
     }
 });
 
 //Perfil de usuario
 router.get('/profile', validateToken, async (req, res) => {
     if (!req.query.user) { res.status(400).json({ error: "No se ha proporcionado un usuario" }); return; }
-    const consulta = await conexion.Consultar(BDD, `select * from usuarios where user_cedula = '${req.query.user}';`);
-    console.log("RUTAS >> PERFIL > Consulta del perfil", req.query.user, "realizada");
-    res.json(consulta);
+
+    try {
+        const usuario = await Usuarios.findOne({ where: { user_cedula: req.query.user } });
+        console.log("RUTAS >> PERFIL > Consulta del perfil", req.query.user, "realizada");
+        res.json(usuario);
+    } catch (error) {
+        console.error("RUTAS >> PERFIL > Error al consultar el perfil:", error);
+        res.status(500).json({ error: "Error al consultar el perfil" });
+    }
 });
 //#endregion
 

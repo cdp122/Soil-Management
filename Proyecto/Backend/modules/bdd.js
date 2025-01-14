@@ -1,198 +1,526 @@
-//#region Instanciación de la bdd
+// modules/bdd.js
+const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
-const { Client } = require('pg');
 
-const bddLocal = new Client({
+//Configuración de la bdd de Azure
+const sequelizeAzure = new Sequelize(process.env.DB_AZURE_URL, {
+    dialect: 'postgres',
+    logging: false,
+    ssl: {
+        require: false,
+        rejectUnauthorized: false,
+    },
+    debug: true,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
+    },
+    retry: {
+        max: 3,
+        match: [/ECONNRESET/, /ETIMEDOUT/],
+        backoffBase: 1000,
+        backoffExponent: 1.5
+    },
+});
+
+// Configuración de la base de datos LOCAL
+const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_USER_LOCAL, process.env.DB_PASSWORD_LOCAL, {
     host: process.env.DB_HOST_LOCAL,
-    database: process.env.DB_NAME_LOCAL,
-    user: process.env.DB_USER_LOCAL,
-    password: process.env.DB_PASSWORD_LOCAL,
-    port: process.env.DB_PORT,
+    dialect: 'postgres',
+    logging: false,
+    debug: true,
+    retry: {
+        max: 3,
+        match: [/ECONNRESET/, /ETIMEDOUT/],
+        backoffBase: 1000,
+        backoffExponent: 1.5
+    },
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000,
+    }
 });
 
-const bddAzure = new Client({
-    connectionString: process.env.DB_AZURE_URL,
-});
+let sequelize = null;
 
-let bdd = null;
-
-function ConectarLocal() {
-    return new Promise((resolve, reject) => {
-        bddLocal.connect((error) => {
-            if (error) {
-                console.error("BDD >> Conexión Local error:\n", error);
-                return reject(error);
-            }
-            resolve(bddLocal);
-        });
-    });
-}
-
-function ConectarAzure() {
-    return new Promise((resolve, reject) => {
-        bddAzure.connect((error) => {
-            if (error) {
-                console.error("BDD >> Conexión Azure error:\n", error.routine);
-                return reject(error);
-            }
-            resolve(bddAzure);
-        });
-    });
-}
+var PermisosUsuarios, TiposSuelos, Parcelas, Consultas, Elementos, Muestras, Problemas, Unidades, VariablesSecundarias, TiposUsuarios, Usuarios;
 
 async function Conectar() {
     try {
         console.log("BDD >> Intentando conectar a Azure");
-        await ConectarAzure();
-        bdd = bddAzure;
+        await sequelizeAzure.authenticate();
+        sequelize = sequelizeAzure;
         console.log("BDD >> Conexión a la BDD Azure exitosa");
-        return bdd;
-    }
-    catch {
+        return sequelize;
+    } catch (error) {
+        console.error("BDD >> Conexión Azure error:", error.original.routine);
         try {
-            console.log("BDD >> Intentando conectar a LOCAL",);
-            await ConectarLocal();
-            bdd = bddLocal;
+            console.log("BDD >> Intentando conectar a LOCAL");
+            await sequelizeLocal.authenticate();
+            sequelize = sequelizeLocal;
             console.log("BDD >> Conexión a la BDD Local exitosa");
-            return bdd;
+            return sequelize;
+        } catch (error) {
+            console.error("BDD >> Conexión Local error:", error.original.routine);
+            console.log("BDD >> No se pudo conectar a la BDD");
         }
-        catch { console.log("BDD >> No se pudo conectar a la BDD"); }
     }
 }
 
-function Consultar(bdd, query) {
-    return new Promise((resolve, reject) => {
-        bdd.query(query, (error, results) => {
-            if (error) {
-                return reject(error);
+async function DefinirPermisos() {
+    PermisosUsuarios = sequelize.define('PermisosUsuarios', {
+        perus_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        perus_detalle: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'permisos_usuarios',
+        timestamps: false,
+    });
+    return PermisosUsuarios;
+}
+
+async function DefinirTiposUsuarios() {
+    TiposUsuarios = sequelize.define('TiposUsuarios', {
+        tipus_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        perus_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: PermisosUsuarios,
+                key: 'perus_id',
             }
-            resolve(results.rows);
-        });
+        },
+        tipus_detalles: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'tipos_usuarios',
+        timestamps: false,
     });
-}
-//#endregion
 
-//#region Conseguir Registros
-async function ConseguirRegistros(tabla, nombreParametro, parametroBusqueda) {
-    try {
-        const query = `SELECT * FROM ${tabla} WHERE ${nombreParametro} = $1`;
-        const registro = await Consultar({
-            text: query,
-            values: [parametroBusqueda],
-        });
-        if (registro.length === 0) return null;
-        console.log("Enviando resultado:", query);
-        return registro;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-}
-
-async function LogInClient(idCliente) {
-    return await ConseguirRegistros("tb_clientes", "idCliente", idCliente);
-}
-
-async function LogInEmpleado(idEmpleado) {
-    return await ConseguirRegistros("tb_empleados", "idEmpleado", idEmpleado);
-}
-
-async function RecibirDatos(idCliente) {
-    return await ConseguirRegistros("tb_clientes", "idCliente", idCliente);
-}
-
-async function ConseguirNumFilas(tabla) {
-    const query = `SELECT TABLE_ROWS FROM information_schema.tables WHERE TABLE_NAME = $1`;
-
-    try {
-        const registro = await Consultar({
-            text: query,
-            values: [tabla],
-        });
-        console.log("Cargando nro de Registros");
-        return registro;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-}
-//#endregion
-
-async function InsertarRegistro(tabla, params, values) {
-    let query = `INSERT INTO ${tabla} (`;
-    if (params.length != values.length) return false;
-    params.forEach(parametro => {
-        query += `${parametro}, `;
+    PermisosUsuarios.hasMany(TiposUsuarios, {
+        foreignKey: 'perus_id',
+        sourceKey: 'perus_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'RESTRICT',
     });
-    query = query.slice(0, -2) + ") VALUES (";
-    values.forEach((valor, index) => {
-        query += `$${index + 1}, `;
+
+    return TiposUsuarios;
+}
+
+async function DefinirTiposSuelos() {
+    TiposSuelos = sequelize.define('TiposSuelos', {
+        tipos_id: {
+            type: DataTypes.STRING(5),
+            primaryKey: true,
+            allowNull: false,
+        },
+        tipos_nombre: {
+            type: DataTypes.STRING(30),
+            allowNull: false,
+        },
+        tipos_descripcion: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_f_tipossuelos',
+        timestamps: false,
     });
-    query = query.slice(0, -2) + ")";
-    try {
-        await Consultar({
-            text: query,
-            values: values,
-        });
-        console.log("Registro ingresado:", query);
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
+
+    return TiposSuelos;
 }
 
-async function ModificarRegistro(tabla, nuevoParam, actual, paramTarg, target) {
-    try {
-        const query = `UPDATE ${tabla} SET ${nuevoParam} = $1 WHERE ${paramTarg} = $2`;
-        const registro = await Consultar({
-            text: query,
-            values: [actual, target],
-        });
-        if (registro.length === 0) return null;
-        console.log("Registro Modificado:", query);
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-}
-
-async function ModificarRegistros(tabla, params, nuevosValores, paramTarg, target) {
-    if (params.length != nuevosValores.length) return false;
-
-    let query = `UPDATE ${tabla} SET `;
-    params.forEach((param, index) => {
-        query += `${param} = $${index + 1}, `;
+async function DefinirProblemas() {
+    Problemas = sequelize.define('Problemas', {
+        prob_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        prob_detalle: {
+            type: DataTypes.STRING(15),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_q_problema',
+        timestamps: false,
     });
-    query = query.slice(0, -2) + ` WHERE ${paramTarg} = $${params.length + 1}`;
 
-    try {
-        await Consultar({
-            text: query,
-            values: [...nuevosValores, target],
-        });
-        console.log("Registros modificados exitosamente: ", query);
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
+    return Problemas;
 }
 
-async function BorrarRegistro(tabla, parametro, valor) {
-    try {
-        const query = `DELETE FROM ${tabla} WHERE ${parametro} = $1`;
-        await Consultar({
-            text: query,
-            values: [valor],
-        });
-        console.log("Registro Eliminado:", query);
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
+async function DefinirConsultas() {
+    Consultas = sequelize.define('Consultas', {
+        cons_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        cons_nombre: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        prob_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'sm_q_problema',
+                key: 'prob_id',
+            }
+        }
+    }, {
+        tableName: 'sm_q_consultas',
+        timestamps: false,
+    });
+    Consultas.belongsTo(Problemas, {
+        foreignKey: 'prob_id',
+        targetKey: 'prob_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return Consultas;
 }
 
-module.exports = { bdd, Conectar, Consultar };
+async function DefinirUnidades() {
+    Unidades = sequelize.define('Unidades', {
+        uni_simbolo: {
+            type: DataTypes.STRING(5),
+            primaryKey: true,
+            allowNull: false,
+        },
+        uni_nombre: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_q_unidades',
+        timestamps: false,
+    });
+    return Unidades;
+}
+
+async function DefinirElementos() {
+    Elementos = sequelize.define('Elementos', {
+        elem_simbolo: {
+            type: DataTypes.STRING(5),
+            primaryKey: true,
+            allowNull: false,
+        },
+        elem_nombre: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        elem_valor_min_rec: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        elem_valor_max_rec: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        }
+    }, {
+        tableName: 'sm_q_elementos',
+        timestamps: false,
+    });
+    Elementos.belongsTo(Unidades, {
+        foreignKey: 'elem_simbolo',
+        targetKey: 'uni_simbolo',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return Elementos;
+}
+
+async function DefinirUsuarios() {
+    Usuarios = sequelize.define('Usuarios', {
+        user_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        tipus_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: TiposUsuarios,
+                key: 'tipus_id',
+            }
+        },
+        user_cedula: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+        },
+        user_nombre: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        user_apellido: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        },
+        user_email: {
+            type: DataTypes.STRING(35),
+            allowNull: false,
+            unique: true,
+        },
+        user_password: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
+        user_telefono: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+        },
+        user_estado: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+        },
+        created_at: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        updated_at: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        }
+    }, {
+        tableName: 'usuarios',
+        timestamps: false,
+    });
+
+    TiposUsuarios.hasMany(Usuarios, {
+        foreignKey: 'tipus_id',
+        sourceKey: 'tipus_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return Usuarios;
+}
+
+async function DefinirParcelas() {
+    Parcelas = sequelize.define('Parcelas', {
+        parc_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        tipos_id: {
+            type: DataTypes.STRING(5),
+            allowNull: false,
+            references: {
+                model: TiposSuelos,
+                key: 'tipos_id',
+            }
+        },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'usuarios',
+                key: 'user_id',
+            }
+        },
+        cons_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'sm_q_consultas',
+                key: 'cons_id',
+            }
+        },
+        parc_nombre: {
+            type: DataTypes.STRING(50),
+            allowNull: true,
+        },
+        parc_area: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        parc_coord_la: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        parc_coord_lo: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        parc_descripcion: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        }
+    }, {
+        tableName: 'sm_parcelas',
+        timestamps: false,
+    });
+
+    Parcelas.belongsTo(TiposSuelos, {
+        foreignKey: 'tipos_id',
+        targetKey: 'tipos_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+    Parcelas.belongsTo(Usuarios, {
+        foreignKey: 'user_id',
+        targetKey: 'user_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+    Parcelas.belongsTo(Consultas, {
+        foreignKey: 'cons_id',
+        targetKey: 'cons_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    Consultas.hasMany(Parcelas, {
+        foreignKey: 'cons_id',
+        sourceKey: 'cons_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return Parcelas;
+}
+
+async function DefinirMuestras() {
+    Muestras = sequelize.define('Muestras', {
+        mue_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        parc_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Parcelas,
+                key: 'parc_id',
+            }
+        },
+        mue_ph: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        mue_con_elec: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        mue_porc_mat_org: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        mue_cap_inter_cati: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        mue_salinidad: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        mue_fecha_registro: {
+            type: DataTypes.DATE,
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_q_muestras',
+        timestamps: false,
+    });
+
+    Muestras.belongsTo(Parcelas, {
+        foreignKey: 'parc_id',
+        targetKey: 'parc_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    Parcelas.hasMany(Muestras, {
+        foreignKey: 'parc_id',
+        sourceKey: 'parc_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return Muestras;
+}
+
+async function DefinirVariables() {
+    VariablesSecundarias = sequelize.define('VariablesSecundarias', {
+        anpar_varsec: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        mue_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: Muestras,
+                key: 'mue_id',
+            }
+        },
+        elem_simbolo: {
+            type: DataTypes.STRING(5),
+            allowNull: false,
+            references: {
+                model: Elementos,
+                key: 'elem_simbolo',
+            }
+        },
+        anpar_elem_cant: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_q_variables_secundarias',
+        timestamps: false,
+    });
+
+    VariablesSecundarias.belongsTo(Muestras, {
+        foreignKey: 'mue_id',
+        targetKey: 'mue_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    Muestras.hasMany(VariablesSecundarias, {
+        foreignKey: 'mue_id',
+        sourceKey: 'mue_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return VariablesSecundarias;
+}
+
+module.exports = {
+    sequelize, Conectar, DefinirPermisos, DefinirTiposUsuarios, DefinirTiposSuelos,
+    DefinirProblemas, DefinirConsultas, DefinirUnidades, DefinirElementos, DefinirUsuarios,
+    DefinirParcelas, DefinirMuestras, DefinirVariables
+};
