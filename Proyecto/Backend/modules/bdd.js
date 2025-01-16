@@ -125,6 +125,47 @@ async function DefinirTiposUsuarios() {
     return TiposUsuarios;
 }
 
+async function DefinirTiposUsuarios() {
+    TiposUsuarios = sequelize.define('TiposUsuarios', {
+        tipus_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        perus_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: PermisosUsuarios,
+                key: 'perus_id',
+            }
+        },
+        tipus_detalles: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'tipos_usuarios',
+        timestamps: false,
+    });
+
+    TiposUsuarios.belongsTo(PermisosUsuarios, {
+        foreignKey: 'perus_id',
+        targetKey: 'perus_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'RESTRICT',
+    });
+
+    PermisosUsuarios.hasMany(TiposUsuarios, {
+        foreignKey: 'perus_id',
+        sourceKey: 'perus_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'RESTRICT',
+    });
+
+    return TiposUsuarios;
+}
 async function DefinirTiposSuelos() {
     TiposSuelos = sequelize.define('TiposSuelos', {
         tipos_id: {
@@ -309,6 +350,13 @@ async function DefinirUsuarios() {
     }, {
         tableName: 'usuarios',
         timestamps: false,
+    });
+
+    Usuarios.belongsTo(TiposUsuarios, {
+        foreignKey: 'tipus_id',
+        targetKey: 'tipus_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
     });
 
     TiposUsuarios.hasMany(Usuarios, {

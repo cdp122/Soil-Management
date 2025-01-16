@@ -114,7 +114,10 @@ router.post('/registrarzona', validateToken, async (req, res) => {
 router.get('/roles', async (req, res) => {
     //await TestBDD();
     try {
-        const roles = await TiposUsuarios.findAll();
+        const roles = await TiposUsuarios.findAll({
+                where: { perus_id: 1 }, 
+            attributes: ['tipus_detalles']
+        });
         console.log("RUTAS >> ROLES > Consulta de roles realizada");
 
         res.setHeader('Content-Type', 'application/json');
@@ -210,13 +213,41 @@ router.post('/login', async (req, res) => {
 });
 
 //Perfil de usuario
-router.get('/profile', validateToken, async (req, res) => {
+router.get('/profile'/*, validateToken*/, async (req, res) => {
     if (!req.query.user) { res.status(400).json({ error: "No se ha proporcionado un usuario" }); return; }
 
     try {
-        const usuario = await Usuarios.findOne({ where: { user_cedula: req.query.user } });
+        const usuario = await Usuarios.findOne({
+            attributes: [
+                'user_id',
+                'user_cedula',
+                'user_nombre',
+                'user_apellido',
+                'user_email',
+                'user_password',
+                'user_telefono',
+                'user_estado',
+                'created_at'
+            ],
+            include: [{
+                model: TiposUsuarios,
+                attributes: ['tipus_detalles']
+            }],
+            where: { user_cedula: req.query.user }
+        });
         console.log("RUTAS >> PERFIL > Consulta del perfil", req.query.user, "realizada");
-        res.json(usuario);
+        res.json({
+            "id": usuario.user_id,  
+            "tipo" : usuario.TiposUsuario.tipus_detalles,
+            "cedula": usuario.user_cedula,
+            "nombre": usuario.user_nombre,
+            "apellido": usuario.user_apellido,
+            "correo": usuario.user_email,
+            "password": usuario.user_password,
+            "telefono": usuario.user_telefono,
+            "estado": usuario.user_estado,
+            "created_at": usuario.created_at,
+        });
     } catch (error) {
         console.error("RUTAS >> PERFIL > Error al consultar el perfil:", error);
         res.status(500).json({ error: "Error al consultar el perfil" });
