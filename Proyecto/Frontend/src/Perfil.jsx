@@ -62,11 +62,11 @@ function Perfil() {
                         />
                     </div>
                     <h1 className="perfil-name">
-                        {userData[0]?.user_nombre || 'Nombre del Usuario'}{' '}
-                        {userData[0]?.user_apellido || ''}
+                        {userData?.nombre || 'Nombre del Usuario'}{' '}
+                        {userData?.apellido || ''}
                     </h1>
                     <p className="perfil-role">
-                        Rol: {userData[0]?.tipus_id}  {/* Cambiar por tipus_detalles */}
+                        Rol: {userData?.tipo}  {/* Cambiar por tipus_detalles */}
                     </p>
 
                 </div>
@@ -76,15 +76,15 @@ function Perfil() {
                     <div className="perfil-info-grid">
                         <div className="perfil-info-item">
                             <h3>Email</h3>
-                            <p>{userData[0]?.user_email || 'usuario@email.com'}</p>
+                            <p>{userData?.correo || 'usuario@email.com'}</p>
                         </div>
                         <div className="perfil-info-item">
                             <h3>Teléfono</h3>
-                            <p>{userData[0]?.user_telefono || '+123 456 7890'}</p>
+                            <p>{userData?.telefono || '+123 456 7890'}</p>
                         </div>
                         <div className="perfil-info-item">
                             <h3>Fecha de Registro</h3>
-                            <p>{new Date(userData[0]?.created_at).toLocaleDateString() || '01/01/2023'}</p>
+                            <p>{new Date(userData?.created_at).toLocaleDateString() || '01/01/2023'}</p>
                         </div>
                     </div>
                 </div>
