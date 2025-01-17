@@ -1,0 +1,91 @@
+/* Contenedor principal */
+.contacto-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    /* Asegura que ocupe el ancho completo */
+
+    min-height: 100vh;
+    /* Al menos la altura de la pantalla */
+    box-sizing: border-box;
+    /* Incluye padding y bordes en el tamaño total */
+}
+
+
+/* Contenido principal */
+.contacto-main {
+    display: flex;
+    justify-content: space-between;
+    /* Separa el texto y la imagen */
+    align-items: flex-start;
+    /* Alinea ambos elementos en la parte superior */
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.contacto-content {
+    flex: 1;
+    /* Ocupa el 50% del ancho */
+    margin-right: 20px;
+    /* Espaciado entre texto e imagen */
+}
+
+.contacto-content p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+
+}
+
+.contacto-image {
+    flex: 1;
+}
+
+.placeholder-image {
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+
+}
+
+/* Footer */
+.contacto-footer {
+    width: 100%;
+
+    padding: 10px 20px;
+    text-align: left;
+}
+
+.contacto-footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contacto-footer li {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.contacto-img {
+    background-image: url("../assets/Operadora.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    max-width: 600px;
+    height: 500px;
+    border: 3px solid #090909;
+    border-radius: 10px;
+}
+
+.contacto-image {
+    flex: 1;
+    /* Ocupa el 50% del ancho */
+    display: flex;
+    justify-content: center;
+    /* Centra la imagen horizontalmente */
+    align-items: center;
+    /* Centra la imagen verticalmente */
+}

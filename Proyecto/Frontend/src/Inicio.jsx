@@ -50,8 +50,6 @@ function Inicio() {
             <div className="texto">
                 <footer>
                     <p>Todos los derechos Reservados para Soil Management | Ibarra - Ecuador 2025 </p>
-
-
                 </footer>
 
             </div>

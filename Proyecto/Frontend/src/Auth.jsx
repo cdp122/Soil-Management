@@ -2,6 +2,7 @@ import { useState } from "react";
 import MenuInicio from "./MenuInicio";
 import Login from "./Login";
 import Inicio from "./Inicio";
+import Contacto from "./Contacto";
 import Registro from "./Registro";
 import "./styles/Auth.css";
 
@@ -19,7 +20,7 @@ function Auth() {
             case "inicio":
                 return <Inicio />; // Mostrar el componente Inicio
             case "contacto":
-                return <div>CONTACTO</div>;
+                return <Contacto />;
             case "login":
                 return <Login onSwitchToRegister={() => onTabSelect("registro")} />;
             case "registro":
