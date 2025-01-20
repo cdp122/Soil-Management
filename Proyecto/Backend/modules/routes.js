@@ -4,6 +4,7 @@ const conexion = require('./bdd.js');
 const bodyParser = require('body-parser');
 const router = express.Router();
 router.use(bodyParser.json());
+router.use(express.json());
 var BDD, PermisosUsuarios, TiposSuelos, Problemas, Consultas, Unidades, Elementos, Usuarios, Parcelas, Muestras, VariablesSecundarias;
 const { encryptPassword, verifyPassword, generateAccessToken, validateToken } = require('./auth.js'); 
 const Clases = require('./clases.js');
@@ -82,7 +83,7 @@ router.get('/parcelas', validateToken, async (req, res) => {
 });
 
 //Registrar zonas o consultas
-router.post('/registrarzona', validateToken, async (req, res) => {
+router.post('/registrarzona', async (req, res) => {
     console.log(req.body);
 
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
@@ -96,12 +97,13 @@ router.post('/registrarzona', validateToken, async (req, res) => {
     const Problema = nuevaZona["probDetalle"];
 
     try {
+        var nuevaConsulta = null;
         await BDD.transaction(async (t) => {
             const problema = await Problemas.create({ prob_detalle: Problema }, { transaction: t });
-            await Consultas.create({ cons_nombre: Consulta, prob_id: problema.prob_id }, { transaction: t });
+            nuevaConsulta = await Consultas.create({ cons_nombre: Consulta, prob_id: problema.prob_id }, { transaction: t });
         });
         console.log("RUTAS >> ZONAS > Zona registrada correctamente");
-        res.json({ status: "OK" });
+        res.json({ status: "OK" , nuevaZona : nuevaConsulta.cons_id });
     } catch (error) {
         console.error("RUTAS >> REGISTRAR ZONA > Error al registrar la zona:", error);
         res.status(500).json({ error: "Error al registrar la zona" });

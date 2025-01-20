@@ -25,7 +25,8 @@ const getLocalIP = () => {
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
-app.use(bodyparser.json()); // Asegúrate de que el bodyparser esté configurado
+app.use(bodyparser.json());
+app.use(express.json());
 
 const localIP = getLocalIP();
 
