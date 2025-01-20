@@ -31,7 +31,7 @@ async function TestBDD() {
 //#region Rutas relativas a parcelas
 //Solicitud de todas las zonas de un usuario
 router.get('/zonas', validateToken, async (req, res) => {
-    if (!req.query.userid) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
+    if (!req.query.userid || req.query.userid == null) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
     try {
         const zonas = await Consultas.findAll({
@@ -81,7 +81,7 @@ router.get('/parcelas', validateToken, async (req, res) => {
     }
 });
 
-//Solicitd de toda una parcela
+//Registrar zonas o consultas
 router.post('/registrarzona', validateToken, async (req, res) => {
     console.log(req.body);
 
@@ -105,6 +105,29 @@ router.post('/registrarzona', validateToken, async (req, res) => {
     } catch (error) {
         console.error("RUTAS >> REGISTRAR ZONA > Error al registrar la zona:", error);
         res.status(500).json({ error: "Error al registrar la zona" });
+    }
+});
+
+//Solicitud de todos los tipos de suelo que puede tener una parcela
+router.get('/tipos', validateToken, async(req, res) => {
+    try {
+        const tipos = await TiposSuelos.findAll();
+        console.log("RUTAS >> TIPOS > Consulta de tipos de suelo realizada");
+        if (tipos.length > 0) res.json(tipos);
+        else res.status(400).json({ error: "No se encontraron tipos de suelo" });
+    } catch (error) {
+        console.error("RUTAS >> TIPOS > Error al consultar tipos de suelo:", error);
+        res.status(500).json({ error: "Error al consultar tipos de suelo" });
+    }
+});
+
+//Para crear una parcela. Todavía en desarrollo. 
+router.post('/newparcel', async (req, res) => {
+    try {
+        //Todavía en desarrollo.
+    } catch (error) {
+        console.error("RUTAS >> NUEVA PARCELA > Error al crear una nueva parcela:", error);
+        res.status(500).json({ error: "Error al crear una nueva parcela" });
     }
 });
 //#endregion
