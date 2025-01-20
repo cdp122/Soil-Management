@@ -4,10 +4,9 @@ import "./styles/SuelosCRUD.css";
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
-    const [userData, setUserData] = useState([]); // Información del usuario
+    const [userData, setUserData] = useState(null); // Información del usuario
     const token = localStorage.getItem('token'); // Recuperar token
     const cedula = localStorage.getItem('cedula'); // Recuperar cédula
-    const user_id = localStorage.getItem('user_id'); // Recuperar userid
     const [zonas, setZonas] = useState([]); // Lista de zonas
     const [parcelas, setParcelas] = useState([]); // Lista de parcelas
     const [zonaSeleccionada, setZonaSeleccionada] = useState(null); // Zona seleccionada
@@ -35,9 +34,24 @@ function SuelosCRUD() {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('Datos del usuario recibidos:', data);
-                    setUserData(data); // Guardar datos del usuario
-                    setAuthorized(true);
+                    console.log('Datos del usuario recibidos:', data); // Ver datos completos del usuario
+                
+                    if (Array.isArray(data) && data.length > 0) {
+                        const user = data[0]; // Accede al primer elemento del array
+                        setUserData(user); // Guardar el objeto del usuario en lugar del array completo
+                
+                        // Imprimir el user_id después de actualizar el estado
+                        if (user?.user_id) {
+                            console.log('user_id recibido y guardado:', user.user_id);
+                        } else {
+                            console.error('user_id no está presente en el usuario.');
+                        }
+                
+                        setAuthorized(true);
+                    } else {
+                        console.error('Los datos del usuario no son válidos o están vacíos.');
+                        setAuthorized(false);
+                    }
                 } else {
                     console.error('Token inválido o expirado. Redirigiendo al login.');
                     setAuthorized(false);
@@ -55,16 +69,16 @@ function SuelosCRUD() {
     // Cargar las zonas
     useEffect(() => {
         const fetchZonas = async () => {
-            if (!authorized) return; // No cargar zonas si el usuario no está autorizado
+            if (!authorized || !userData?.user_id) return; // No cargar zonas si el usuario no está autorizado
 
             setLoading(true);
             try {
                 const response = await fetch(
-                    `https://soil-management-4-soft-utn.onrender.com/zonas?userid=${user_id}`,
+                    `https://soil-management-4-soft-utn.onrender.com/zonas?userid=${userData.user_id}`,
                     {
                         method: 'GET',
                         headers: {
-                            Authorization: token,
+                            'Authorization': token,
                             "Content-Type": "application/json",
                         },
                     }
@@ -85,7 +99,7 @@ function SuelosCRUD() {
         };
 
         fetchZonas();
-    }, [authorized, token, cedula]);
+    }, [authorized, token, userData]);
 
     // Obtener las parcelas de una zona específica
     const fetchParcelas = async (zonaId) => {
