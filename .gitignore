@@ -13,8 +13,6 @@ Proyecto/Frontend/pnpm-debug.log*
 Proyecto/Frontend/lerna-debug.log*
 
 Proyecto/Frontend/node_modules/
-Proyecto/Frontend/dist
-Proyecto/Frontend/dist-ssr
 Proyecto/Frontend/*.local
 
 # Editor directories and files
