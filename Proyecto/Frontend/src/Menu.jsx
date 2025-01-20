@@ -15,12 +15,16 @@ function Menu({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("inicio")}>
                         INICIO
                     </li>
+                    <li onClick={() => handleMenuClick("contacto")}>
+                        CONTACTO
+                    </li>
                     <li onClick={() => handleMenuClick("suelos")}>
                         SUELOS
                     </li>
                     <li onClick={() => handleMenuClick("perfil")}>
                         PERFIL
                     </li>
+                    
                 </ul>
             </div>
         </>

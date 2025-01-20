@@ -1,4 +1,6 @@
 import SuelosCRUD from "./SuelosCRUD"
+import Inicio from "./Inicio"
+import Contacto from "./Contacto"
 import Registro from "./Registro"
 import Login from "./Login"
 import Menu from "./Menu"
@@ -8,7 +10,9 @@ function Tab({ selectedTab, onTabSelect }) {
     const renderContent = () => {
         switch (selectedTab) {
             case "inicio":
-                return <div>INICIO</div>
+                return <Inicio />
+            case "contacto":
+                return <Contacto />
             case "suelos":
                 return <SuelosCRUD />
             case "perfil":

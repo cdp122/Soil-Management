@@ -23,11 +23,9 @@
 .mn-options li {
     cursor: pointer;
     padding: 10px 15px;
-    /* Espaciado interno para los elementos */
     border-radius: 5px;
-    /* Bordes redondeados */
     transition: background-color 0.3s, color 0.3s;
-    /* Animación suave */
+    color: black;
 }
 
 .mn-options li:hover {
