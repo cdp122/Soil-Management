@@ -1,0 +1,117 @@
+.container{
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    /* background-color: #242424; */
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.parcela-form{
+    padding: 0 20px;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.form-container{
+    padding: 10px;
+    width: 100%;
+    min-height: 550px;
+    max-height: 550px;
+    min-width: 450px;
+    max-width: 1000px;
+    background: #e2e2e2;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header{
+    position: relative;
+    color: #000;
+}
+
+.btn-close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.btn-close::after{
+    content: 'x';
+    position: absolute;
+    font-size: 20px;
+    font-weight: 500;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-body{
+    /* background: peru; */
+    padding: 0 50px;
+    flex-grow: 1;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.form-footer{
+    gap: 15px;
+    padding-right: 50px;
+}
+
+.input-variable{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.input-variable input{
+    width: 100px;
+}
+
+.datos-finales{
+    display: flex;
+    gap: 20px;
+}
+
+.datos-finales .datos{
+    width: 50%;
+}
+
+.detalles{
+    width: 50%;
+    height: 300px;
+}
+
+.detalles textarea{
+    resize: none;
+    height: 100%;
+}
+
+.detalles div{
+    height: 100%;
+}
+
+.encargados-container{
+    background: #fff;
+    border-radius: 5px;
+    height: 240px;
+    overflow: auto;
+}
+
+.encargados-li{
+    padding: 5px 20px;
+    text-align: right;
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #333;
+}

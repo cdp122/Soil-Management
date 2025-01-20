@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Zonas from "./Zonas";
 import "./styles/SuelosCRUD.css";
+import FormParcela from "./components/parcela-nuevo";
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -172,6 +173,7 @@ function SuelosCRUD() {
                     </>
                 ) : (
                     <div className="sueloscrud-placeholder">
+                        <FormParcela/>
                         <h2>Selecciona una zona para ver las parcelas</h2>
                     </div>
                 )}
