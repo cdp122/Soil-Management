@@ -63,7 +63,7 @@ function Zonas({ zonas, onZonaClick }) {
                         className="zonas-item"
                         onClick={() => onZonaClick(zona.id)}
                     >
-                        {zona.nombre}
+                        {zona.cons_nombre}
                     </li>
                 ))}
             </ul>

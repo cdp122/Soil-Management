@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Zonas from "./Zonas";
+import Loading from "./assets/loading.gif";
 import "./styles/SuelosCRUD.css";
 import FormParcela from "./components/parcela-nuevo";
 
@@ -8,7 +9,6 @@ function SuelosCRUD() {
     const [userData, setUserData] = useState([]); // Información del usuario
     const token = localStorage.getItem('token'); // Recuperar token
     const cedula = localStorage.getItem('cedula'); // Recuperar cédula
-    const user_id = localStorage.getItem('user_id'); // Recuperar userid
     const [zonas, setZonas] = useState([]); // Lista de zonas
     const [parcelas, setParcelas] = useState([]); // Lista de parcelas
     const [zonaSeleccionada, setZonaSeleccionada] = useState(null); // Zona seleccionada
@@ -38,6 +38,7 @@ function SuelosCRUD() {
                     const data = await response.json();
                     console.log('Datos del usuario recibidos:', data);
                     setUserData(data); // Guardar datos del usuario
+                    
                     setAuthorized(true);
                 } else {
                     console.error('Token inválido o expirado. Redirigiendo al login.');
@@ -61,7 +62,7 @@ function SuelosCRUD() {
             setLoading(true);
             try {
                 const response = await fetch(
-                    `https://soil-management-4-soft-utn.onrender.com/zonas?userid=${user_id}`,
+                    `https://soil-management-4-soft-utn.onrender.com/zonas?userid=${userData.id}`,
                     {
                         method: 'GET',
                         headers: {
@@ -126,7 +127,7 @@ function SuelosCRUD() {
     };
 
     if (!authorized) {
-        return <div>No tienes acceso. Por favor, inicia sesión.</div>;
+        return <img src={Loading} alt="Cargando..." className="sueloscrud-loading"/>
     }
 
     return (
@@ -139,7 +140,7 @@ function SuelosCRUD() {
                     <>
                         <div className="sueloscrud-header">
                             <h2 className="sueloscrud-title">
-                                {zonas.find((z) => z.id === zonaSeleccionada)?.nombre}
+                                {zonas.find((z) => z.id === zonaSeleccionada)?.cons_nombre}
                             </h2>
                             <div className="sueloscrud-search">
                                 <input

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Loading from "./assets/loading.gif";
 import './styles/Perfil.css';
 
 function Perfil() {
@@ -47,7 +48,7 @@ function Perfil() {
 
     if (!authorized) {
         // Mostrar un mensaje o redirigir al usuario si no está autorizado
-        return <div>No tienes acceso. Por favor, inicia sesión.</div>;
+        return <img src={Loading} alt="Cargando..." className="sueloscrud-loading"/>
     }
 
     return (

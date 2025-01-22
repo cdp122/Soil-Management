@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import styles from "./parcela.module.css";
-import 'bulma/css/bulma.min.css';
 
 
 const VariablesQuimicasModel = {
