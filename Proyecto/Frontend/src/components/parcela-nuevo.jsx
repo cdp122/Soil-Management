@@ -46,8 +46,8 @@ const ParcelaModel = {
 const parcelaNames = Object.keys(ParcelaModel);
 const variableNames = Object.keys(VariablesQuimicasModel);
 
-const FormParcela = () => {
-
+const FormParcela = ({idZona, idUser}) => {
+    console.log(idZona);
     const [currentStep, setCurrentStep] = useState(0);
     const [parcelaModel, setParcelaModel] = useState(ParcelaModel);
 

@@ -61,7 +61,7 @@ function Zonas({ zonas, onZonaClick }) {
                     <li
                         key={zona.id}
                         className="zonas-item"
-                        onClick={() => onZonaClick(zona.id)}
+                        onClick={() => onZonaClick(zona.cons_id)}
                     >
                         {zona.cons_nombre}
                     </li>

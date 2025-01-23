@@ -1,5 +1,4 @@
 .mn-container {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     display: flex;
     align-items: center;
     padding-left: 20px;
@@ -11,6 +10,12 @@
     flex-shrink: 0;
     height: 75px !important;
     /* Evita que el menú se reduzca */
+}
+
+.mn-container h1 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 .mn-options {

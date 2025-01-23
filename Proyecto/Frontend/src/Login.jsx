@@ -60,8 +60,6 @@ function Login({ onSwitchToRegister }) {
                 setToken(result.token);
                 // Guardado del usuario
                 localStorage.setItem("cedula", formData.cedula);
-
-                alert('Inicio de sesión exitoso');
                 
                 // Redirigir al componente principal después del login
                 navigate('/app'); // Ruta definida en las rutas de react-router-dom

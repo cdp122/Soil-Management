@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Zonas from "./Zonas";
 import Loading from "./assets/loading.gif";
+import Parcela from "./Parcela";
 import "./styles/SuelosCRUD.css";
 import FormParcela from "./components/parcela-nuevo";
 
@@ -71,11 +72,11 @@ function SuelosCRUD() {
                         },
                     }
                 );
-
+                console.log(response);
                 if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response.status}`);
+                    throw new Error(`Error del servidor: ${response}`);
                 }
-
+                
                 const data = await response.json();
                 console.log('Zonas recibidas:', data);
                 setZonas(data);
@@ -152,11 +153,12 @@ function SuelosCRUD() {
                             </div>
                             <div className="sueloscrud-buttons">
                                 <button className="sueloscrud-btn">Comparar Parcelas</button>
-                                <button className="sueloscrud-btn">Añadir Parcela</button>
+                                <FormParcela idZona={zonaSeleccionada} userId={userData.id}/>
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
-                            {parcelas.length > 0 ? (
+                            <Parcela />
+                            {/* {parcelas.length > 0 ? (
                                 parcelas.map((parcela) => (
                                     <div key={parcela.id} className="sueloscrud-parcel">
                                         <div className="sueloscrud-parcel-image"></div>
@@ -169,12 +171,11 @@ function SuelosCRUD() {
                                 <div className="sueloscrud-placeholder">
                                     No hay parcelas disponibles en esta zona.
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </>
                 ) : (
                     <div className="sueloscrud-placeholder">
-                        <FormParcela/>
                         <h2>Selecciona una zona para ver las parcelas</h2>
                     </div>
                 )}
