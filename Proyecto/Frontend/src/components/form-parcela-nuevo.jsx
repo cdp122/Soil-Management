@@ -1,51 +1,52 @@
-import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import styles from "./parcela.module.css";
+import { useState, useEffect } from "react";
 import { useForm} from "react-hook-form";
+import styles from "./parcela.module.css";
 import "./form-parcela.css";
-
-let tiposSuelos = {};
-
-const getTipos  = async () =>{
-    const token = localStorage.getItem("token");
-    const url = "https://soil-management-4-soft-utn.onrender.com/tipos";
-    try {
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                Authorization: token,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-        }
-
-        tiposSuelos = await response.json();
-
-    } catch (error) {
-        console.error(error.message);
-    }
-} 
-
-getTipos();
+import Notification from "./notification/notification";
+import api from "../utils/api";
 
 const FormParcela = ({idZona, idUser}) => {
+    const [tiposSuelo, setTiposSuelo] = useState([]);
+
+    useEffect(() => {
+        const getTipos = async () => {
+            const token = localStorage.getItem("token");
+            const url = "https://soil-management-4-soft-utn.onrender.com/tipos";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setTiposSuelo(data);
+            } catch (error) {
+                console.error(
+                    "Error al obtener los tipos de suelo:",
+                    error.message
+                );
+            }
+        };
+
+        getTipos();
+    }, []);
 
     const { register, handleSubmit, formState: { errors }, reset} = useForm();
     const [isActive, setIsActive] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     
-    const EnviarDatos = handleSubmit((data) => {
-        const datosParcela = {...data, 'user_id': idUser, 'const_id': idZona};
-        console.log(datosParcela);
-        reset();
-        toggleModal();
-    })
-
     const toggleModal = () => {
         setIsActive(!isActive);
         reset();
+        setIsSuccess(false);
     };
 
     useEffect(() => {
@@ -62,6 +63,28 @@ const FormParcela = ({idZona, idUser}) => {
         };
     }),[isActive];
 
+    const EnviarDatos = handleSubmit((data, e) => {
+        const datosParcela = {...data, 'user_id': idUser, 'cons_id': idZona};
+        const btnAdd = e.target.querySelector('.btn-add-parcela');
+        btnAdd.classList.add('is-loading');
+
+        console.log(localStorage.getItem('token'));
+        api.nuevaParcela(datosParcela).then((response) => {
+            if (response.error) {
+                alert("Error al registrar la parcela:", response.message);
+                btnAdd.classList.remove('is-loading');
+            } else {
+                setIsSuccess(true);
+                btnAdd.classList.remove('is-loading');
+            }
+        });
+
+        // setTimeout(() => {
+        //     setIsSuccess(true);
+        //     btnAdd.classList.remove('is-loading');
+        // }, 2000);
+    })
+
     return (
         <div>
             <button className="button is-primary" onClick={toggleModal}>
@@ -72,8 +95,18 @@ const FormParcela = ({idZona, idUser}) => {
                 <div className="parcela-form-container">
                     <form onSubmit={EnviarDatos}>
                         <FormHeader handleModal={toggleModal}/>
-                        <FormBody register={register} errors={errors}/>
-                        <FormFooter handleSubmit={handleSubmit} handleModal={toggleModal}/>
+                        {!isSuccess ? (
+                            <>
+                                <FormBody register={register} errors={errors} tiposSuelo={tiposSuelo}/>
+                                <FormFooter handleSubmit={handleSubmit} handleModal={toggleModal}/>
+                            </>
+                        ) : (
+                            // ******** Falta estilos *****
+                            <div className="success-message"> 
+                                <Notification/>
+                                <button className="button is-primary" onClick={toggleModal}>Cerrar</button>
+                            </div>
+                        )}
                     </form>
                 </div>
             </div>
@@ -94,10 +127,10 @@ function FormHeader({handleModal}) {
 }
 
 
-function FormBody({register, errors}){
+function FormBody({register, errors, tiposSuelo}){
     return (
         <div className={`${styles["form-body"]} parcela-form-body`}>
-            <DatosGenerales register={register} errors={errors}/>
+            <DatosGenerales register={register} errors={errors} tiposSuelo={tiposSuelo}/>
         </div>
     );
 }
@@ -105,13 +138,13 @@ function FormBody({register, errors}){
 function FormFooter({handleSubmit, handleModal}){
     return (
         <div className={`${styles['form-footer']} is-fullwidth is-flex is-justify-content-end mb-2 mt-5 parcela-form-footer`}>
-            <button className="button is-primary" onClick={handleSubmit}>Añadir</button>
+            <button className="button is-primary btn-add-parcela" onClick={handleSubmit}>Añadir</button>
             <button className="button" onClick={handleModal}>Cancelar</button>
         </div>
     );
 }
 
-function DatosGenerales({register, errors}) {
+function DatosGenerales({register, errors,  tiposSuelo}) {
     return (
         <div>
             <div className="fixed-grid">
@@ -147,7 +180,7 @@ function DatosGenerales({register, errors}) {
                                             })}
                                             >
                                                 <option hidden selected value="">Seleccione una opción ...  </option>
-                                                {tiposSuelos.map((suelo) => (
+                                                {tiposSuelo.map((suelo) => (
                                                     <option key={suelo.tipos_id} value={suelo.tipos_id}>
                                                         {suelo.tipos_nombre}
                                                     </option>
@@ -260,7 +293,8 @@ FormHeader.propTypes = {
 
 FormBody.propTypes = {
     register: PropTypes.func.isRequired,
-    errors: PropTypes.object
+    errors: PropTypes.object,
+    tiposSuelo: PropTypes.array
 }
 
 FormFooter.propTypes = {
@@ -270,7 +304,9 @@ FormFooter.propTypes = {
 
 DatosGenerales.propTypes = {
     register: PropTypes.func.isRequired,
-    errors: PropTypes.object
+    errors: PropTypes.object,
+    tiposSuelo: PropTypes.array
+    
 }
 
 export default FormParcela;
