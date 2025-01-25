@@ -9,6 +9,7 @@ function Login({ onSwitchToRegister }) {
     });
 
     const [token, setToken] = useState(null); // Estado para almacenar el token
+    const [errorMessage, setErrorMessage] = useState(''); // Estado para almacenar el mensaje de error
     const navigate = useNavigate(); // Hook para redirección
 
     // Cargar token desde localStorage al iniciar el componente
@@ -20,7 +21,7 @@ function Login({ onSwitchToRegister }) {
         }
     }, []);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = async (e) => {
         const { id, value } = e.target;
         setFormData({
             ...formData,
@@ -28,7 +29,7 @@ function Login({ onSwitchToRegister }) {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
 
         const payload = {
@@ -38,50 +39,50 @@ function Login({ onSwitchToRegister }) {
 
         console.log('Datos enviados al backend (login):', payload);
 
-        // Enviar los datos al backend
-        fetch('https://soil-management-4-soft-utn.onrender.com/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(result => {
-                console.log('Inicio de sesión exitoso:', result);
-
-                // Guardar el token en localStorage y en el estado
-                localStorage.setItem('token', result.token);
-                setToken(result.token);
-                // Guardado del usuario
-                localStorage.setItem("cedula", formData.cedula);
-                
-                // Redirigir al componente principal después del login
-                navigate('/app'); // Ruta definida en las rutas de react-router-dom
-            })
-            .catch(error => {
-                console.error('Error al iniciar sesión:', error);
-                alert('Error al iniciar sesión');
+        try {
+            const response = await fetch('https://soil-management-4-soft-utn.onrender.com/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
             });
+
+            if (!response.ok) {
+                const errorResult = await response.json();
+                throw new Error(`${errorResult.error}`);
+            }
+
+            const result = await response.json();
+            console.log('Inicio de sesión exitoso:', result);
+
+            // Guardar el token en localStorage y en el estado
+            localStorage.setItem('token', result.token);
+            setToken(result.token);
+            // Guardado del usuario
+            localStorage.setItem("cedula", formData.cedula);
+            
+            navigate('/app');
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            setErrorMessage(`${error.message}`); // Actualizar el mensaje de error
+        }
     };
 
     return (
         <div className="content">
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="cedula"><b>Usuario</b></label>
+                    <label htmlFor="cedula"><b>Cédula de Identidad</b></label>
                     <input
                         type="text"
                         className="username"
                         id="cedula"
+                        minLength={10}
+                        maxLength={10}
                         required
-                        pattern=".{10}"
-                        title="Ingrese los 10 dígitos de su cédula"
+                        pattern='\d{10}'
+                        title='Ingrese los 10 dígitos de su cédula'
                         autoFocus
                         onChange={handleInputChange}
                     />
@@ -99,6 +100,7 @@ function Login({ onSwitchToRegister }) {
                     />
                     <a href="">Recuperar contraseña</a>
                 </div>
+                {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Mostrar el mensaje de error */}
                 <div className="form-group">
                     <button className="btn" type="submit">Iniciar Sesión</button>
                     <button

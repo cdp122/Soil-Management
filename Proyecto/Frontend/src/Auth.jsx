@@ -24,7 +24,7 @@ function Auth() {
             case "login":
                 return <Login onSwitchToRegister={() => onTabSelect("registro")} />;
             case "registro":
-                return <Registro />;
+                return <Registro onSwitchToLogin={() => onTabSelect("login")} />;
             default:
                 return <div>DEFAULT</div>;
         }

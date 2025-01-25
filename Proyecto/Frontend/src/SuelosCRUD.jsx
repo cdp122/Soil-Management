@@ -72,9 +72,9 @@ function SuelosCRUD() {
                         },
                     }
                 );
-                console.log(response);
                 if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response}`);
+                    const errorResult = await response.json();
+                    throw new Error(`${errorResult.error}`);
                 }
                 
                 const data = await response.json();
@@ -136,7 +136,7 @@ function SuelosCRUD() {
             <Zonas zonas={zonas} onZonaClick={handleZonaClick} />
             <div className="sueloscrud-content">
                 {loading ? (
-                    <div className="sueloscrud-loading">Cargando...</div>
+                    <div className="sueloscrud-loading"><img src={Loading} alt="Cargando..." className="sueloscrud-loading" /></div>
                 ) : zonaSeleccionada ? (
                     <>
                         <div className="sueloscrud-header">
@@ -157,21 +157,15 @@ function SuelosCRUD() {
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
-                            <Parcela />
-                            {/* {parcelas.length > 0 ? (
+                            {parcelas.length > 0 ? (
                                 parcelas.map((parcela) => (
-                                    <div key={parcela.id} className="sueloscrud-parcel">
-                                        <div className="sueloscrud-parcel-image"></div>
-                                        <label className="sueloscrud-parcel-label">
-                                            <input type="checkbox" /> {parcela.nombre}
-                                        </label>
-                                    </div>
+                                    <Parcela key={parcela.parc_id} parcelName={parcela.parc_nombre} />
                                 ))
                             ) : (
                                 <div className="sueloscrud-placeholder">
                                     No hay parcelas disponibles en esta zona.
                                 </div>
-                            )} */}
+                            )}
                         </div>
                     </>
                 ) : (

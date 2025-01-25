@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Loading from "./assets/loading.gif";
 import './styles/Perfil.css';
+import Icon from './assets/user.svg';
 
 function Perfil() {
     const [authorized, setAuthorized] = useState(false); // Estado para controlar el acceso
@@ -57,7 +58,7 @@ function Perfil() {
                 <div className="perfil-header">
                     <div className="perfil-img-wrapper">
                         <img
-                            src="https://via.placeholder.com/150"
+                            src={Icon}
                             alt="Perfil"
                             className="perfil-img"
                         />

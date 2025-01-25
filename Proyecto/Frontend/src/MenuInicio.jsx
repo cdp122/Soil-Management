@@ -18,7 +18,7 @@ function MenuInicio({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("contacto")}>
                         CONTACTO
                     </li>
-                    <li onClick={() => handleMenuClick("login")}>
+                    <li onClick={() => handleMenuClick("login")} id='login'>
                         LOGIN
                     </li>
                 </ul>

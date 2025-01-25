@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './styles/Registro.css';
 
-function Registro() {
+function Registro({ onSwitchToLogin }) {
     const [roles, setRoles] = useState([]); // Estado para almacenar los roles obtenidos del backend
     const [formData, setFormData] = useState({
         cedula: '',
@@ -15,22 +15,21 @@ function Registro() {
 
     // Fetch de roles desde el backend (este bloque se conserva por si en el futuro se usara)
     useEffect(() => {
-        fetch('https://soil-management-4-soft-utn.onrender.com/roles') // Cambia la URL por la de tu backend
-            .then(response => {
+        // Función para cargar los roles desde el backend
+        const fetchRoles = async () => {
+            try {
+                const response = await fetch('https://soil-management-4-soft-utn.onrender.com/roles');
                 if (!response.ok) {
-                    throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error('Error al cargar los roles');
                 }
-                return response.json();
-            })
-            .then(data => {
-                var datroles = JSON.parse(data);
-                console.log('Roles obtenidos desde el backend:', datroles); // Depuración
-                setRoles(datroles); // Actualizar el estado (aunque en este caso no se usa directamente)
-            })
-            .catch(error => {
+                const data = await response.json();
+                setRoles(data);
+            } catch (error) {
                 console.error('Error al cargar los roles:', error);
-                setRoles([]); // En caso de error, mantener un array vacío
-            });
+            }
+        };
+
+        fetchRoles();
     }, []);
 
     // Manejar cambios en los inputs
@@ -43,7 +42,7 @@ function Registro() {
     };
 
     // Enviar datos al backend
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
         // Crear el objeto que se enviará
@@ -76,6 +75,7 @@ function Registro() {
             .then(data => {
                 console.log('Registro exitoso:', data);
                 alert('Registro exitoso');
+                onSwitchToLogin(); // Cambiar a la pestaña de inicio de sesión
             })
             .catch(error => {
                 console.error('Error al registrar:', error);
@@ -94,7 +94,10 @@ function Registro() {
                             <input
                                 type="text"
                                 name="cedula"
+                                minLength={10}
                                 maxLength={10}
+                                pattern='\d{10}'
+                                title='Ingrese los 10 dígitos de su cédula'
                                 required
                                 onChange={handleInputChange}
                             />
@@ -112,6 +115,8 @@ function Registro() {
                                 type="text"
                                 name="nombre"
                                 maxLength={50}
+                                pattern='[A-Za-zÁÉÍÓÚáéíóúÑñ]+' // Solo letras
+                                title='Solo se permiten letras'
                                 required
                                 onChange={handleInputChange}
                             />
@@ -121,6 +126,8 @@ function Registro() {
                                 type="text"
                                 name="apellido"
                                 maxLength={50}
+                                pattern='[A-Za-zÁÉÍÓÚáéíóúÑñ]+' // Solo letras
+                                title='Solo se permiten letras'
                                 required
                                 onChange={handleInputChange}
                             />
@@ -137,6 +144,7 @@ function Registro() {
                             <input
                                 type="text"
                                 name="telefono"
+                                minLength={10}
                                 maxLength={10}
                                 required
                                 onChange={handleInputChange}
@@ -152,9 +160,11 @@ function Registro() {
                                 required
                             >
                                 <option value="">Seleccione un rol</option>
-                                <option value="ING AGRO">ING AGRO</option>
-                                <option value="AGRICULTOR">AGRICULTOR</option>
-                                <option value="ESTUDIANTE">ESTUDIANTE</option>
+                                {roles.map((role) => (
+                                    <option key={role.id} value={role.id}>
+                                        {role.tipus_detalles}
+                                    </option>
+                                ))}
                             </select>
                         </label>
 
