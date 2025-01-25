@@ -2,23 +2,45 @@ import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import styles from "./parcela.module.css";
 import { useForm} from "react-hook-form";
-import "./form-parcela.css"
+import "./form-parcela.css";
 
-const tiposSuelo = new Map([
-    ['id1', 'Suelo 1'],
-    ['id2', 'Suelo 2'],
-    ['id3', 'Suelo 3']
-]);
+let tiposSuelos = {};
+
+const getTipos  = async () =>{
+    const token = localStorage.getItem("token");
+    const url = "https://soil-management-4-soft-utn.onrender.com/tipos";
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                Authorization: token,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        tiposSuelos = await response.json();
+
+    } catch (error) {
+        console.error(error.message);
+    }
+} 
+
+getTipos();
 
 const FormParcela = ({idZona, idUser}) => {
-    
+
     const { register, handleSubmit, formState: { errors }, reset} = useForm();
     const [isActive, setIsActive] = useState(false);
     
     const EnviarDatos = handleSubmit((data) => {
-        console.log("Enviando datos parcela...")
         const datosParcela = {...data, 'user_id': idUser, 'const_id': idZona};
         console.log(datosParcela);
+        reset();
+        toggleModal();
     })
 
     const toggleModal = () => {
@@ -125,9 +147,11 @@ function DatosGenerales({register, errors}) {
                                             })}
                                             >
                                                 <option hidden selected value="">Seleccione una opción ...  </option>
-                                            {[...tiposSuelo].map(([idSuelo, nombreSuelo]) => (
-                                                <option key={idSuelo} value={idSuelo}>{nombreSuelo}</option>
-                                            ))}
+                                                {tiposSuelos.map((suelo) => (
+                                                    <option key={suelo.tipos_id} value={suelo.tipos_id}>
+                                                        {suelo.tipos_nombre}
+                                                    </option>
+                                                ))}
                                             </select>
                                         </div>
                                         <div className="icon is-small is-left">
