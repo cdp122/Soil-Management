@@ -5,7 +5,9 @@
     background-color: #fff;
     border-radius: 10px;
     margin: 15px;
-    height: calc(100vh - 30px); /* Altura total de la ventana menos márgenes */
+    min-height: 30px; /* Altura mínima para el contenedor */
+    height: 100%; /* Ocupa el 100% de su contenedor principal */
+    flex-grow: 1; /* Permite que el contenedor crezca para ocupar el espacio disponible */
 }
 
 .menu {
@@ -15,6 +17,7 @@
 .tab-content {
     flex-grow: 1; /* Hace que este div ocupe todo el espacio disponible */
     display: flex;
+    height: 100%;
     justify-content: center; /* Centra horizontalmente el contenido */
     align-items: center; /* Centra verticalmente el contenido */
     overflow: auto; /* Habilita el scroll si es necesario */

@@ -30,33 +30,23 @@ function Zonas({ zonas, onZonaClick }) {
             });
 
             if (response.ok) {
-                const result = await response.json();
-                console.log('Zona creada exitosamente:', result);
-                setShowModal(false); // Cerrar el modal después de crear la zona
-                // Aquí puedes agregar lógica para actualizar la lista de zonas si es necesario
+                // Lógica para manejar la creación exitosa de una nueva zona
+                setShowModal(false);
             } else {
-                console.error('Error al crear la zona:', response.status);
+                console.error('Error al crear la zona');
             }
         } catch (error) {
-            console.error('Error al enviar los datos al backend:', error);
+            console.error('Error al crear la zona:', error);
         }
     };
 
     return (
-        <aside className="zonas-sidebar">
+        <div className="zonas-sidebar">
             <div className="zonas-header">
                 <h2 className="zonas-title">Zonas</h2>
-                <button className="zonas-add" onClick={handleAddZonaClick}>
-                    +
-                </button>
+                <button className="zonas-add" onClick={handleAddZonaClick}>+</button>
             </div>
             <ul className="zonas-list">
-                <li
-                    className="zonas-item zonas-item-home"
-                    onClick={() => onZonaClick(null)}
-                >
-                    <span className="zonas-home-icon">🏠</span> Inicio
-                </li>
                 {zonas.map((zona) => (
                     <li
                         key={zona.id}
@@ -70,9 +60,9 @@ function Zonas({ zonas, onZonaClick }) {
 
             {/* Mostrar el Modal si el estado showModal es verdadero */}
             {showModal && (
-                <Modal onClose={handleCloseModal} onSubmit={handleCreateZona} />
+                <Modal onClose={handleCloseModal} onCreateZona={handleCreateZona} />
             )}
-        </aside>
+        </div>
     );
 }
 

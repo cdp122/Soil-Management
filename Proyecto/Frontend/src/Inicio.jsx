@@ -9,7 +9,7 @@ function Inicio() {
                 <div className="full-inner">
                     <div className="content">
                         <h1>Suelos</h1>
-                        <a href="#miTexto">INFORMACIÓN</a>
+                        <a href="#miTexto">Más información</a>
                     </div>
                 </div>
             </section>

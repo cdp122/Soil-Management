@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px; /* Reducido para más espacio */
+    gap: 2px; /* Reducido para más espacio */
 }
 
 .rg-title {

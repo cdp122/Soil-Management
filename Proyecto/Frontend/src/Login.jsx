@@ -65,12 +65,16 @@ function Login({ onSwitchToRegister }) {
             navigate('/app');
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
-            setErrorMessage(`${error.message}`); // Actualizar el mensaje de error
+            if (error.message.startsWith("Contra")) {
+                setErrorMessage("Contraseña incorrecta");
+            } else {
+                setErrorMessage(`${error.message}`);
+            }
         }
     };
 
     return (
-        <div className="content">
+        <div className="content-login">
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="cedula"><b>Cédula de Identidad</b></label>
@@ -98,7 +102,7 @@ function Login({ onSwitchToRegister }) {
                         title="Ingrese su contraseña"
                         onChange={handleInputChange}
                     />
-                    <a href="">Recuperar contraseña</a>
+                    <a className='recuperar' href="">Recuperar contraseña</a>
                 </div>
                 {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Mostrar el mensaje de error */}
                 <div className="form-group">

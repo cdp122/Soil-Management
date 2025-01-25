@@ -22,9 +22,17 @@
 }
 
 .content {
-    max-width: 700px;
+    max-width: 300px;
     margin: auto;
     text-align: center;
+    background: rgba(0, 0, 0, 0.5); /* Slightly gray background */
+    color: #f9f3f4; /* White text color */
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    border-radius: 25px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .content h1 {

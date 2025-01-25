@@ -1,4 +1,4 @@
-.content {
+.content-login {
     color: rgb(0, 0, 0);
     display: flex;
     border: 2px solid transparent;
@@ -80,4 +80,11 @@
 
 .recuperar:hover {
     text-decoration: underline;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 0px;
+    text-align: center;
 }

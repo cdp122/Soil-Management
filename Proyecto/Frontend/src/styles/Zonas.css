@@ -1,17 +1,20 @@
 .zonas-sidebar {
-    width: 200px;
-    background-color: #a8d636;
+    width: 250px; /* Ancho aumentado */
+    background-color: #4CAF50; /* Color de fondo verde */
     padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    color: white; /* Color de texto blanco */
 }
 
 .zonas-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px; /* Mayor margen inferior */
 }
 
 .zonas-title {
-    font-size: 18px;
+    font-size: 24px; /* Tamaño de fuente aumentado */
     margin: 0;
 }
 
@@ -19,10 +22,19 @@
     background-color: #fff;
     border: none;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 16px;
+    width: 30px; /* Tamaño aumentado */
+    height: 30px; /* Tamaño aumentado */
+    font-size: 20px; /* Tamaño de fuente aumentado */
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    color: black
+}
+
+.zonas-add:hover {
+    background-color: #e0e0e0; /* Color de fondo al hacer hover */
 }
 
 .zonas-list {
@@ -35,10 +47,11 @@
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #ccc;
+    transition: background-color 0.3s; /* Transición suave */
 }
 
 .zonas-item:hover {
-    background-color: #c4e57a;
+    background-color: #66bb6a; /* Color de fondo al hacer hover */
 }
 
 .zonas-item-home {

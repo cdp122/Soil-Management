@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import Zonas from "./Zonas";
-import Loading from "./assets/loading.gif";
-import Parcela from "./Parcela";
-import "./styles/SuelosCRUD.css";
-import FormParcela from "./components/parcela-nuevo";
+import React, { useEffect, useState } from 'react';
+import Loading from './assets/loading.gif';
+import FormParcela from './components/parcela-nuevo';
+import Parcela from './Parcela';
+import Zonas from './Zonas';
+import './styles/SuelosCRUD.css';
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -14,72 +14,59 @@ function SuelosCRUD() {
     const [parcelas, setParcelas] = useState([]); // Lista de parcelas
     const [zonaSeleccionada, setZonaSeleccionada] = useState(null); // Zona seleccionada
     const [loading, setLoading] = useState(false); // Estado de carga
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
 
     // Validar el token y cargar datos del usuario
     useEffect(() => {
         const validateToken = async () => {
-            if (!token) {
-                console.error('No hay token disponible. Redirigiendo al login.');
-                setAuthorized(false);
-                return;
-            }
-
+            setLoading(true);
             try {
-                const response = await fetch(
-                    `https://soil-management-4-soft-utn.onrender.com/profile?user=${cedula}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            Authorization: token,
-                        },
-                    }
-                );
+                const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/profile?user=${cedula}`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: token,
+                    },
+                });
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('Datos del usuario recibidos:', data);
-                    setUserData(data); // Guardar datos del usuario
-                    
+                    setUserData(data);
                     setAuthorized(true);
                 } else {
-                    console.error('Token inválido o expirado. Redirigiendo al login.');
                     setAuthorized(false);
-                    localStorage.removeItem('token'); // Limpiar token si es inválido
+                    localStorage.removeItem('token');
                 }
             } catch (error) {
                 console.error('Error al validar el token:', error);
                 setAuthorized(false);
+            } finally {
+                setLoading(false);
             }
         };
 
-        validateToken();
+        if (token && cedula) {
+            validateToken();
+        }
     }, [token, cedula]);
 
     // Cargar las zonas
     useEffect(() => {
         const fetchZonas = async () => {
-            if (!authorized) return; // No cargar zonas si el usuario no está autorizado
-
             setLoading(true);
             try {
-                const response = await fetch(
-                    `https://soil-management-4-soft-utn.onrender.com/zonas?userid=${userData.id}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            Authorization: token,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
-                if (!response.ok) {
-                    const errorResult = await response.json();
-                    throw new Error(`${errorResult.error}`);
+                const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/zonas?userid=${userData.id}`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: token,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setZonas(data);
+                } else {
+                    console.error('Error al cargar las zonas');
                 }
-                
-                const data = await response.json();
-                console.log('Zonas recibidas:', data);
-                setZonas(data);
             } catch (error) {
                 console.error('Error al cargar las zonas:', error);
             } finally {
@@ -87,29 +74,28 @@ function SuelosCRUD() {
             }
         };
 
-        fetchZonas();
-    }, [authorized, token, cedula]);
+        if (authorized) {
+            fetchZonas();
+        }
+    }, [authorized, token]);
 
     // Obtener las parcelas de una zona específica
     const fetchParcelas = async (zonaId) => {
         setLoading(true);
         try {
-            const response = await fetch(
-                `https://soil-management-4-soft-utn.onrender.com/parcelas?zonaid=${zonaId}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        Authorization: token,
-                    },
-                }
-            );
+            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/parcelas?zonaid=${zonaId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: token,
+                },
+            });
 
-            if (!response.ok) {
-                throw new Error(`Error del servidor: ${response.status}`);
+            if (response.ok) {
+                const data = await response.json();
+                setParcelas(data);
+            } else {
+                console.error('Error al cargar las parcelas');
             }
-
-            const data = await response.json();
-            setParcelas(data);
         } catch (error) {
             console.error('Error al cargar las parcelas:', error);
         } finally {
@@ -127,9 +113,21 @@ function SuelosCRUD() {
         }
     };
 
+    // Manejar el cambio en el campo de búsqueda
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    // Filtrar las parcelas en función del término de búsqueda
+    const filteredParcelas = parcelas.filter((parcela) =>
+        parcela.parc_nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     if (!authorized) {
-        return <img src={Loading} alt="Cargando..." className="sueloscrud-loading"/>
+        return <img src={Loading} alt="Cargando..." className="sueloscrud-loading" />;
     }
+
+    const zonaSeleccionadaNombre = zonas.find((z) => z.cons_id === zonaSeleccionada)?.cons_nombre;
 
     return (
         <div className="sueloscrud-container">
@@ -141,25 +139,26 @@ function SuelosCRUD() {
                     <>
                         <div className="sueloscrud-header">
                             <h2 className="sueloscrud-title">
-                                {zonas.find((z) => z.id === zonaSeleccionada)?.cons_nombre}
+                                {zonaSeleccionadaNombre}
                             </h2>
                             <div className="sueloscrud-search">
                                 <input
                                     type="text"
                                     placeholder="Búsqueda"
                                     className="sueloscrud-search-input"
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
                                 />
-                                <button className="sueloscrud-search-button">🔍</button>
                             </div>
                             <div className="sueloscrud-buttons">
                                 <button className="sueloscrud-btn">Comparar Parcelas</button>
-                                <FormParcela idZona={zonaSeleccionada} userId={userData.id}/>
+                                <FormParcela idZona={zonaSeleccionada} userId={userData.id} className="sueloscrud-btn" />
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
-                            {parcelas.length > 0 ? (
-                                parcelas.map((parcela) => (
-                                    <Parcela key={parcela.parc_id} parcelName={parcela.parc_nombre} />
+                            {filteredParcelas.length > 0 ? (
+                                filteredParcelas.map((parcela) => (
+                                    <Parcela key={parcela.parc_id} parcelID={parcela.parc_id} parcelName={parcela.parc_nombre} parcelType={parcela.tipos_id}/>
                                 ))
                             ) : (
                                 <div className="sueloscrud-placeholder">
@@ -170,7 +169,7 @@ function SuelosCRUD() {
                     </>
                 ) : (
                     <div className="sueloscrud-placeholder">
-                        <h2>Selecciona una zona para ver las parcelas</h2>
+                        Selecciona una zona para ver las parcelas.
                     </div>
                 )}
             </div>
