@@ -103,7 +103,7 @@ router.post('/registrarzona', async (req, res) => {
             nuevaConsulta = await Consultas.create({ cons_nombre: Consulta, prob_id: problema.prob_id }, { transaction: t });
         });
         console.log("RUTAS >> ZONAS > Zona registrada correctamente");
-        res.json({ status: "OK" , nuevaZona : nuevaConsulta.cons_id });
+        res.json({ nuevaZona : nuevaConsulta.cons_id });
     } catch (error) {
         console.error("RUTAS >> REGISTRAR ZONA > Error al registrar la zona:", error);
         res.status(500).json({ error: "Error al registrar la zona" });
@@ -217,6 +217,7 @@ router.post('/login', async (req, res) => {
 
     try {
         const usuario = await Usuarios.findOne({ where: { user_cedula: cedula } });
+        res.setHeader('charset', 'utf-8');
         if (!usuario) {
             console.log("RUTAS >> LOGIN > No se encontró el usuario");
             res.status(400).json({ error: "Usuario no encontrado" });
