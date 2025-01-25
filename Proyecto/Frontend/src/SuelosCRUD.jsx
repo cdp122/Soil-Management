@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Loading from './assets/loading.gif';
-import FormParcela from './components/parcela-nuevo';
+import FormParcela from './components/form-parcela-nuevo';
 import Parcela from './Parcela';
 import Zonas from './Zonas';
 import './styles/SuelosCRUD.css';
+import FormMuestras from "./components/form-muestras";
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -152,7 +153,7 @@ function SuelosCRUD() {
                             </div>
                             <div className="sueloscrud-buttons">
                                 <button className="sueloscrud-btn">Comparar Parcelas</button>
-                                <FormParcela idZona={zonaSeleccionada} userId={userData.id} className="sueloscrud-btn" />
+                                <FormParcela idZona={zonaSeleccionada} userId={userData.id}/>
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
