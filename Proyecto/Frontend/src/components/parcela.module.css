@@ -1,4 +1,5 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css";
 
 .container{
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -23,10 +24,10 @@
 .form-container{
     padding: 10px;
     width: 100%;
-    min-height: 550px;
-    max-height: 550px;
+    min-height: 520px;
+    max-height: 520px;
     min-width: 450px;
-    max-width: 1000px;
+    max-width: 900px;
     background: #e2e2e2;
     border-radius: 5px;
     display: flex;
@@ -47,15 +48,6 @@
     border-radius: 50%;
 }
 
-.btn-close::after{
-    content: 'x';
-    position: absolute;
-    font-size: 20px;
-    font-weight: 500;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
 
 .form-body{
     /* background: peru; */
@@ -70,16 +62,6 @@
     padding-right: 50px;
 }
 
-.input-variable{
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.input-variable input{
-    width: 100px;
-}
-
 .datos-finales{
     display: flex;
     gap: 20px;
@@ -89,31 +71,7 @@
     width: 50%;
 }
 
-.detalles{
-    width: 50%;
-    height: 300px;
-}
-
-.detalles textarea{
+.descripcion textarea{
     resize: none;
     height: 100%;
-}
-
-.detalles div{
-    height: 100%;
-}
-
-.encargados-container{
-    background: #fff;
-    border-radius: 5px;
-    height: 240px;
-    overflow: auto;
-}
-
-.encargados-li{
-    padding: 5px 20px;
-    text-align: right;
-    display: block;
-    width: 100%;
-    border-bottom: 1px solid #333;
 }

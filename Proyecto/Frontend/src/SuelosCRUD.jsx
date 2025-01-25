@@ -3,7 +3,8 @@ import Zonas from "./Zonas";
 import Loading from "./assets/loading.gif";
 import Parcela from "./Parcela";
 import "./styles/SuelosCRUD.css";
-import FormParcela from "./components/parcela-nuevo";
+import FormParcela from "./components/form-parcela-nuevo";
+import FormMuestras from "./components/form-muestras";
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -154,6 +155,7 @@ function SuelosCRUD() {
                             <div className="sueloscrud-buttons">
                                 <button className="sueloscrud-btn">Comparar Parcelas</button>
                                 <FormParcela idZona={zonaSeleccionada} userId={userData.id}/>
+                                <FormMuestras/>
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
