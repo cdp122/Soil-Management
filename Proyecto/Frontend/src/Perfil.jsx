@@ -1,110 +1,218 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import Loading from "./assets/loading.gif";
-import './styles/Perfil.css';
-import Icon from './assets/user.svg';
+import "./styles/Perfil.css";
+import Icon from "./assets/user.svg";
 
 function Perfil() {
-    const [authorized, setAuthorized] = useState(false); // Estado para controlar el acceso
-    const [userData, setUserData] = useState([]); // Cambiado a un array vacío
-    const token = localStorage.getItem('token'); // Recuperar el token del localStorage
-    const cedula = localStorage.getItem('cedula'); // Recuperar el token del localStorage
+    const [authorized, setAuthorized] = useState(false);
+    const [userData, setUserData] = useState({});
+    const [isEditing, setIsEditing] = useState(false); // Controla si el formulario de edición está visible
+    const [formData, setFormData] = useState({});
+    const token = localStorage.getItem("token");
+    const cedula = localStorage.getItem("cedula");
 
     useEffect(() => {
-        // Verificar el token al cargar la página
         const validateToken = async () => {
             if (!token) {
-                // Si no hay token, redirigir o bloquear acceso
-                console.error('No hay token disponible. Redirigiendo al login.');
                 setAuthorized(false);
                 return;
             }
 
             try {
-                const response = await fetch('https://soil-management-4-soft-utn.onrender.com/profile?user=' + cedula, {  //cedula del user 
-                    method: 'GET',
-                    headers: {
-                        'Authorization': token // Enviar token en los headers
+                const response = await fetch(
+                    `https://soil-management-4-soft-utn.onrender.com/profile?user=${cedula}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: token,
+                        },
                     }
-                });
+                );
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('Datos del usuario recibidos:', data); // Depuración
-                    setUserData(data); // Guardar datos del usuario si el token es válido
-                    //console.log('datos.' + data.user_email + data.user_apellido);
-                    setAuthorized(true); // Permitir acceso a la página
+                    setUserData(data);
+                    setAuthorized(true);
                 } else {
-                    console.error('Token inválido o expirado. Redirigiendo al login.');
                     setAuthorized(false);
-                    localStorage.removeItem('token'); // Limpiar token si no es válido
+                    localStorage.removeItem("token");
                 }
             } catch (error) {
-                console.error('Error al validar el token:', error);
+                console.error("Error al validar el token:", error);
                 setAuthorized(false);
             }
         };
 
         validateToken();
-    }, [token]);
+    }, [token, cedula]);
+
+    // Maneja los cambios en los campos del formulario
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    // Maneja la acción de guardar los datos modificados
+    const handleSaveChanges = async () => {
+        try {
+            const response = await fetch(
+                `https://soil-management-4-soft-utn.onrender.com/`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                    },
+                    body: JSON.stringify(formData),
+                }
+            );
+
+            if (response.ok) {
+                const updatedData = await response.json();
+                setUserData(updatedData);
+                setIsEditing(false); // Cerrar el formulario
+                alert("Datos actualizados con éxito.");
+            } else {
+                alert("Error al actualizar los datos. Inténtelo nuevamente.");
+            }
+        } catch (error) {
+            console.error("Error al guardar los cambios:", error);
+            alert("Ocurrió un error al guardar los cambios.");
+        }
+    };
 
     if (!authorized) {
-        // Mostrar un mensaje o redirigir al usuario si no está autorizado
-        return <img src={Loading} alt="Cargando..." className="sueloscrud-loading"/>
+        return <img src={Loading} alt="Cargando..." className="sueloscrud-loading" />;
     }
 
     return (
         <main className="perfil-main">
             <div className="perfil-container">
-                <div className="perfil-header">
-                    <div className="perfil-img-wrapper">
-                        <img
-                            src={Icon}
-                            alt="Perfil"
-                            className="perfil-img"
-                        />
-                    </div>
-                    <h1 className="perfil-name">
-                        {userData?.nombre || 'Nombre del Usuario'}{' '}
-                        {userData?.apellido || ''}
-                    </h1>
-                    <p className="perfil-role">
-                        Rol: {userData?.tipo}  {/* Cambiar por tipus_detalles */}
-                    </p>
-
-                </div>
-
-                <div className="perfil-info">
-                    <h2>Información Personal</h2>
-                    <div className="perfil-info-grid">
-                        <div className="perfil-info-item">
-                            <h3>Email</h3>
-                            <p>{userData?.correo || 'usuario@email.com'}</p>
+                {!isEditing ? (
+                    <>
+                        {/* Vista de perfil */}
+                        <div className="perfil-header">
+                            <div className="perfil-img-wrapper">
+                                <img src={Icon} alt="Perfil" className="perfil-img" />
+                            </div>
+                            <h1 className="perfil-name">
+                                {userData?.nombre || "Nombre del Usuario"}{" "}
+                                {userData?.apellido || ""}
+                            </h1>
+                            <p className="perfil-role">Rol: {userData?.tipo}</p>
                         </div>
-                        <div className="perfil-info-item">
-                            <h3>Teléfono</h3>
-                            <p>{userData?.telefono || '+123 456 7890'}</p>
-                        </div>
-                        <div className="perfil-info-item">
-                            <h3>Fecha de Registro</h3>
-                            <p>{new Date(userData?.created_at).toLocaleDateString() || '01/01/2023'}</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div className="perfil-actions">
-                    <button className="btnPerfil">Modificar Datos</button>
-                    <button className="btnPerfil">Suspender Cuenta</button>
-                    <button
-                        className="btnDanger"
-                        onClick={() => {
-                            localStorage.removeItem('token'); // Eliminar el token al cerrar sesión
-                            setAuthorized(false); // Bloquear acceso
-                            window.location.href = '/'; // Redirigir al login
-                        }}
-                    >
-                        Cerrar Sesión
-                    </button>
-                </div>
+                        <div className="perfil-info">
+                            <h2>Información Personal</h2>
+                            <div className="perfil-info-grid">
+                                <div className="perfil-info-item">
+                                    <h3>Cédula</h3>
+                                    <p>{userData?.cedula || "No especificado"}</p>
+                                </div>
+                                <div className="perfil-info-item">
+                                    <h3>Email</h3>
+                                    <p>{userData?.correo || "usuario@email.com"}</p>
+                                </div>
+                                <div className="perfil-info-item">
+                                    <h3>Teléfono</h3>
+                                    <p>{userData?.telefono || "+123 456 7890"}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="perfil-actions">
+                            <button
+                                className="btnPerfil"
+                                onClick={() => {
+                                    setIsEditing(true);
+                                    setFormData(userData); // Prellenar el formulario con los datos actuales
+                                }}
+                            >
+                                Modificar Datos
+                            </button>
+                            <button className="btnPerfil">Suspender Cuenta</button>
+                            <button
+                                className="btnDanger"
+                                onClick={() => {
+                                    localStorage.removeItem("token");
+                                    setAuthorized(false);
+                                    window.location.href = "/";
+                                }}
+                            >
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {/* Formulario de edición */}
+                        <h2>Editar Información Personal</h2>
+                        <div className="perfil-info-grid">
+                            <div className="perfil-info-item">
+                                <label>Cédula</label>
+                                <input
+                                    type="text"
+                                    name="cedula"
+                                    value={formData.cedula || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="perfil-info-item">
+                                <label>Nombre</label>
+                                <input
+                                    type="text"
+                                    name="nombre"
+                                    value={formData.nombre || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="perfil-info-item">
+                                <label>Apellido</label>
+                                <input
+                                    type="text"
+                                    name="apellido"
+                                    value={formData.apellido || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="perfil-info-item">
+                                <label>Email</label>
+                                <input
+                                    type="email"
+                                    name="correo"
+                                    value={formData.correo || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="perfil-info-item">
+                                <label>Teléfono</label>
+                                <input
+                                    type="text"
+                                    name="telefono"
+                                    value={formData.telefono || ""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="perfil-info-item">
+                                <label>Contraseña</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={""}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="perfil-actions">
+                            <button className="btnPerfil" onClick={() => setIsEditing(false)}>
+                                Cancelar
+                            </button>
+                            <button className="btnPerfil" onClick={handleSaveChanges}>
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
         </main>
     );

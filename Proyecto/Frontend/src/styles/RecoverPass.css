@@ -3,7 +3,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 500px;
+    height: 70vh;
+    /* Para centrar verticalmente toda la pantalla */
     background-color: #d7d9d4;
 }
 
@@ -19,8 +20,6 @@
 
 /* Encabezado */
 .header {
-    box-shadow: #333333;
-    border-radius: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -62,48 +61,39 @@
     font-size: 14px;
     color: #000000;
     margin-bottom: 16px;
+    text-align: center;
 }
 
 /* Contenedor del input */
 .input-container {
     display: flex;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    overflow: hidden;
+    flex-direction: column;
+    /* Organiza los elementos verticalmente */
+    gap: 10px;
+    /* Espaciado entre inputs */
     margin-bottom: 16px;
 }
 
 .input-field {
-    flex: 1;
+    width: 100%;
+    /* Asegura que el input ocupe todo el ancho */
     padding: 10px;
-    border: none;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
     outline: none;
     font-size: 14px;
-}
-
-.check-btn {
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    padding: 0 16px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.check-btn:hover {
-    background-color: #0056b3;
 }
 
 /* Botones de acciones */
 .actions {
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 .cancel-btn {
-    background-color: #e0e0e0;
-    color: #333333;
+    background-color: #ff5b5b;
+    color: #ffffff;
     border: none;
     padding: 10px 20px;
     border-radius: 4px;
@@ -112,7 +102,7 @@
 }
 
 .cancel-btn:hover {
-    background-color: #c0c0c0;
+    background-color: #e04848;
 }
 
 .accept-btn {
