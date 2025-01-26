@@ -23,7 +23,7 @@ const FormParcela = ({idZona, idUser}) => {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
+                    // throw new Error(`Response status: ${response.status}`);
                 }
 
                 const data = await response.json();
@@ -263,7 +263,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                     <div className="cell">
                         <div className="cell">
                             <label className="label mb-1">Descripción para la parcela</label>
-                            <textarea className="textarea has-fixed-size mb-1" placeholder="..." 
+                            <textarea className="textarea has-fixed-size mb-1" placeholder="Descripción ..." 
                             {...register("parc_descripcion", {
                                 required:{
                                     value: true,
