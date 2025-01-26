@@ -24,7 +24,7 @@ function RecoverPass({ onSwitchToLogin }) {
                 <div className="header">
                     <div className="title">
                         <span className="icon">ℹ️</span>
-                        <h2>Recuperación de Contraseña</h2>
+                        <h2 className="h2Recover">Recuperación de Contraseña</h2>
                     </div>
                     <button className="close-btn" onClick={handleCancel}>&times;</button>
                 </div>
