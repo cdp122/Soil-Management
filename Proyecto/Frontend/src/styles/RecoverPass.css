@@ -1,0 +1,130 @@
+/* Contenedor principal */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+    background-color: #d7d9d4;
+}
+
+/* Tarjeta */
+.carta {
+    background: linear-gradient(#b4ff6fcb, #ffffff37) padding-box,
+        linear-gradient(145deg, transparent 10%, #47d7a2e4, #4cfe1ff2) border-box;
+    width: 400px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 3px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezado */
+.header {
+    box-shadow: #333333;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    color: #007bff;
+    margin-right: 8px;
+}
+
+h2 {
+    font-size: 18px;
+    color: #000000;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #888888;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #555555;
+}
+
+/* Subtítulo */
+.subtitulo {
+    font-size: 14px;
+    color: #000000;
+    margin-bottom: 16px;
+}
+
+/* Contenedor del input */
+.input-container {
+    display: flex;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.input-field {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.check-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 0 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.check-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Botones de acciones */
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background-color: #e0e0e0;
+    color: #333333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #c0c0c0;
+}
+
+.accept-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.accept-btn:hover {
+    background-color: #0056b3;
+}

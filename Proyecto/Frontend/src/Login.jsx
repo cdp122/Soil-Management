@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Para redirecciones
 import './styles/Login.css';
 
-function Login({ onSwitchToRegister }) {
+function Login({ onSwitchToRegister, onSwitchToRecover }) {
     const [formData, setFormData] = useState({
         cedula: '',
         password: ''
@@ -61,7 +61,7 @@ function Login({ onSwitchToRegister }) {
             setToken(result.token);
             // Guardado del usuario
             localStorage.setItem("cedula", formData.cedula);
-            
+
             navigate('/app');
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
@@ -102,7 +102,16 @@ function Login({ onSwitchToRegister }) {
                         title="Ingrese su contraseña"
                         onChange={handleInputChange}
                     />
-                    <a className='recuperar' href="">Recuperar contraseña</a>
+                    <a
+                        className='recuperar'
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+                            onSwitchToRecover(); // Cambiar a la vista de recuperación
+                        }}
+                    >
+                        Recuperar contraseña
+                    </a>
                 </div>
                 {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Mostrar el mensaje de error */}
                 <div className="form-group">

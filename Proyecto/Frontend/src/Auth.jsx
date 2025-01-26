@@ -5,6 +5,8 @@ import Inicio from "./Inicio";
 import Contacto from "./Contacto";
 import Registro from "./Registro";
 import "./styles/Auth.css";
+import RecoverPass from "./RecoverPass";
+
 
 function Auth() {
     const [selectedTab, setSelectedTab] = useState("inicio"); // Estado para la pestaña seleccionada
@@ -18,13 +20,18 @@ function Auth() {
     const renderContent = () => {
         switch (selectedTab) {
             case "inicio":
-                return <Inicio />; // Mostrar el componente Inicio
+                return <Inicio />;
             case "contacto":
                 return <Contacto />;
             case "login":
-                return <Login onSwitchToRegister={() => onTabSelect("registro")} />;
+                return <Login
+                    onSwitchToRegister={() => onTabSelect("registro")}
+                    onSwitchToRecover={() => onTabSelect("recover")}
+                />;
             case "registro":
                 return <Registro onSwitchToLogin={() => onTabSelect("login")} />;
+            case "recover":
+                return <RecoverPass onSwitchToLogin={() => onTabSelect("login")} />;
             default:
                 return <div>DEFAULT</div>;
         }
