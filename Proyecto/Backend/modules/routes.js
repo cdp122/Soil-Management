@@ -56,18 +56,34 @@ router.get('/zonas', validateToken, async (req, res) => {
 });
 
 //Solictud de todas las parcelas de una zona
-router.get('/parcelas', validateToken, async (req, res) => {
+router.get('/parcelas', async (req, res) => {
     try {
         let parcelas;
         if (req.query.zonaid) {
-            parcelas = await Parcelas.findAll({
+            parcelas = await Parcelas.findOne({
                 where: { cons_id: req.query.zonaid }
             });
             console.log("RUTAS >> ZONAS > Consulta de parcelas realizada de la zona", req.query.zonaid);
         } else if (req.query.idparcela) {
             parcelas = await Parcelas.findOne({
+                attributes: ['parc_id', 'user_id', 'cons_id', 'parc_nombre', 'parc_area', 'parc_coord_lo', 'parc_coord_la', 'parc_descripcion'],
+                include: [{
+                    model: TiposSuelos,
+                    attributes: ['tipos_nombre']
+                }],
                 where: { parc_id: req.query.idparcela }
             });
+            parcelas = {
+                "parc_id": parcelas.parc_id,
+                "tipos_suelo": parcelas.TiposSuelo.tipos_nombre,
+                "user_id": parcelas.user_id,
+                "cons_id": parcelas.cons_id,
+                "parc_nombre": parcelas.parc_nombre,
+                "parc_area": parcelas.parc_area,
+                "parc_coord_lo": parcelas.parc_coord_lo,
+                "parc_coord_la": parcelas.parc_coord_la,
+                "parc_descripcion": parcelas.parc_descripcion
+            }
             console.log("RUTAS >> ZONAS > Consulta de la parcela de id", req.query.idparcela);
         } else {
             res.status(400).json({ error: "No se ha proporcionado un ID de zona o de parcela" });
@@ -83,7 +99,7 @@ router.get('/parcelas', validateToken, async (req, res) => {
 });
 
 //Registrar zonas o consultas
-router.post('/registrarzona', async (req, res) => {
+router.post('/registrarzona', validateToken, async (req, res) => {
     console.log(req.body);
 
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
@@ -124,9 +140,29 @@ router.get('/tipos', validateToken, async(req, res) => {
 });
 
 //Para crear una parcela. Todavía en desarrollo. 
-router.post('/newparcel', async (req, res) => {
+router.post('/nuevaparcela', async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body["tipos_id"]) { res.status(400).json({ error: "No se ha proporcionado el id del tipo de suelo" }); return; }
+    if (!req.body["user_id"]) { res.status(400).json({ error: "No se ha proporcionado el id del usuario" }); return; }
+    if (!req.body["cons_id"]) { res.status(400).json({ error: "No se ha proporcionado el id de la Zona" }); return; }
+    if (!req.body["parc_nombre"]) { res.status(400).json({ error: "No se ha proporcionado el nombre de la Parcela" }); return; }
+    if (!req.body["parc_area"]) { res.status(400).json({ error: "No se ha proporcionado el area de la parcela" }); return; }
+    if (!req.body["parc_coord_la"] && req.body["parc_coord_la"] == null) { res.status(400).json({ error: "No se ha proporcionado la coordenada de latitud de la parcela" }); return; }
+    if (!req.body["parc_coord_lo"] && req.body["parc_coord_la"] == null) { res.status(400).json({ error: "No se ha proporcionado la coordenada de longitud de la parcela" }); return; }
+    if (!req.body["parc_descripcion"]) { res.status(400).json({ error: "No se ha proporcionado la descripcion de la parcela" }); return; }
+
+    console.log("RUTAS >> NUEVA PARCELA > Registrando nueva parcela...");
+    const parcela = req.body;
+
     try {
-        //Todavía en desarrollo.
+        await Parcelas.create({
+            tipos_id: parcela.tipos_id, user_id: parcela.user_id, cons_id: parcela.cons_id, parc_nombre: parcela.parc_nombre,
+            parc_area: parcela.parc_area, parc_coord_la: parcela.parc_coord_la, parc_coord_lo: parcela.parc_coord_lo,
+            parc_descripcion: parcela.parc_descripcion
+        });
+
+        console.log("RUTAS >> NUEVA PARCELA > Parcela registrada correctamente");
+        res.json({ status: "OK" });
     } catch (error) {
         console.error("RUTAS >> NUEVA PARCELA > Error al crear una nueva parcela:", error);
         res.status(500).json({ error: "Error al crear una nueva parcela" });
@@ -157,7 +193,7 @@ router.get('/roles', async (req, res) => {
 //Registro de Usuario
 router.post('/register', async (req, res) => {
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body["rol"]) { res.status(400).json({ error: "No se ha proporcionado el rol" }); return; }
+    if (!req.body["rol"] && typeof req.body["rol"] !== string) { res.status(400).json({ error: "No se ha proporcionado el rol o rol inválido" }); return; }
     if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
     if (!req.body["nombre"]) { res.status(400).json({ error: "No se ha proporcionado el nombre" }); return; }
     if (!req.body["apellido"]) { res.status(400).json({ error: "No se ha proporcionado el apellido" }); return; }
@@ -223,6 +259,11 @@ router.post('/login', async (req, res) => {
             res.status(400).json({ error: "Usuario no encontrado" });
             return;
         }
+        if (!usuario.user_estado) {
+            console.log("RUTAS >> LOGIN > Usuario deshabilitado");
+            res.status(400).json({ error: "Usuario deshabilitado" });
+            return;
+        }
 
         const match = await verifyPassword(password, usuario.user_password);
         if (match) {
@@ -239,7 +280,7 @@ router.post('/login', async (req, res) => {
 });
 
 //Perfil de usuario
-router.get('/profile'/*, validateToken*/, async (req, res) => {
+router.get('/profile', validateToken, async (req, res) => {
     if (!req.query.user) { res.status(400).json({ error: "No se ha proporcionado un usuario" }); return; }
 
     try {
