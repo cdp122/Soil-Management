@@ -30,3 +30,35 @@
     background: rgb(252, 215, 215);
     border-radius: 5px;
 }
+
+/* Sobreponiendo modo oscuro */
+.subtitle{
+    color: #000;
+}
+
+.input, .textarea{
+    background: #fff;
+    color: #000;
+    outline-color: var(--has-background-white-ter);
+    border-color: var(--has-background-grey-lighter);
+}
+
+.input::placeholder, .textarea::placeholder{
+    color: var(--has-background-grey-light)
+}
+
+.select select{
+    background: #fff;
+    color: #000;
+    outline-color: var(--has-background-white-ter);
+    border-color: var(--has-background-grey-lighter);
+}
+
+.select option{
+    background: #fff;
+    color: #000;
+}
+
+.label{
+    color: #000;
+}

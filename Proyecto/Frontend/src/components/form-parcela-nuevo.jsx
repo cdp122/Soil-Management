@@ -23,7 +23,7 @@ const FormParcela = ({idZona, idUser}) => {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
+                    // throw new Error(`Response status: ${response.status}`);
                 }
 
                 const data = await response.json();
@@ -119,7 +119,7 @@ function FormHeader({handleModal}) {
         <div className={`${styles['form-header']} `}>
             <div>
                 <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2">Agregar nueva parcela</span>
-                <button className={`${styles['btn-close']} has-background-danger`} aria-label="close" onClick={handleModal}><i className="fa-solid fa-x"></i></button>
+                <button className={`${styles["btn-close"]} delete is-medium has-background-danger`} aria-label="close" onClick={handleModal}></button>
             </div>
            
         </div>
@@ -179,7 +179,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                                                 }
                                             })}
                                             >
-                                                <option hidden selected value="">Seleccione una opción ...  </option>
+                                                <option hidden value="">Seleccione una opción ...  </option>
                                                 {tiposSuelo.map((suelo) => (
                                                     <option key={suelo.tipos_id} value={suelo.tipos_id}>
                                                         {suelo.tipos_nombre}
@@ -263,7 +263,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                     <div className="cell">
                         <div className="cell">
                             <label className="label mb-1">Descripción para la parcela</label>
-                            <textarea className="textarea has-fixed-size mb-1" placeholder="..." 
+                            <textarea className="textarea has-fixed-size mb-1" placeholder="Descripción ..." 
                             {...register("parc_descripcion", {
                                 required:{
                                     value: true,

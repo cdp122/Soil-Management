@@ -24,6 +24,11 @@ class Api {
             return { error: true, message: error.message };
         }
     }
+
+    async nuevaMuestra(data){
+        // TODO: Implementar el envio de muestras
+        console.log("Enviando muestra...", data);
+    }
 }
 
 // const urlLocal = "https://beb9-186-71-12-133.ngrok-free.app"
