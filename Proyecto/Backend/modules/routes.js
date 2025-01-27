@@ -324,7 +324,7 @@ router.put('/account', validateToken, async (req, res) => {
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
 
     try {
-        let usuario = await Usuarios.findOne({ where: { user_id: req.body.id } });
+        let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
         let tipo_id = await TiposUsuarios.findOne({ where: { tipus_detalles: req.body.tipo } });
         usuario.tipus_id = tipo_id.tipus_id;
         usuario.user_cedula = req.body.cedula;
