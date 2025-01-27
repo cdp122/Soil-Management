@@ -325,8 +325,6 @@ router.put('/account', validateToken, async (req, res) => {
 
     try {
         let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
-        let tipo_id = await TiposUsuarios.findOne({ where: { tipus_detalles: req.body.tipo } });
-        usuario.tipus_id = tipo_id.tipus_id;
         usuario.user_cedula = req.body.cedula;
         usuario.user_nombre = req.body.nombre;
         usuario.user_apellido = req.body.apellido;
