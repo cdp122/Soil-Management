@@ -4,8 +4,7 @@
     border: 2px solid transparent;
     border-radius: 25px;
     width: 450px;
-    background: linear-gradient(#b4ff6fcb, #ffffff37) padding-box,
-        linear-gradient(145deg, transparent 10%, #47d7a2e4, #4cfe1ff2) border-box;
+    background-color: #4CAF50; /* Color de fondo verde */
     padding: 30px;
     flex-direction: column;
     box-sizing: border-box;
@@ -44,26 +43,20 @@
 }
 
 .btn {
-    width: 100%;
-    height: 45px;
-    border-radius: 50px;
-    background-image: linear-gradient(135deg, #38f241 0%, #20e881 100%);
-    box-shadow: 0 10px 20px -6px rgba(62, 67, 61, 0.5);
-    outline: none;
-    cursor: pointer;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px; /* Reducir padding */
+    background-color: #3a8b2f; /* Color de fondo más oscuro */
+    height: 40px;
+    color: #fff;
     border: none;
-    font-size: 16px;
-    color: white;
-    margin-top: 10px;
-    transition: all 0.3s ease-in-out;
-    font-family: 'Bebas Neue', sans-serif;
-    text-shadow: none;
-    text-align: center;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px; /* Reducir tamaño de fuente */
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px rgba(62, 67, 61, 0.4);
+    background-color: #4ca04f; /* Color de fondo más oscuro al hacer hover */
 }
 
 .btn:active {
@@ -73,7 +66,7 @@
 .recuperar {
     align-self: flex-start; /* Alinear a la izquierda */
     font-size: 14px;
-    color: #007bff;
+    color: white;
     text-decoration: none;
     margin-bottom: 20px;
 }

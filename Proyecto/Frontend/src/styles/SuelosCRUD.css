@@ -47,20 +47,6 @@
     font-size: 14px; /* Reducir tamaño de fuente */
 }
 
-.sueloscrud-search-button {
-    padding: 5px; /* Reducir padding */
-    background-color: #45a049; /* Color de fondo más oscuro */
-    border: none;
-    border-radius: 0 4px 4px 0;
-    color: white; /* Color de texto blanco */
-    cursor: pointer;
-    font-size: 14px; /* Reducir tamaño de fuente */
-}
-
-.sueloscrud-search-button:hover {
-    background-color: #3e8e41; /* Color de fondo más oscuro al hacer hover */
-}
-
 .sueloscrud-buttons {
     display: flex;
     align-items: center;
@@ -69,16 +55,17 @@
 .sueloscrud-buttons .sueloscrud-btn {
     margin-left: 10px;
     padding: 5px 10px; /* Reducir padding */
-    background-color: #45a049; /* Color de fondo más oscuro */
+    background-color: #3a8b2f; /* Color de fondo más oscuro */
+    height: 40px;
     color: #fff;
     border: none;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 14px; /* Reducir tamaño de fuente */
 }
 
 .sueloscrud-buttons .sueloscrud-btn:hover {
-    background-color: #3e8e41; /* Color de fondo más oscuro al hacer hover */
+    background-color: #4ca04f; /* Color de fondo más oscuro al hacer hover */
 }
 
 .sueloscrud-parcels {
