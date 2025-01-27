@@ -424,7 +424,7 @@ router.put('/recover', async (req, res) => {
         usuario.updated_at = new Date();
         await usuario.save();
         console.log("RUTAS >> RECUPERAR CUENTA > Cuenta recuperada correctamente");
-        res.json({ status: "OK" });
+        res.json({ success: true });
     } catch (error) {
         console.error("RUTAS >> RECUPERAR CUENTA > Error al recuperar la cuenta:", error);
         res.status(500).json({ error: "Error al recuperar la cuenta", detallesError: error.message });
