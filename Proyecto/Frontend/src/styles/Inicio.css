@@ -36,17 +36,16 @@
 }
 
 .content h1 {
-    font-family: "Century Gothic";
     font-size: 5rem;
     color: #f9f3f4;
     text-shadow: 0 0 15px rgb(0, 0, 0);
 }
 
 .content a {
+    background-color: rgba(0, 0, 0, 0.726);
     border-radius: 9px;
     text-decoration: none;
     color: #f9f3f4;
-    font-family: "Century Gothic", sans-serif;
     font-weight: bold;
     border: 3px solid;
     padding: 7px 13px;
@@ -64,7 +63,6 @@
     align-items: center;
     margin: 25px;
     font-size: 1.6rem;
-    font-family: sans-serif;
     color: #fff;
     background: #403d3d;
     padding: 20px;

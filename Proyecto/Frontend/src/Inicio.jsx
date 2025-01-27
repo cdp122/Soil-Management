@@ -8,7 +8,7 @@ function Inicio() {
             <section className="full">
                 <div className="full-inner">
                     <div className="content">
-                        <h1>Suelos</h1>
+                        <h1>Gestión Química de Suelos</h1>
                         <a href="#miTexto">Más información</a>
                     </div>
                 </div>

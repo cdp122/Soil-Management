@@ -1,7 +1,6 @@
 .sueloscrud-container {
     display: flex;
     height: calc(100vh - 100px); /* Ajustar la altura al 100% del contenedor principal */
-    font-family: Arial, sans-serif;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     overflow: auto; /* Habilitar el scroll si es necesario */
