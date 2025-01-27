@@ -1,4 +1,4 @@
-import soilLogo from './assets/soil-logo.svg'
+import soilLogo from './assets/soil-management-logo.png'
 import './styles/Menu.css'
 
 function MenuInicio({ onTabSelect }) {
@@ -10,7 +10,6 @@ function MenuInicio({ onTabSelect }) {
         <>
             <div className='mn-container'>
                 <img className='soil-logo' src={soilLogo} alt="soil" />
-                <h1>Soil Management</h1>
                 <ul className='mn-options'>
                     <li onClick={() => handleMenuClick("inicio")}>
                         INICIO

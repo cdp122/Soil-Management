@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ModalInfoP from './ModalInfoP';
-import test from './assets/soil-logo.svg';
 import aluvial from './assets/tipos_suelos/aluvial.jpeg';
 import arcilloso from './assets/tipos_suelos/arcilloso.jpg';
 import arenoso from './assets/tipos_suelos/arenoso.jpg';

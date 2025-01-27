@@ -21,7 +21,7 @@
     vertical-align: middle;
 }
 
-.content {
+.ini-content {
     max-width: 300px;
     margin: auto;
     text-align: center;
@@ -35,13 +35,14 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.content h1 {
-    font-size: 5rem;
+.ini-content h1 {
+    font-size: 30px;
+    font-weight: bold;
     color: #f9f3f4;
     text-shadow: 0 0 15px rgb(0, 0, 0);
 }
 
-.content a {
+.ini-content a {
     background-color: rgba(0, 0, 0, 0.726);
     border-radius: 9px;
     text-decoration: none;
@@ -52,7 +53,7 @@
     transition: color 1s;
 }
 
-.content a:hover {
+.ini-content a:hover {
     color: aquamarine;
 }
 

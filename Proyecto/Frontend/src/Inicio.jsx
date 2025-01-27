@@ -7,7 +7,7 @@ function Inicio() {
             {/* Sección principal con imagen de fondo */}
             <section className="full">
                 <div className="full-inner">
-                    <div className="content">
+                    <div className="ini-content">
                         <h1>Gestión Química de Suelos</h1>
                         <a href="#miTexto">Más información</a>
                     </div>
