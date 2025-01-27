@@ -1,4 +1,5 @@
 import soilLogo from './assets/soil-logo.svg'
+import FormMuestras from './components/form-muestras'
 import './styles/Menu.css'
 
 function MenuInicio({ onTabSelect }) {
@@ -21,6 +22,7 @@ function MenuInicio({ onTabSelect }) {
                     <li onClick={() => handleMenuClick("login")} id='login'>
                         LOGIN
                     </li>
+                    <FormMuestras/>
                 </ul>
             </div>
         </>

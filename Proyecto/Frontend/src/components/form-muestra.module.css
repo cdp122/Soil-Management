@@ -35,7 +35,6 @@
 
 .form-header{
     position: relative;
-    
 }
 
 .form-header .title-header{
@@ -43,7 +42,7 @@
 }
 
 .btn-close{
-    position: absolute;
+    position: absolute !important;
     top: 0;
     right: 0;
     width: 30px;
@@ -81,7 +80,7 @@
     overflow: auto;
 }
 
-.table thead{
+.custom-thead{
     position: sticky;
     top: 0;
 }

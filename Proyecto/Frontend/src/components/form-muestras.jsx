@@ -1,10 +1,9 @@
 /* eslint-disable */ // Validar despúes 
-
 import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { useForm} from "react-hook-form";
 import "./indicator.css"
-import "./form-muestra.css"
+import styles from "./form-muestra.module.css"
 import { isFormValid } from "../utils/isFormValid";
 import { elementosQuimicos, unidadesMedida } from "../utils/others";
 import api from "../utils/api";
@@ -54,8 +53,8 @@ const FormMuestras = () => {
                 Agregar muestra
             </button>
 
-            <div className={`parcela-form modal ${isActive ? "is-active" : ""}`}>
-                <div className="form-container">
+            <div className={`${styles["parcela-form"]} modal ${isActive ? "is-active" : ""}`}>
+                <div className={`${styles["form-container"]}`}>
                     <form onSubmit={handleSubmit((data) => api.nuevaMuestra(data))}>
                         <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
                         <FormBody currentStep={currentStep} register={register} errors={errors}/>
@@ -69,10 +68,10 @@ const FormMuestras = () => {
 
 function FormHeader({handleModal, currentStep}) {
     return (
-        <div className="form-header">
+        <div className={`${styles["form-header"]}`}>
             <div>
-                <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2 title-header">Agregar muestras</span>
-                <button className="btn-close delete is-medium has-background-danger" aria-label="close" onClick={handleModal}></button>
+                <span className={`subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2 ${styles["title-header"]}`}>Agregar muestras</span>
+                <button className={`${styles["btn-close"]} delete is-medium has-background-danger`} aria-label="close" onClick={handleModal}></button>
             </div>
             <div>
                 <StepIndicator currentStep={currentStep}/>
@@ -99,7 +98,7 @@ function StepIndicator({currentStep}){
 
 function FormBody({currentStep, register, errors}){
     return (
-        <div className="form-body">
+        <div className={`${styles["form-body"]}`}>
             {currentStep === 0 && <VariablesGenerales/>}
             {currentStep === 1 && <VariablesQuimicas/>}
         </div>
@@ -108,16 +107,16 @@ function FormBody({currentStep, register, errors}){
 
 function FormFooter({currentStep, handleBack, handleNext, handleSubmit, handleModal}){
     return (
-        <div className="form-footer is-fullwidth is-flex is-justify-content-end mb-2 mt-5">
+        <div className={`${styles["form-footer"]} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
             {currentStep > 0 ?
                 <>
-                    <button className="button btn-white" onClick={handleBack}>Atrás</button>
+                    <button className={`button ${styles["btn-white"]}`} onClick={handleBack}>Atrás</button>
                     <button className="button is-link" onClick={handleSubmit}>Guardar</button>
                 </>
             :
                 <button className="button is-link" onClick={handleNext}>Siguiente</button>
             }
-            <button className="button btn-white" onClick={handleModal}>Cancelar</button>
+            <button className={`button ${styles["btn-white"]}`} onClick={handleModal}>Cancelar</button>
         </div>
     );
 }
@@ -131,7 +130,7 @@ function VariablesGenerales() {
                     <input type="number" className="input" />
                 </div>
                 
-                <div className="cell label-text">
+                <div className={`cell ${styles["label-text"]}`}>
                     <label>Conductividad eléctrica (CE)</label>
                     <div className="control">
                         <input type="number" className="input" />
@@ -143,7 +142,7 @@ function VariablesGenerales() {
                     <input type="number" className="input" />
                 </div>
                 
-                <div className="cell label-text">
+                <div className={`cell ${styles["label-text"]}`}>
                     <label>Capacidad de intercambio catiónico efectiva (CICe)</label>
                     <div className="control">
                         <input type="number" className="input" />
@@ -168,7 +167,7 @@ function VariablesGenerales() {
 
 function VariablesQuimicas() {
     return (
-        <div className="container-quimico">
+        <div className={`${styles["container-quimico"]}`}>
             <div className="control mt-1 mb-3">
                 <div className="field has-addons has-addons-right">
                     <p className="control is-expanded">
@@ -206,9 +205,9 @@ function VariablesQuimicas() {
                 </div>
             </div>
 
-            <div className="container">
+            <div className={`${styles["container"]}`}>
                 <table className="table is-hoverable is-stripped is-fullwidth">
-                    <thead className="has-background-white">
+                    <thead className={`has-background-white ${styles["custom-thead"]}`}>
                         <tr>
                             <th>#</th>
                             <th>Símbolo</th>
@@ -243,7 +242,7 @@ function RowTable ({index}){
             <td>mg/kg</td>
             <td>10</td>
             <td>
-                <div className="buttons buttons-table">
+                <div className={`buttons ${styles["buttons-table"]}`}>
                     <button className="tag is-link">
                         <i className="fa-solid fa-pen-to-square"></i>
                     </button>
