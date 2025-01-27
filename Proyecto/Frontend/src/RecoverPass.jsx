@@ -8,6 +8,7 @@ function RecoverPass({ onSwitchToLogin }) {
         telefono: ""
     });
     const [newPassword, setNewPassword] = useState(""); // Nueva contraseña
+    const [confirmPassword, setConfirmPassword] = useState(""); // Confirmar contraseña
     const [step, setStep] = useState(1); // Controla los pasos del formulario
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -26,6 +27,11 @@ function RecoverPass({ onSwitchToLogin }) {
         setNewPassword(e.target.value);
     };
 
+    // Maneja el cambio de la confirmación de la contraseña
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+    };
+
     // Simula la validación de datos
     const handleValidateData = async () => {
         const { cedula, email, telefono } = formData;
@@ -36,32 +42,79 @@ function RecoverPass({ onSwitchToLogin }) {
             return;
         }
 
-        // Simulación de comprobación
-        console.log("Validando datos...");
-        if (cedula === "1234567890" && email === "test@example.com" && telefono === "0987654321") {
-            setStep(2); // Pasar al formulario de nueva contraseña
-            setErrorMessage("");
-        } else {
-            setErrorMessage("Los datos no coinciden. Verifique e intente nuevamente.");
+        try {
+            // Agregar los datos como parámetros de consulta
+            const url = `https://soil-management-4-soft-utn.onrender.com/recover?cedula=${encodeURIComponent(
+                cedula
+            )}&email=${encodeURIComponent(email)}&telefono=${encodeURIComponent(telefono)}`;
+
+            console.log("URL de validación:", url);
+
+            const response = await fetch(url, {
+                method: "GET",
+
+            });
+
+            const data = await response.json();
+
+            console.log("Respuesta de validación:", data);
+
+            if (data.valid) {
+                setStep(2); // Pasar al formulario de nueva contraseña
+                setErrorMessage("");
+            } else {
+                setErrorMessage("Los datos no coinciden. Verifique e intente nuevamente.");
+            }
+        } catch (error) {
+            setErrorMessage("Error al validar los datos. Intente nuevamente.");
+            console.error("Error en la solicitud de validación:", error);
         }
     };
 
     // Simula el guardado de la nueva contraseña
     const handleSaveNewPassword = async () => {
-        if (!newPassword.trim()) {
-            setErrorMessage("La nueva contraseña no puede estar vacía.");
+        const { cedula } = formData;
+
+        if (!newPassword.trim() || !confirmPassword.trim()) {
+            setErrorMessage("La nueva contraseña y la confirmación no pueden estar vacías.");
             return;
         }
 
-        // Simulación de guardado
-        console.log("Nueva contraseña guardada:", newPassword);
-        setSuccessMessage("Contraseña actualizada con éxito.");
-        setErrorMessage("");
+        if (newPassword !== confirmPassword) {
+            setErrorMessage("Las contraseñas no coinciden.");
+            return;
+        }
 
-        // Redirigir al login después de un pequeño retraso
-        setTimeout(() => {
-            onSwitchToLogin();
-        }, 2000);
+        console.log("Nueva contraseña:", newPassword);
+
+        try {
+            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/recover", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ cedula, password: newPassword })
+            });
+
+            const data = await response.json();
+
+            console.log("Respuesta de cambio de contraseña:", data);
+
+            if (data.success) {
+                setSuccessMessage("Contraseña actualizada con éxito.");
+                setErrorMessage("");
+
+                // Redirigir al login después de un pequeño retraso
+                setTimeout(() => {
+                    onSwitchToLogin();
+                }, 2000);
+            } else {
+                setErrorMessage("Error al actualizar la contraseña. Intente nuevamente 1 .");
+            }
+        } catch (error) {
+            setErrorMessage("Error al actualizar la contraseña. Intente nuevamente 2 .");
+            console.error("Error en la solicitud de cambio de contraseña:", error);
+        }
     };
 
     return (
@@ -130,6 +183,13 @@ function RecoverPass({ onSwitchToLogin }) {
                                 placeholder="Nueva contraseña"
                                 value={newPassword}
                                 onChange={handleNewPasswordChange}
+                            />
+                            <input
+                                type="password"
+                                className="input-field"
+                                placeholder="Confirmar nueva contraseña"
+                                value={confirmPassword}
+                                onChange={handleConfirmPasswordChange}
                             />
                         </div>
                         {errorMessage && <div className="error-message">{errorMessage}</div>}

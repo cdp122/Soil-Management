@@ -7,7 +7,9 @@ function Perfil() {
     const [authorized, setAuthorized] = useState(false);
     const [userData, setUserData] = useState({});
     const [isEditing, setIsEditing] = useState(false); // Controla si el formulario de edición está visible
+    const [isChangingPassword, setIsChangingPassword] = useState(false); // Controla si el formulario de contraseña está visible
     const [formData, setFormData] = useState({});
+    const [passwordData, setPasswordData] = useState({ currentPassword: "", newPassword: "" });
     const token = localStorage.getItem("token");
     const cedula = localStorage.getItem("cedula");
 
@@ -24,7 +26,7 @@ function Perfil() {
                     {
                         method: "GET",
                         headers: {
-                            Authorization: token,
+                            Authorization: token
                         },
                     }
                 );
@@ -49,28 +51,68 @@ function Perfil() {
     // Maneja los cambios en los campos del formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setPasswordData({ ...passwordData, [name]: value });
+    };
+
+    // Maneja la acción de suspender la cuenta
+    const handleSuspendAccount = async () => {
+        if (!cedula || !token) {
+            alert("No se puede suspender la cuenta. Faltan datos necesarios.");
+            return;
+        }
+
+        const confirmDelete = window.confirm(
+            "¿Estás seguro de que deseas suspender tu cuenta? Esta acción no se puede deshacer."
+        );
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(
+                `https://soil-management-4-soft-utn.onrender.com/account?cedula=${cedula}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                alert("La cuenta ha sido suspendida con éxito.");
+                localStorage.removeItem("token");
+                setAuthorized(false);
+                window.location.href = "/";
+            } else {
+                alert("Error al suspender la cuenta. Inténtalo de nuevo.");
+            }
+        } catch (error) {
+            console.error("Error al suspender la cuenta:", error);
+            alert("Hubo un error al procesar tu solicitud.");
+        }
     };
 
     // Maneja la acción de guardar los datos modificados
     const handleSaveChanges = async () => {
         try {
+            const { password, ...updatedFormData } = formData;
+            console.log(updatedFormData);
             const response = await fetch(
-                `https://soil-management-4-soft-utn.onrender.com/`,
+                `https://soil-management-4-soft-utn.onrender.com/account`,
                 {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: token,
                     },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify(updatedFormData),
                 }
             );
 
             if (response.ok) {
                 const updatedData = await response.json();
                 setUserData(updatedData);
-                setIsEditing(false); // Cerrar el formulario
+                setIsEditing(false);
                 alert("Datos actualizados con éxito.");
             } else {
                 alert("Error al actualizar los datos. Inténtelo nuevamente.");
@@ -81,6 +123,39 @@ function Perfil() {
         }
     };
 
+    // Maneja la acción de cambiar la contraseña
+    const handleModifyPassword = async () => {
+        if (passwordData.newPassword === userData.password) {
+            alert("La nueva contraseña no puede ser igual a la actual.");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://soil-management-4-soft-utn.onrender.com/password`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: token,
+                    },
+                    body: JSON.stringify({ cedula: cedula, password: passwordData.newPassword }),
+                }
+            );
+
+            if (response.ok) {
+                alert("Contraseña cambiada con éxito.");
+                setIsChangingPassword(false);
+                setPasswordData({ currentPassword: "", newPassword: "" });
+            } else {
+                alert("Error al cambiar la contraseña. Inténtalo nuevamente.");
+            }
+        } catch (error) {
+            console.error("Error al cambiar la contraseña:", error);
+            alert("Ocurrió un error al cambiar la contraseña.");
+        }
+    };
+
     if (!authorized) {
         return <img src={Loading} alt="Cargando..." className="sueloscrud-loading" />;
     }
@@ -88,7 +163,7 @@ function Perfil() {
     return (
         <main className="perfil-main">
             <div className="perfil-container">
-                {!isEditing ? (
+                {!isEditing && !isChangingPassword ? (
                     <>
                         {/* Vista de perfil */}
                         <div className="perfil-header">
@@ -96,8 +171,7 @@ function Perfil() {
                                 <img src={Icon} alt="Perfil" className="perfil-img" />
                             </div>
                             <h1 className="perfil-name">
-                                {userData?.nombre || "Nombre del Usuario"}{" "}
-                                {userData?.apellido || ""}
+                                {userData?.nombre || "Nombre del Usuario"} {userData?.apellido || ""}
                             </h1>
                             <p className="perfil-role">Rol: {userData?.tipo}</p>
                         </div>
@@ -121,16 +195,18 @@ function Perfil() {
                         </div>
 
                         <div className="perfil-actions">
-                            <button
-                                className="btnPerfil"
-                                onClick={() => {
-                                    setIsEditing(true);
-                                    setFormData(userData); // Prellenar el formulario con los datos actuales
-                                }}
-                            >
+                            <button className="btnPerfil" onClick={() => setIsEditing(true)}>
                                 Modificar Datos
                             </button>
-                            <button className="btnPerfil">Suspender Cuenta</button>
+                            <button
+                                className="btnPerfil"
+                                onClick={() => setIsChangingPassword(true)}
+                            >
+                                Modificar Contraseña
+                            </button>
+                            <button className="btnPerfil" onClick={handleSuspendAccount}>
+                                Suspender Cuenta
+                            </button>
                             <button
                                 className="btnDanger"
                                 onClick={() => {
@@ -140,6 +216,33 @@ function Perfil() {
                                 }}
                             >
                                 Cerrar Sesión
+                            </button>
+                        </div>
+                    </>
+                ) : isChangingPassword ? (
+                    <>
+                        {/* Formulario de cambio de contraseña */}
+                        <h2>Cambiar Contraseña</h2>
+                        <div className="perfil-info-grid">
+                            <div className="perfil-info-item">
+                                <label>Nueva Contraseña</label>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={passwordData.newPassword}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="perfil-actions">
+                            <button
+                                className="btnPerfil"
+                                onClick={() => setIsChangingPassword(false)}
+                            >
+                                Cancelar
+                            </button>
+                            <button className="btnPerfil" onClick={handleModifyPassword}>
+                                Guardar Contraseña
                             </button>
                         </div>
                     </>
@@ -154,7 +257,9 @@ function Perfil() {
                                     type="text"
                                     name="cedula"
                                     value={formData.cedula || ""}
-                                    onChange={handleInputChange}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }
                                 />
                             </div>
                             <div className="perfil-info-item">
@@ -163,7 +268,9 @@ function Perfil() {
                                     type="text"
                                     name="nombre"
                                     value={formData.nombre || ""}
-                                    onChange={handleInputChange}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }
                                 />
                             </div>
                             <div className="perfil-info-item">
@@ -172,7 +279,9 @@ function Perfil() {
                                     type="text"
                                     name="apellido"
                                     value={formData.apellido || ""}
-                                    onChange={handleInputChange}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }
                                 />
                             </div>
                             <div className="perfil-info-item">
@@ -181,7 +290,9 @@ function Perfil() {
                                     type="email"
                                     name="correo"
                                     value={formData.correo || ""}
-                                    onChange={handleInputChange}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }
                                 />
                             </div>
                             <div className="perfil-info-item">
@@ -190,16 +301,9 @@ function Perfil() {
                                     type="text"
                                     name="telefono"
                                     value={formData.telefono || ""}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="perfil-info-item">
-                                <label>Contraseña</label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    value={""}
-                                    onChange={handleInputChange}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, [e.target.name]: e.target.value })
+                                    }
                                 />
                             </div>
                         </div>
