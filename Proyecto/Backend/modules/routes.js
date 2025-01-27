@@ -44,8 +44,6 @@ router.get('/zonas', validateToken, async (req, res) => {
             attributes: ['cons_id', 'cons_nombre']
         });
 
-        console.log(zonas);
-
         console.log("RUTAS >> ZONAS > Consulta de zonas realizada del usuario", req.query.userid);
         if (zonas.length > 0) res.json(zonas);
         else res.status(400).json({ error: "No se encontraron zonas para el usuario" });
@@ -73,7 +71,6 @@ router.get('/parcelas', validateToken, async (req, res) => {
                 }],
                 where: { parc_id: req.query.idparcela }
             });
-            console.log(parcelas);
             parcelas = {
                 "parc_id": parcelas.parc_id,
                 "tipos_suelo": parcelas.TiposSuelo.tipos_nombre,
