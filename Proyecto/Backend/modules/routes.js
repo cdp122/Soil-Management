@@ -30,7 +30,7 @@ async function TestBDD() {
 }
 
 //#region Rutas relativas a parcelas
-//Solicitud de todas las zonas de un usuario
+//Solicitud de todas las zonas de un usuario *
 router.get('/zonas', validateToken, async (req, res) => {
     if (!req.query.userid || req.query.userid == null) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
@@ -55,12 +55,12 @@ router.get('/zonas', validateToken, async (req, res) => {
     }
 });
 
-//Solictud de todas las parcelas de una zona
-router.get('/parcelas', async (req, res) => {
+//Solictud de todas las parcelas de una zona *
+router.get('/parcelas', validateToken, async (req, res) => {
     try {
         let parcelas;
         if (req.query.zonaid) {
-            parcelas = await Parcelas.findOne({
+            parcelas = await Parcelas.findAll({
                 where: { cons_id: req.query.zonaid }
             });
             console.log("RUTAS >> ZONAS > Consulta de parcelas realizada de la zona", req.query.zonaid);
@@ -73,6 +73,7 @@ router.get('/parcelas', async (req, res) => {
                 }],
                 where: { parc_id: req.query.idparcela }
             });
+            console.log(parcelas);
             parcelas = {
                 "parc_id": parcelas.parc_id,
                 "tipos_suelo": parcelas.TiposSuelo.tipos_nombre,
@@ -98,7 +99,7 @@ router.get('/parcelas', async (req, res) => {
     }
 });
 
-//Registrar zonas o consultas
+//Registrar zonas o consultas *
 router.post('/registrarzona', validateToken, async (req, res) => {
     console.log(req.body);
 
@@ -126,7 +127,7 @@ router.post('/registrarzona', validateToken, async (req, res) => {
     }
 });
 
-//Solicitud de todos los tipos de suelo que puede tener una parcela
+//Solicitud de todos los tipos de suelo que puede tener una parcela *
 router.get('/tipos', validateToken, async(req, res) => {
     try {
         const tipos = await TiposSuelos.findAll();
@@ -139,8 +140,8 @@ router.get('/tipos', validateToken, async(req, res) => {
     }
 });
 
-//Para crear una parcela. Todavía en desarrollo. 
-router.post('/nuevaparcela', async (req, res) => {
+//Para crear una parcela *
+router.post('/nuevaparcela', validateToken, async (req, res) => {
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
     if (!req.body["tipos_id"]) { res.status(400).json({ error: "No se ha proporcionado el id del tipo de suelo" }); return; }
     if (!req.body["user_id"]) { res.status(400).json({ error: "No se ha proporcionado el id del usuario" }); return; }
@@ -236,7 +237,7 @@ router.post('/register', async (req, res) => {
             res.status(400).json({ error: "Ya existe un usuario con ese correo" });
         } else {
             console.error("RUTAS >> REGISTRAR USUARIO > Error al registrar el usuario:", error);
-            res.status(500).json({ error: "Error al registrar el usuario" });
+            res.status(500).json({ error: "Error al registrar el usuario", errorDetalles : error.message });
         }
     }
 });
@@ -261,7 +262,7 @@ router.post('/login', async (req, res) => {
         }
         if (!usuario.user_estado) {
             console.log("RUTAS >> LOGIN > Usuario deshabilitado");
-            res.status(400).json({ error: "Usuario deshabilitado" });
+            res.status(400).json({ error: "Usuario deshabilitado, por favor comunicarse con el administrador" });
             return;
         }
 
@@ -275,11 +276,11 @@ router.post('/login', async (req, res) => {
         }
     } catch (error) {
         console.error("RUTAS >> LOGIN > Error al iniciar sesión:", error);
-        res.status(500).json({ error: "Error al iniciar sesión" });
+        res.status(500).json({ error: "Error al iniciar sesión", errorDetalles : error.message});
     }
 });
 
-//Perfil de usuario
+//Perfil de usuario *
 router.get('/profile', validateToken, async (req, res) => {
     if (!req.query.user) { res.status(400).json({ error: "No se ha proporcionado un usuario" }); return; }
 
@@ -320,6 +321,115 @@ router.get('/profile', validateToken, async (req, res) => {
         res.status(500).json({ error: "Error al consultar el perfil" });
     }
 });
+
+//Actualizar la cuenta *
+router.put('/account', validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+
+    try {
+        let usuario = await Usuarios.findOne({ where: { user_id: req.body.id } });
+        let tipo_id = await TiposUsuarios.findOne({ where: { tipus_detalles: req.body.tipo } });
+        usuario.tipus_id = tipo_id.tipus_id;
+        usuario.user_cedula = req.body.cedula;
+        usuario.user_nombre = req.body.nombre;
+        usuario.user_apellido = req.body.apellido;
+        usuario.user_email = req.body.correo.toLowerCase();
+        usuario.user_telefono = req.body.telefono;
+        usuario.updated_at = new Date();
+        await usuario.save();
+
+        console.log("RUTAS >> ACTUALIZAR CUENTA > Cuenta actualizada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> ACTUALIZAR CUENTA > Error al actualizar la cuenta:", error);
+        res.status(500).json({ error: "Error al actualizar la cuenta", detallesError: error.message });
+    }
+
+});
+
+//Deshabilitar la cuenta *
+router.delete('/account', validateToken, async (req, res) => {
+    if (!req.query.cedula) {
+        res.status(400).json({ error: "No se proporcionó el id de la cuenta" });
+        return;
+    }
+
+    try {
+        const usuario = await Usuarios.findOne({ where: { user_cedula: req.query.cedula } });
+        if (!usuario) {
+            res.status(404).json({ error: "Usuario no encontrado" });
+            return;
+        }
+
+        usuario.user_estado = false;
+        await usuario.save();
+
+        console.log("RUTAS >> DESHABILITAR CUENTA > Cuenta deshabilitada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> DESHABILITAR CUENTA > Error al deshabilitar la cuenta:", error);
+        res.status(500).json({ error: "Error al deshabilitar la cuenta", detallesError: error.message });
+    }
+});
+
+//Cambiar Contraseña *
+router.put('/password', validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.cedula) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.body.password) { res.status(400).json({ error: "No se ha proporcionado la nueva contraseña" }); return; }
+
+    try {
+        let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
+        usuario.user_password = await encryptPassword(req.body.password);
+        usuario.updated_at = new Date();
+        await usuario.save();
+
+        console.log("RUTAS >> CAMBIAR CONTRASEÑA > Contraseña cambiada correctamente");
+    } catch (error) {
+        console.error("RUTAS >> CAMBIAR CONTRASEÑA > Error al cambiar la contraseña:", error);
+        res.status(500).json({ error: "Error al cambiar la contraseña", detallesError: error.message });
+    }
+});
+
+//Recuperar la cuenta, primer paso. Encontrar la cuenta
+router.get('/recover', async (req, res) => {
+    if (!req.query.cedula) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.query.email) { res.status(400).json({ error: "No se ha proporcionado el correo" }); return; }
+    if (!req.query.telefono) { res.status(400).json({ error: "No se ha proporcionado el número de teléfono" }); return; }
+
+    try {
+        let usuario = await Usuarios.findOne({ where: { user_cedula: req.query.cedula, user_email: req.query.email, user_telefono: req.query.telefono } });
+        if (!usuario) {
+            res.status(404).json({ error: "Error: Datos incorrectos o inválidos" });
+            return;
+        }
+
+        console.log("RUTAS >> RECUPERAR CUENTA > Cuenta para recuperación encontrada exitosamente");
+        res.json({ valid: true });
+    } catch (error) {
+        console.error("RUTAS >> RECUPERAR CUENTA > Error al recuperar la cuenta:", error);
+        res.status(500).json({ error: "Error al recuperar la cuenta", detallesError: error.message });  
+    }
+});
+
+//Recuperar la cuenta, segundo paso. Cambiar la contraseña
+router.put('/recover', async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.cedula) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.body.password) { res.status(400).json({ error: "No se ha proporcionado la nueva contraseña" }); return; }
+
+    try {
+        let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
+        usuario.user_password = await encryptPassword(req.body.password);
+        usuario.updated_at = new Date();
+        await usuario.save();
+        console.log("RUTAS >> RECUPERAR CUENTA > Cuenta recuperada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> RECUPERAR CUENTA > Error al recuperar la cuenta:", error);
+        res.status(500).json({ error: "Error al recuperar la cuenta", detallesError: error.message });
+    }
+})
 //#endregion
 
 module.exports = { router, TestBDD };
