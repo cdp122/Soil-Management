@@ -119,7 +119,7 @@ function FormHeader({handleModal}) {
         <div className={`${styles['form-header']} `}>
             <div>
                 <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2">Agregar nueva parcela</span>
-                <button className={`${styles['btn-close']} has-background-danger`} aria-label="close" onClick={handleModal}><i className="fa-solid fa-x"></i></button>
+                <button className={`${styles["btn-close"]} delete is-medium has-background-danger`} aria-label="close" onClick={handleModal}></button>
             </div>
            
         </div>
