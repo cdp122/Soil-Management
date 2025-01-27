@@ -1,0 +1,132 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css";
+
+:root{
+    --border-color: rgb(225, 225, 225);
+    --has-background-grey: hsl(0, 0%, 48%);
+    --has-background-grey-light: hsl(0, 0%, 71%);
+    --has-background-grey-lighter: hsl(0, 0%, 86%);
+    --has-background-white-ter:	hsl(0, 0%, 96%);
+}
+
+.parcela-form{
+    padding: 0 20px;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.form-container{
+    padding: 10px;
+    width: 100%;
+    min-height: 500px;
+    min-width: 300px;
+    max-width: 700px;
+    background: #e2e2e2;
+    border-radius: 5px;
+
+}
+
+.form-container form{
+    width: 100%;
+    min-height: 500px;
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header{
+    position: relative;
+    
+}
+
+.form-header .title-header{
+    color: #000;
+}
+
+.btn-close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.form-body{
+    /* background: peru; */
+    padding: 0 20px;
+    flex-grow: 1;
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.form-footer{
+    gap: 15px;
+    padding-right: 20px;
+}
+
+.label-text{
+    overflow: hidden;
+    white-space: nowrap ;
+    text-overflow: ellipsis;
+}
+
+.container-quimico{
+    display: flex;
+    flex-direction: column;
+}
+
+.container{
+    max-height: 260px;
+    border-radius: 5px;
+    overflow: auto;
+}
+
+.table thead{
+    position: sticky;
+    top: 0;
+}
+
+.table td, th{
+    background: #fff;
+    color: #000 !important;
+}
+
+.table th, td{
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+
+.buttons-table{
+    flex-wrap: nowrap;
+}
+
+.btn-white{
+    background: #fff;
+    color: #000;
+    border: none;
+}
+
+/* Sobreponiendo modo oscuro */
+
+.input{
+    background: #fff;
+    color: #000;
+    outline-color: var(--has-background-white-ter);
+    border-color: var(--has-background-grey-lighter);
+}
+
+.input::placeholder{
+    color: var(--has-background-grey-light)
+}
+
+.select select{
+    background: #fff;
+    color: #000;
+    outline-color: var(--has-background-white-ter);
+    border-color: var(--has-background-grey-lighter);
+}
+
+.select option{
+    background: #fff;
+    color: #000;
+}

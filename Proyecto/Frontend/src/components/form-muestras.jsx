@@ -1,41 +1,19 @@
+/* eslint-disable */ // Validar despúes 
+
 import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import styles from "./parcela.module.css";
 import { useForm} from "react-hook-form";
 import "./indicator.css"
+import "./form-muestra.css"
 import { isFormValid } from "../utils/isFormValid";
-
+import { elementosQuimicos, unidadesMedida } from "../utils/others";
+import api from "../utils/api";
 
 const FormMuestras = () => {
 
     const [currentStep, setCurrentStep] = useState(0);
-    const [parcelaModel, setParcelaModel] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm();
-
-    const handleChangeParcela = (e) => {
-        const { name, value } = e.target;
-        let valorNuevo = value === "" ? "" : isNaN(value) ? value : parseFloat(value);
-
-        setParcelaModel((prevState) => ({
-            ...prevState,
-            [name]: valorNuevo
-        }));
-    };
-
-    const handleMuestra = (e) =>{
-        const {name , value}  = e.target;
-        let valorNuevo = value === "" ? "" : isNaN(value) ? value : parseFloat(value);
-
-        setParcelaModel((prevState) => ({
-            ...prevState,
-            muestraParcela: {
-                ...prevState.muestraParcela,
-                [name]: valorNuevo
-            }
-        }));
-    };
     
-
     const handleNext = () => {
         if (currentStep < 1 && isFormValid(errors)) {
             setCurrentStep(currentStep + 1);
@@ -76,9 +54,9 @@ const FormMuestras = () => {
                 Agregar muestra
             </button>
 
-            <div className={`${styles['parcela-form']} modal ${isActive ? "is-active" : ""}`}>
-                <div className={styles['form-container']}>
-                    <form onSubmit={handleSubmit((data) => console.log(data))}>
+            <div className={`parcela-form modal ${isActive ? "is-active" : ""}`}>
+                <div className="form-container">
+                    <form onSubmit={handleSubmit((data) => api.nuevaMuestra(data))}>
                         <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
                         <FormBody currentStep={currentStep} register={register} errors={errors}/>
                         <FormFooter currentStep={currentStep} handleBack={handleBack} handleNext={handleNext} handleSubmit={handleSubmit} handleModal={toggleModal}/>
@@ -91,10 +69,10 @@ const FormMuestras = () => {
 
 function FormHeader({handleModal, currentStep}) {
     return (
-        <div className={`${styles['form-header']} `}>
+        <div className="form-header">
             <div>
-                <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2">Agregar muestras</span>
-                <button className={`${styles['btn-close']} has-background-danger`} aria-label="close" onClick={handleModal}><i className="fa-solid fa-x"></i></button>
+                <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2 title-header">Agregar muestras</span>
+                <button className="btn-close delete is-medium has-background-danger" aria-label="close" onClick={handleModal}></button>
             </div>
             <div>
                 <StepIndicator currentStep={currentStep}/>
@@ -112,8 +90,8 @@ function StepIndicator({currentStep}){
                 <div className={`step2 ${currentStep > 0?'current-step':''}`}><span>2</span></div>
             </div>
             <div className="indicator-titles">
-                <span>Datos generales</span>
-                <span>Muestras</span>
+                <span>Parámetros generales</span>
+                <span>Variables químicas</span>
             </div>
         </div>
     )
@@ -121,7 +99,7 @@ function StepIndicator({currentStep}){
 
 function FormBody({currentStep, register, errors}){
     return (
-        <div className={`${styles["form-body"]}`}>
+        <div className="form-body">
             {currentStep === 0 && <VariablesGenerales/>}
             {currentStep === 1 && <VariablesQuimicas/>}
         </div>
@@ -130,34 +108,152 @@ function FormBody({currentStep, register, errors}){
 
 function FormFooter({currentStep, handleBack, handleNext, handleSubmit, handleModal}){
     return (
-        <div className={`${styles['form-footer']} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
+        <div className="form-footer is-fullwidth is-flex is-justify-content-end mb-2 mt-5">
             {currentStep > 0 ?
                 <>
-                    <button className="button" onClick={handleBack}>Atrás</button>
-                    <button className="button is-primary" onClick={handleSubmit}>Guardar</button>
+                    <button className="button btn-white" onClick={handleBack}>Atrás</button>
+                    <button className="button is-link" onClick={handleSubmit}>Guardar</button>
                 </>
             :
                 <button className="button is-link" onClick={handleNext}>Siguiente</button>
             }
-            <button className="button" onClick={handleModal}>Cancelar</button>
+            <button className="button btn-white" onClick={handleModal}>Cancelar</button>
         </div>
     );
 }
 
 function VariablesGenerales() {
     return (
-        <div>
-            
+        <div className="fixed-grid has-2-cols">
+            <div className="grid">
+                <div className="cell ">
+                    <label>pH</label>
+                    <input type="number" className="input" />
+                </div>
+                
+                <div className="cell label-text">
+                    <label>Conductividad eléctrica (CE)</label>
+                    <div className="control">
+                        <input type="number" className="input" />
+                    </div>
+                </div>
+                
+                <div className="cell ">
+                    <label>Salinidad</label>
+                    <input type="number" className="input" />
+                </div>
+                
+                <div className="cell label-text">
+                    <label>Capacidad de intercambio catiónico efectiva (CICe)</label>
+                    <div className="control">
+                        <input type="number" className="input" />
+                    </div>
+                </div>
+                
+                <div className="cell ">
+                    <label>Materia orgánica (MO)</label>
+                    <input type="number" className="input" />
+                </div>
+
+                <div className="cell ">
+                    <label>Fecha de registro</label>
+                    <input type="date" className="input" />
+                </div>
+                
+            </div>
         </div>
     );
 }
 
+
 function VariablesQuimicas() {
     return (
-        <div>
-            
+        <div className="container-quimico">
+            <div className="control mt-1 mb-3">
+                <div className="field has-addons has-addons-right">
+                    <p className="control is-expanded">
+                        <span className="select is-fullwidth">
+                            <select className="select-op">
+                                <option hidden>Elemento quimico</option>
+                                {
+                                Array.from(elementosQuimicos.entries()).map(([simbolo, elemento]) =>
+                                    <option key={simbolo}>{elemento}</option>
+                                )
+                                }
+                            </select>
+                        </span>
+                    </p>
+                    <p className="control">
+                        <span className="select">
+                            <select>
+                                <option hidden>Unidad</option>
+                            {
+                                unidadesMedida.map((medida, index) => <option key={index}>{medida}</option>)
+                            }
+                            </select>
+                        </span>
+                    </p>
+                    <p className="control">
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Ingrese el valor"
+                        />
+                    </p>
+                    <p className="control">
+                        <button className="button is-link">Agregar</button>
+                    </p>
+                </div>
+            </div>
+
+            <div className="container">
+                <table className="table is-hoverable is-stripped is-fullwidth">
+                    <thead className="has-background-white">
+                        <tr>
+                            <th>#</th>
+                            <th>Símbolo</th>
+                            <th>Elemento</th>
+                            <th>Unidad</th>
+                            <th>Valor</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <RowTable index={0} />
+                        <RowTable index={1} />
+                        <RowTable index={2} />
+                        <RowTable index={3} />
+                        <RowTable index={4} />
+                        <RowTable index={5} />
+                    </tbody>
+                </table>
+            </div>
         </div>
-    )
+    );
+}
+
+function RowTable ({index}){
+    const [simbolo, nombre] = Array.from(elementosQuimicos.entries())[index];
+
+    return (
+        <tr>
+            <td>1</td>
+            <td>{simbolo}</td>
+            <td>{nombre}</td>
+            <td>mg/kg</td>
+            <td>10</td>
+            <td>
+                <div className="buttons buttons-table">
+                    <button className="tag is-link">
+                        <i className="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button className="tag is-danger">
+                        <i className="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
 }
 
 export default FormMuestras;

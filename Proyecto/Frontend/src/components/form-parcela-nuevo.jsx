@@ -179,7 +179,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                                                 }
                                             })}
                                             >
-                                                <option hidden selected value="">Seleccione una opción ...  </option>
+                                                <option hidden value="">Seleccione una opción ...  </option>
                                                 {tiposSuelo.map((suelo) => (
                                                     <option key={suelo.tipos_id} value={suelo.tipos_id}>
                                                         {suelo.tipos_nombre}

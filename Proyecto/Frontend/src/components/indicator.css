@@ -1,5 +1,8 @@
 :root{
     --barra-heigth: 3px;
+    --separacion: 200px;
+    --has-background-primary: hsl(171, 100%, 41%);
+    --has-background-success: hsl(141, 71%, 48%)
 }
 
 .indicator{
@@ -12,7 +15,7 @@
     position: relative;
     display: flex;
     justify-content: center;
-    gap: 150px;
+    gap: 180px;
 }
 
 .indicator-points .step1, .step2{
@@ -41,7 +44,7 @@
     transform: translateY(-50%);
     background-color: #898989;
     height: var(--barra-heigth);
-    width: 155px;
+    width: var(--separacion);
     overflow: hidden;
 }
 
@@ -50,13 +53,13 @@
     position: absolute;
     right: 100%;
     height: 4.5px;
-    width: 155px;
-    background: yellowgreen;
+    width: 100%;
+    background: var(--has-background-primary);
     transition: all .3s;
 }
 
 .current-step{
-    background: yellowgreen !important;
+    background: var(--has-background-success) !important;
     box-shadow: 0px 0px 0px 1.5px rgb(43, 116, 226);
     transition-delay: .1s;
 }
@@ -70,7 +73,7 @@
 }
 
 .step-complete{
-    background: yellowgreen !important;
+    background: var(--has-background-success) !important;
     box-shadow: none;
 }
 
@@ -81,6 +84,6 @@
 }
 
 .indicator-titles span{
-    width: 150px;
+    width: 160px;
     text-align: center;
 }
