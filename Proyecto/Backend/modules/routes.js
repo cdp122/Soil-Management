@@ -49,7 +49,7 @@ router.get('/zonas', validateToken, async (req, res) => {
         else res.status(400).json({ error: "No se encontraron zonas para el usuario" });
     } catch (error) {
         console.error("RUTAS >> ZONAS > Error al consultar zonas:", error);
-        res.status(500).json({ error: "Error al consultar zonas" });
+        res.status(500).json({ error: "Error al consultar zonas", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -92,7 +92,7 @@ router.get('/parcelas', validateToken, async (req, res) => {
         else res.status(400).json({ error: "No se encontraron parcelas" });
     } catch (error) {
         console.error("RUTAS >> PARCELAS > Error al consultar parcelas:", error);
-        res.status(500).json({ error: "Error al consultar parcelas" });
+        res.status(500).json({ error: "Error al consultar parcelas", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -120,7 +120,7 @@ router.post('/registrarzona', validateToken, async (req, res) => {
         res.json({ nuevaZona : nuevaConsulta.cons_id });
     } catch (error) {
         console.error("RUTAS >> REGISTRAR ZONA > Error al registrar la zona:", error);
-        res.status(500).json({ error: "Error al registrar la zona" });
+        res.status(500).json({ error: "Error al registrar la zona", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -133,7 +133,7 @@ router.get('/tipos', validateToken, async(req, res) => {
         else res.status(400).json({ error: "No se encontraron tipos de suelo" });
     } catch (error) {
         console.error("RUTAS >> TIPOS > Error al consultar tipos de suelo:", error);
-        res.status(500).json({ error: "Error al consultar tipos de suelo" });
+        res.status(500).json({ error: "Error al consultar tipos de suelo", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -163,7 +163,68 @@ router.post('/nuevaparcela', validateToken, async (req, res) => {
         res.json({ status: "OK" });
     } catch (error) {
         console.error("RUTAS >> NUEVA PARCELA > Error al crear una nueva parcela:", error);
-        res.status(500).json({ error: "Error al crear una nueva parcela" });
+        res.status(500).json({ error: "Error al crear una nueva parcela", detalles: error.original?.detail || error.message });
+    }
+});
+
+//Para registrar una nueva muestra *
+router.post('/muestras', validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
+    if (!req.body.ph) { res.status(400).json({ error: "No se ha proporcionado el coeficiente de ph" }); return; }
+    if (!req.body.mat_org) { res.status(400).json({ error: "No se ha proporcionado el porcentaje de cantidad orgánica" }); return; }
+    if (!req.body.fecha_registro) { res.status(400).json({ error: "No se ha proporcionado la fecha de registro" }); return; }
+
+    try {
+        await Muestras.create({
+            parc_id: req.body.parc_id, mue_ph: req.body.ph, mue_con_elec: req.body.con_elec, mue_porc_mat_org: req.body.mat_org,
+            mue_cap_inter_cati: req.body.inter_cati, mue_salinidad: req.body.salinidad, mue_fecha_registro: req.body.fecha_registro
+        });
+
+        console.log("RUTAS >> MUESTRAS > Muestra registrada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> MUESTRAS > Error al registrar la muestra:", error);
+        res.status(500).json({ error: "Error al registrar la muestra", detalles: error.original?.detail || error.message});
+    }
+});
+
+//Para conseguir los elementos registrados en la BDD *
+router.get('/elementos', validateToken, async (req, res) => {
+    try {
+        const elementos = await Elementos.findAll({
+            attributes: [
+                'elem_simbolo',
+                'elem_nombre',
+                'uni_simbolo'
+            ]
+        });
+        console.log("RUTAS >> ELEMENTOS > Consulta de elementos realizada");
+        if (elementos.length > 0) res.json(elementos);
+        else res.status(400).json({ error: "No se encontraron elementos" });
+    } catch (error) {
+        console.error("RUTAS >> UNIDADES > Error al consultar elementos:", error);
+        res.status(500).json({ error: "Error al consultar elementos", detalles: error.original?.detail || error.message });
+    }
+});
+
+//Para registrar Variables Secundarias *
+router.post('/variables', validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra principal" }); return; }
+    if (!req.body.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el simbolo del elemento" }); return; }
+    if (!req.body.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento" }); return; }
+
+    try {
+        await VariablesSecundarias.create({
+            mue_id: req.body.mue_id, elem_simbolo: req.body.simb_elem, anpar_elem_cant: req.body.cant_elem
+        });
+
+        console.log("RUTAS >> VARIABLES > Variable registrada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> VARIABLES > Error al registrar la variable:", error);
+        res.status(500).json({ error: "Error al registrar la variable", detalles: error.original?.detail || error.message });
     }
 });
 //#endregion
@@ -184,7 +245,7 @@ router.get('/roles', async (req, res) => {
         else res.status(400).json({ error: "No hay roles registrados en la BDD" });
     } catch (error) {
         console.error("RUTAS >> ROLES > Error al consultar roles:", error);
-        res.status(500).json({ error: "Error al consultar roles" });
+        res.status(500).json({ error: "Error al consultar roles", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -234,7 +295,7 @@ router.post('/register', async (req, res) => {
             res.status(400).json({ error: "Ya existe un usuario con ese correo" });
         } else {
             console.error("RUTAS >> REGISTRAR USUARIO > Error al registrar el usuario:", error);
-            res.status(500).json({ error: "Error al registrar el usuario", errorDetalles : error.message });
+            res.status(500).json({ error: "Error al registrar el usuario", detalles: error.original?.detail || error.message });
         }
     }
 });
@@ -273,7 +334,7 @@ router.post('/login', async (req, res) => {
         }
     } catch (error) {
         console.error("RUTAS >> LOGIN > Error al iniciar sesión:", error);
-        res.status(500).json({ error: "Error al iniciar sesión", errorDetalles : error.message});
+        res.status(500).json({ error: "Error al iniciar sesión", detalles: error.original?.detail || error.message});
     }
 });
 
@@ -315,7 +376,7 @@ router.get('/profile', validateToken, async (req, res) => {
         });
     } catch (error) {
         console.error("RUTAS >> PERFIL > Error al consultar el perfil:", error);
-        res.status(500).json({ error: "Error al consultar el perfil" });
+        res.status(500).json({ error: "Error al consultar el perfil", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -337,7 +398,7 @@ router.put('/account', validateToken, async (req, res) => {
         res.json({ status: "OK" });
     } catch (error) {
         console.error("RUTAS >> ACTUALIZAR CUENTA > Error al actualizar la cuenta:", error);
-        res.status(500).json({ error: "Error al actualizar la cuenta", detallesError: error.message });
+        res.status(500).json({ error: "Error al actualizar la cuenta", detalles: error.original?.detail || error.message });
     }
 
 });
@@ -363,7 +424,7 @@ router.delete('/account', validateToken, async (req, res) => {
         res.json({ status: "OK" });
     } catch (error) {
         console.error("RUTAS >> DESHABILITAR CUENTA > Error al deshabilitar la cuenta:", error);
-        res.status(500).json({ error: "Error al deshabilitar la cuenta", detallesError: error.message });
+        res.status(500).json({ error: "Error al deshabilitar la cuenta", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -382,7 +443,7 @@ router.put('/password', validateToken, async (req, res) => {
         console.log("RUTAS >> CAMBIAR CONTRASEÑA > Contraseña cambiada correctamente");
     } catch (error) {
         console.error("RUTAS >> CAMBIAR CONTRASEÑA > Error al cambiar la contraseña:", error);
-        res.status(500).json({ error: "Error al cambiar la contraseña", detallesError: error.message });
+        res.status(500).json({ error: "Error al cambiar la contraseña", detalles: error.original?.detail || error.message });
     }
 });
 
@@ -399,11 +460,11 @@ router.get('/recover', async (req, res) => {
             return;
         }
 
-        console.log("RUTAS >> RECUPERAR CUENTA > Cuenta para recuperación encontrada exitosamente");
+        console.log("RUTAS >> RECUPERAR CUENTA [1] > Cuenta para recuperación encontrada exitosamente");
         res.json({ valid: true });
     } catch (error) {
-        console.error("RUTAS >> RECUPERAR CUENTA > Error al recuperar la cuenta:", error);
-        res.status(500).json({ error: "Error al recuperar la cuenta", detallesError: error.message });  
+        console.error("RUTAS >> RECUPERAR CUENTA [1]> Error al recuperar la cuenta:", error);
+        res.status(500).json({ error: "Error al recuperar la cuenta", detalles: error.original?.detail || error.message });  
     }
 });
 
@@ -418,11 +479,11 @@ router.put('/recover', async (req, res) => {
         usuario.user_password = await encryptPassword(req.body.password);
         usuario.updated_at = new Date();
         await usuario.save();
-        console.log("RUTAS >> RECUPERAR CUENTA > Cuenta recuperada correctamente");
+        console.log("RUTAS >> RECUPERAR CUENTA [2] > Cuenta recuperada correctamente");
         res.json({ success: true });
     } catch (error) {
-        console.error("RUTAS >> RECUPERAR CUENTA > Error al recuperar la cuenta:", error);
-        res.status(500).json({ error: "Error al recuperar la cuenta", detallesError: error.message });
+        console.error("RUTAS >> RECUPERAR CUENTA [2] > Error al recuperar la cuenta:", error);
+        res.status(500).json({ error: "Error al recuperar la cuenta", detalles: error.original?.detail || error.message });
     }
 })
 //#endregion
