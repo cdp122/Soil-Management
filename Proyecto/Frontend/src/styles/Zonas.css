@@ -4,6 +4,8 @@
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
     color: white; /* Color de texto blanco */
+    height: calc(100vh -100px); /* Altura ajustada */
+    overflow-y: auto; /* Habilitar scroll vertical */
 }
 
 .zonas-header {
@@ -30,7 +32,7 @@
     justify-content: center;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil */
-    color: black
+    color: black;
 }
 
 .zonas-add:hover {
@@ -41,6 +43,8 @@
     list-style: none;
     padding: 0;
     margin-top: 20px;
+    max-height: calc(100vh - 120px); /* Altura máxima ajustada */
+    overflow-y: auto; /* Habilitar scroll vertical */
 }
 
 .zonas-item {

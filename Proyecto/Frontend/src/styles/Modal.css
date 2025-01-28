@@ -1,72 +1,116 @@
-.modal-overlay {
+.modal-addz-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    background: rgba(0, 0, 0, 0.7); /* Fondo más oscuro */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Asegurarse de que el modal esté por encima de todo */
 }
 
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.modal-addz-content {
+    position: relative; /* Para posicionar el botón de cerrar */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 600px; /* Aumentar el ancho */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    animation: fadeIn 0.3s ease-in-out; /* Animación de entrada */
 }
 
-.modal-content h2 {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-addz-content h2 {
     text-align: center;
+    color: #4CAF50; /* Color verde */
+    margin-bottom: 20px;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.form-addz-group {
+    margin-bottom: 15px; /* Reducir margen inferior */
 }
 
-.form-group label {
+.form-addz-group label {
     display: block;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 5px; /* Reducir margen inferior */
+    color: #333; /* Color de texto */
 }
 
-.form-group input, textarea {
-    width: 95%;
-    padding: 10px;
-    border-radius: 4px;
+.form-addz-group input, .form-addz-group textarea, .form-addz-group select {
+    width: 100%;
+    padding: 8px; /* Reducir padding */
+    border-radius: 6px;
     border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 14px; /* Reducir tamaño de fuente */
 }
 
-.form-group textarea {
+.form-addz-group textarea {
     resize: vertical;
-    height: 100px;
+    min-height: 100px; /* Reducir altura */
+    max-height: calc(100vh - 470px); /* Altura máxima */
 }
 
-.modal-buttons {
+.modal-addz-buttons {
     display: flex;
     justify-content: space-between;
+    margin-top: 20px;
 }
 
-.modal-buttons button {
-    padding: 10px 20px;
+.modal-addz-buttons button {
+    padding: 10px 20px; /* Reducir padding */
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px; /* Reducir tamaño de fuente */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.cancel-addz-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    color: #333;
+    font-size: 20px;
+    border: none;
     cursor: pointer;
 }
 
-.cancel-btn {
-    background-color: #f44336;
-    color: white;
+.cancel-addz-btn:hover {
+    color: #f44336;
 }
 
-.submit-btn {
+.submit-addz-btn {
     background-color: #4caf50;
     color: white;
 }
 
-.modal-buttons button:hover {
-    opacity: 0.8;
+.modal-addz-buttons button:hover {
+    opacity: 0.9;
+}
+
+/* Estilos para organizar los inputs en dos columnas */
+.form-addz-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.addz-p {
+    color: red;
+    text-align: center;
 }

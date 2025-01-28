@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "./Modal"; // Importamos el Modal
 import "./styles/Zonas.css";
 
-function Zonas({ zonas, onZonaClick }) {
+function Zonas({ zonas, onZonaClick, userId, setZonas }) {
     const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
 
     const handleAddZonaClick = () => {
@@ -13,30 +13,23 @@ function Zonas({ zonas, onZonaClick }) {
         setShowModal(false); // Cerrar el modal
     };
 
-    const handleCreateZona = async (newZona) => {
-        console.log("Nueva zona creada:", newZona);
-
+    const refreshZonas = async () => {
         try {
-            const response = await fetch('https://soil-management-4-soft-utn.onrender.com/registrarzona', {
-                method: 'POST',
+            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/zonas?userid=${userId}`, {
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': localStorage.getItem('token'),
+                    Authorization: localStorage.getItem('token'),
                 },
-                body: JSON.stringify({
-                    nombreConsulta: newZona.nombreZona,
-                    probDetalle: newZona.problema,
-                }),
             });
 
             if (response.ok) {
-                // Lógica para manejar la creación exitosa de una nueva zona
-                setShowModal(false);
+                const data = await response.json();
+                setZonas(data);
             } else {
-                console.error('Error al crear la zona');
+                console.error('Error al cargar las zonas');
             }
         } catch (error) {
-            console.error('Error al crear la zona:', error);
+            console.error('Error al cargar las zonas:', error);
         }
     };
 
@@ -49,7 +42,7 @@ function Zonas({ zonas, onZonaClick }) {
             <ul className="zonas-list">
                 {zonas.map((zona) => (
                     <li
-                        key={zona.id}
+                        key={zona.cons_id}
                         className="zonas-item"
                         onClick={() => onZonaClick(zona.cons_id)}
                     >
@@ -60,7 +53,7 @@ function Zonas({ zonas, onZonaClick }) {
 
             {/* Mostrar el Modal si el estado showModal es verdadero */}
             {showModal && (
-                <Modal onClose={handleCloseModal} onCreateZona={handleCreateZona} />
+                <Modal onClose={handleCloseModal} refreshZonas={refreshZonas} userId={userId} />
             )}
         </div>
     );

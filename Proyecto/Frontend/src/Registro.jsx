@@ -58,29 +58,27 @@ function Registro({ onSwitchToLogin }) {
 
         console.log('Datos enviados al backend (registro):', payload);
 
-        // Solicitud POST al backend
-        fetch('https://soil-management-4-soft-utn.onrender.com/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload) // Convertir a JSON
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Registro exitoso:', data);
-                alert('Registro exitoso');
-                onSwitchToLogin(); // Cambiar a la pestaña de inicio de sesión
-            })
-            .catch(error => {
-                console.error('Error al registrar:', error);
-                alert('Error al registrar');
+        try {
+            const response = await fetch('https://soil-management-4-soft-utn.onrender.com/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
             });
+
+            if (!response.ok) {
+                const errorResult = await response.json();
+                throw new Error(`${errorResult.error}`);
+            }
+
+            const result = await response.json();
+            console.log('Registro exitoso:', result);
+            alert('Registro exitoso');
+            onSwitchToLogin(); // Cambiar a la pestaña de inicio de sesión
+        } catch (error) {
+            console.error('Error al registrar:', error);
+        }
     };
 
     return (

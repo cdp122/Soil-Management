@@ -132,7 +132,7 @@ function SuelosCRUD() {
 
     return (
         <div className="sueloscrud-container">
-            <Zonas zonas={zonas} onZonaClick={handleZonaClick} />
+            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas} />
             <div className="sueloscrud-content">
                 {loading ? (
                     <div className="sueloscrud-loading"><img src={Loading} alt="Cargando..." className="sueloscrud-loading" /></div>
