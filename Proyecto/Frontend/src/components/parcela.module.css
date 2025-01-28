@@ -40,7 +40,7 @@
 }
 
 .btn-close{
-    position: absolute;
+    position: absolute !important;
     top: 0;
     right: 0;
     width: 30px;

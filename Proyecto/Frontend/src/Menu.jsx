@@ -1,5 +1,6 @@
 import soilLogo from './assets/soil-management-logo.png'
 import './styles/Menu.css'
+import FormMuestras from './components/form-muestras'
 
 function Menu({ onTabSelect }) {
     const handleMenuClick = (tab) => {
@@ -11,6 +12,7 @@ function Menu({ onTabSelect }) {
             <div className='mn-container'>
                 <img className='soil-logo' src={soilLogo} alt="soil" />
                 <ul className='mn-options'>
+                    <FormMuestras></FormMuestras>
                     <li onClick={() => handleMenuClick("inicio")}>
                         INICIO
                     </li>

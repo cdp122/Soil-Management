@@ -11,13 +11,8 @@ import api from "../utils/api";
 const FormMuestras = () => {
 
     const [currentStep, setCurrentStep] = useState(0);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({mode: "all"});
     
-    const handleNext = () => {
-        if (currentStep < 1 && isFormValid(errors)) {
-            setCurrentStep(currentStep + 1);
-        }
-    };
 
     const handleBack = () => {
         if (currentStep > 0) {
@@ -30,6 +25,7 @@ const FormMuestras = () => {
     const toggleModal = () => {
         setIsActive(!isActive);
         setCurrentStep(0);
+        reset();
     };
 
     useEffect(() => {
@@ -47,6 +43,17 @@ const FormMuestras = () => {
         };
     }),[isActive];
 
+
+    const EnviarMuestra = handleSubmit((data) => {
+        if(currentStep < 1){
+            setCurrentStep(currentStep + 1);
+            return;
+        }
+        
+        console.log("Enviando", data);
+    });
+    
+
     return (
         <div>
             <button className="button is-primary" onClick={toggleModal}>
@@ -55,10 +62,10 @@ const FormMuestras = () => {
 
             <div className={`${styles["parcela-form"]} modal ${isActive ? "is-active" : ""}`}>
                 <div className={`${styles["form-container"]}`}>
-                    <form onSubmit={handleSubmit((data) => api.nuevaMuestra(data))}>
+                    <form >
                         <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
                         <FormBody currentStep={currentStep} register={register} errors={errors}/>
-                        <FormFooter currentStep={currentStep} handleBack={handleBack} handleNext={handleNext} handleSubmit={handleSubmit} handleModal={toggleModal}/>
+                        <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal}/>
                     </form>
                 </div>
             </div>
@@ -99,13 +106,13 @@ function StepIndicator({currentStep}){
 function FormBody({currentStep, register, errors}){
     return (
         <div className={`${styles["form-body"]}`}>
-            {currentStep === 0 && <VariablesGenerales/>}
+            {currentStep === 0 && <VariablesGenerales register={register} errors={errors}/>}
             {currentStep === 1 && <VariablesQuimicas/>}
         </div>
     );
 }
 
-function FormFooter({currentStep, handleBack, handleNext, handleSubmit, handleModal}){
+function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
     return (
         <div className={`${styles["form-footer"]} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
             {currentStep > 0 ?
@@ -114,49 +121,127 @@ function FormFooter({currentStep, handleBack, handleNext, handleSubmit, handleMo
                     <button className="button is-link" onClick={handleSubmit}>Guardar</button>
                 </>
             :
-                <button className="button is-link" onClick={handleNext}>Siguiente</button>
+                <button className="button is-link" onClick={handleSubmit}>Siguiente</button>
             }
-            <button className={`button ${styles["btn-white"]}`} onClick={handleModal}>Cancelar</button>
+            <button type="button" className={`button ${styles["btn-white"]}`} onClick={handleModal}>Cancelar</button>
         </div>
     );
 }
 
-function VariablesGenerales() {
+function VariablesGenerales({register, errors}) {
+
     return (
         <div className="fixed-grid has-2-cols">
             <div className="grid">
                 <div className="cell ">
                     <label>pH</label>
-                    <input type="number" className="input" />
+                    <input type="number" className="input" 
+                    {...register("mue_ph", {
+                        required:{
+                            value: true,
+                            message: "Ingrese valor"
+                        },
+                        min: {
+                            value: 0,
+                            message: "Valor inválido"
+                        },
+                        max: {
+                            value: 14,
+                            message: "Valor inválido"
+                        }
+                    })}
+                    />
+                    {
+                        errors?.mue_ph && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_ph.message}</span></div>
+                    }
                 </div>
                 
                 <div className={`cell ${styles["label-text"]}`}>
                     <label>Conductividad eléctrica (CE)</label>
                     <div className="control">
-                        <input type="number" className="input" />
+                        <input type="number" className="input"
+                        {...register("mue_con_elec", {
+                            required:{
+                                value: true,
+                                message: "Ingrese valor"
+                            }
+                        })}
+                        />
                     </div>
+                    {
+                        errors?.mue_con_elec && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_con_elec.message}</span></div>
+                    }
                 </div>
                 
                 <div className="cell ">
                     <label>Salinidad</label>
-                    <input type="number" className="input" />
+                    <input type="number" className="input" 
+                    {...register("mue_salinidad", {
+                        required:{
+                            value: true,
+                            message: "Ingrese valor"
+                        }
+                    })}
+                    />
+                    {
+                        errors?.mue_salinidad && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_salinidad.message}</span></div>
+                    }
                 </div>
                 
                 <div className={`cell ${styles["label-text"]}`}>
                     <label>Capacidad de intercambio catiónico efectiva (CICe)</label>
                     <div className="control">
-                        <input type="number" className="input" />
+                        <input type="number" className="input"
+                        {...register("mue_cap_inter_cati",{
+                            required:{
+                                value: true,
+                                message: "Ingrese valor"
+                            }
+                        })}
+                        />
+                        {
+                            errors?.mue_cap_inter_cati && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_cap_inter_cati.message}</span></div>
+                        }
                     </div>
                 </div>
                 
                 <div className="cell ">
                     <label>Materia orgánica (MO)</label>
-                    <input type="number" className="input" />
+                    <input type="number" className="input"
+                    {...register("mue_porc_mat_org", {
+                        required:{
+                            value: true,
+                            message: "Ingrese valor"
+                        }
+                    })}
+                    />
+                    {
+                        errors?.mue_porc_mat_org && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_porc_mat_org.message}</span></div>
+                    }
                 </div>
 
                 <div className="cell ">
                     <label>Fecha de registro</label>
-                    <input type="date" className="input" />
+                    <input type="date" className="input"
+                    {...register("mue_fecha_registro", {
+                        required:{
+                            value: true,
+                            message: "Escoga fecha de registro"
+                        },
+                        validate: (valor) => {
+                            const fechaSeleccionada = new Date(valor);
+                            const hoy = new Date();
+                            if(fechaSeleccionada > hoy){
+                                return "Escoga un fecha actual o anterior";
+                            }
+                            return true;
+                        }
+                        
+                    })}
+                    />
+                    {
+                        errors?.mue_fecha_registro && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_fecha_registro.message}</span></div>
+                    }
                 </div>
                 
             </div>
@@ -183,13 +268,13 @@ function VariablesQuimicas() {
                         </span>
                     </p>
                     <p className="control">
-                        <span className="select">
-                            <select>
+                        <span className="input">
+                            {/* <select>
                                 <option hidden>Unidad</option>
                             {
                                 unidadesMedida.map((medida, index) => <option key={index}>{medida}</option>)
                             }
-                            </select>
+                            </select> */}
                         </span>
                     </p>
                     <p className="control">
