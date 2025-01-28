@@ -57,7 +57,7 @@ async function Conectar() {
         console.log("BDD >> Conexión a la BDD Azure exitosa");
         return sequelize;
     } catch (error) {
-        console.error("BDD >> Conexión Azure error:", error.original.routine);
+        console.error("BDD >> Conexión Azure error:", error.original?.routine || error.message);
         try {
             console.log("BDD >> Intentando conectar a LOCAL");
             await sequelizeLocal.authenticate();
@@ -246,7 +246,7 @@ async function DefinirConsultas() {
 async function DefinirUnidades() {
     Unidades = sequelize.define('Unidades', {
         uni_simbolo: {
-            type: DataTypes.STRING(5),
+            type: DataTypes.STRING(7),
             primaryKey: true,
             allowNull: false,
         },

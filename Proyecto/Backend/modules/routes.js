@@ -167,28 +167,6 @@ router.post('/nuevaparcela', validateToken, async (req, res) => {
     }
 });
 
-//Para registrar una nueva muestra *
-router.post('/muestras', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
-    if (!req.body.ph) { res.status(400).json({ error: "No se ha proporcionado el coeficiente de ph" }); return; }
-    if (!req.body.mat_org) { res.status(400).json({ error: "No se ha proporcionado el porcentaje de cantidad orgánica" }); return; }
-    if (!req.body.fecha_registro) { res.status(400).json({ error: "No se ha proporcionado la fecha de registro" }); return; }
-
-    try {
-        await Muestras.create({
-            parc_id: req.body.parc_id, mue_ph: req.body.ph, mue_con_elec: req.body.con_elec, mue_porc_mat_org: req.body.mat_org,
-            mue_cap_inter_cati: req.body.inter_cati, mue_salinidad: req.body.salinidad, mue_fecha_registro: req.body.fecha_registro
-        });
-
-        console.log("RUTAS >> MUESTRAS > Muestra registrada correctamente");
-        res.json({ status: "OK" });
-    } catch (error) {
-        console.error("RUTAS >> MUESTRAS > Error al registrar la muestra:", error);
-        res.status(500).json({ error: "Error al registrar la muestra", detalles: error.original?.detail || error.message});
-    }
-});
-
 //Para conseguir los elementos registrados en la BDD *
 router.get('/elementos', validateToken, async (req, res) => {
     try {
@@ -208,23 +186,83 @@ router.get('/elementos', validateToken, async (req, res) => {
     }
 });
 
-//Para registrar Variables Secundarias *
-router.post('/variables', validateToken, async (req, res) => {
+//Para registrar una nueva muestra *
+router.post('/muestras', validateToken, async (req, res) => {
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra principal" }); return; }
-    if (!req.body.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el simbolo del elemento" }); return; }
-    if (!req.body.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento" }); return; }
+    if (!req.body.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
+    if (!req.body.ph) { res.status(400).json({ error: "No se ha proporcionado el coeficiente de ph" }); return; }
+    if (!req.body.mat_org) { res.status(400).json({ error: "No se ha proporcionado el porcentaje de cantidad orgánica" }); return; }
+    if (!req.body.fecha_registro) { res.status(400).json({ error: "No se ha proporcionado la fecha de registro" }); return; }
+
+    console.log("RUTAS >> MUESTRAS > Registrando nueva muestra...");
+
+    //Si hay variables secundarias debe de comprobarse de la buena estructura del json
+    if (req.body.elems) {
+        console.log("RUTAS >> MUESTRAS > Se identificaron elementos en el registro de muestras. Comprobando estructura de elementos...");
+        var elem;
+        for (var elems in req.body.elems) {
+            elem = req.body.elems[elems];
+            if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el símbolo del elemento en el registro " + (elems + 1) }); return; }
+            if (!elem.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento en el registro " + (elems + 1) }); return; }
+        }
+        console.log("RUTAS >> MUESTRAS > Estructura de elementos correcta. Iniciando con el registro...");
+    }
 
     try {
-        await VariablesSecundarias.create({
-            mue_id: req.body.mue_id, elem_simbolo: req.body.simb_elem, anpar_elem_cant: req.body.cant_elem
+        await BDD.transaction(async (t) => {
+            const muestra = await Muestras.create({
+                parc_id: req.body.parc_id, mue_ph: req.body.ph, mue_con_elec: req.body.con_elec, mue_porc_mat_org: req.body.mat_org,
+                mue_cap_inter_cati: req.body.inter_cati, mue_salinidad: req.body.salinidad, mue_fecha_registro: req.body.fecha_registro
+            }, { transaction: t });
+
+            var elem;
+
+            for (var elems in req.body.elems) {
+                elem = req.body.elems[elems];
+                await VariablesSecundarias.create({
+                    mue_id: muestra.mue_id, elem_simbolo: elem.simb_elem, anpar_elem_cant: elem.cant_elem
+                }, { transaction: t });
+            }
         });
 
-        console.log("RUTAS >> VARIABLES > Variable registrada correctamente");
+        console.log("RUTAS >> MUESTRAS > Muestras registradas correctamente");
         res.json({ status: "OK" });
     } catch (error) {
-        console.error("RUTAS >> VARIABLES > Error al registrar la variable:", error);
-        res.status(500).json({ error: "Error al registrar la variable", detalles: error.original?.detail || error.message });
+        console.error("RUTAS >> MUESTRAS > Error al registrar las muestras:", error);
+        res.status(500).json({ error: "Error al registrar las muestras", detalles: error.original?.detail || error.message });
+    }
+});
+
+//Para registrar nuevas variables secundarias *
+router.post('/variables', validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; } 
+    if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
+    if (!req.body.elems) { res.status(400).json({ error: "No se ha proporcionado información de las nuevas variables" }); return; }
+
+    var elem;
+    for (var elems in req.body.elems) {
+        elem = req.body.elems[elems];
+        if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el símbolo del elemento en el registro " + (elems + 1) }); return; }
+        if (!elem.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento en el registro " + (elems + 1) }); return; }
+    }
+    console.log("RUTAS >> VARIABLES > Registro de variables secundarias a la muestra", req.body.mue_id);
+
+    try {
+        var elem;
+        await BDD.transaction(async (t) => {
+            for (var elems in req.body.elems) {
+                elem = req.body.elems[elems];
+                await VariablesSecundarias.create({
+                    mue_id: req.body.mue_id, elem_simbolo: elem.simb_elem, anpar_elem_cant: elem.cant_elem
+                }, { transaction: t });
+            }
+        });
+
+        console.log("RUTAS >> VARIABLES > Variables registradas correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> VARIABLES > Error al registrar las variables:", error);
+        res.status(500).json({ error: "Error al registrar las variable", detalles: error.original?.detail || error.message });
     }
 });
 //#endregion
@@ -322,6 +360,10 @@ router.post('/login', async (req, res) => {
             console.log("RUTAS >> LOGIN > Usuario deshabilitado");
             res.status(400).json({ error: "Usuario deshabilitado, por favor comunicarse con el administrador" });
             return;
+        }
+        if (usuario.tipus_id != 1 && usuario.tipus_id != 2 && usuario.tipus_id != 3) {
+            console.log("RUTAS >> LOGIN > Usuario de otro módulo detectado. Impidiendo inicio de sesión");
+            res.status(403).json({ error: "Usuario no autorizado" });
         }
 
         const match = await verifyPassword(password, usuario.user_password);
