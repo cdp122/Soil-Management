@@ -353,17 +353,17 @@ router.post('/login', async (req, res) => {
         res.setHeader('charset', 'utf-8');
         if (!usuario) {
             console.log("RUTAS >> LOGIN > No se encontró el usuario");
-            res.status(400).json({ error: "Usuario no encontrado" });
+            res.status(401).json({ error: "Usuario no encontrado" });
             return;
         }
         if (!usuario.user_estado) {
             console.log("RUTAS >> LOGIN > Usuario deshabilitado");
-            res.status(400).json({ error: "Usuario deshabilitado, por favor comunicarse con el administrador" });
+            res.status(401).json({ error: "Usuario deshabilitado, por favor comunicarse con el administrador" });
             return;
         }
         if (usuario.tipus_id != 1 && usuario.tipus_id != 2 && usuario.tipus_id != 3) {
             console.log("RUTAS >> LOGIN > Usuario de otro módulo detectado. Impidiendo inicio de sesión");
-            res.status(403).json({ error: "Usuario no autorizado" });
+            res.status(401).json({ error: "Usuario no autorizado" });
         }
 
         const match = await verifyPassword(password, usuario.user_password);
@@ -372,7 +372,7 @@ router.post('/login', async (req, res) => {
             res.json({ token: generateAccessToken({ username: usuario.user_cedula }) });
         } else {    
             console.log("RUTAS >> LOGIN > Contraseña incorrecta");
-            res.status(400).json({ error: "Contraseña incorrecta" });
+            res.status(401).json({ error: "Contraseña incorrecta" });
         }
     } catch (error) {
         console.error("RUTAS >> LOGIN > Error al iniciar sesión:", error);
