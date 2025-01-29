@@ -9,7 +9,6 @@ import api from "../utils/api";
 import Notification from "./notification/notification";
 
 const FormMuestras = ({parcelaId}) => {
-    console.log("Renderizando formulario main...");
     const [currentStep, setCurrentStep] = useState(0);
     const {register, handleSubmit, formState: { errors }, reset} = useForm({mode: "all"});
     const [isSuccess, setIsSuccess] = useState(false);
@@ -148,7 +147,6 @@ const FormMuestras = ({parcelaId}) => {
 };
 
 function FormHeader({handleModal, currentStep}) {
-    console.log("Renderizando form header...");
     return (
         <div className={`${styles["form-header"]}`}>
             <div>
@@ -163,7 +161,6 @@ function FormHeader({handleModal, currentStep}) {
 }
 
 function StepIndicator({currentStep}){
-    console.log("Renderizando step indicator...");
     return (
         <div className="indicator">
             <div className="indicator-points">
@@ -180,7 +177,6 @@ function StepIndicator({currentStep}){
 }
 
 function FormBody({currentStep, register, errors, elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}){
-    console.log("Renderizando form body...");
     return (
         <div className={`${styles["form-body"]}`}>
             {currentStep === 0 && <VariablesGenerales register={register} errors={errors}/>}
@@ -190,7 +186,6 @@ function FormBody({currentStep, register, errors, elementosIniciales, elementosS
 }
 
 function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
-    console.log("Renderizando form footer...");
     return (
         <div className={`${styles["form-footer"]} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
             {currentStep > 0 ?
@@ -207,7 +202,6 @@ function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
 }
 
 function VariablesGenerales({register, errors}) {
-    console.log("Renderizando variables generales...");
     return (
         <div className="fixed-grid has-2-cols">
             <div className="grid">
@@ -325,10 +319,7 @@ function VariablesGenerales({register, errors}) {
     );
 }
 
-
 function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}) {
-    console.log("Renderizando variables quimicas...");
-    
     const elementoSimboloRef = useRef("");
     const elementoValorRef = useRef("");
 
