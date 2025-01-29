@@ -6,13 +6,43 @@ import "./indicator.css"
 import styles from "./form-muestra.module.css"
 import { isFormValid } from "../utils/isFormValid";
 import api from "../utils/api";
-import jsonData from "../utils/elementos.json"
 import Notification from "./notification/notification";
 
 const FormMuestras = ({parcelaId}) => {
     const [currentStep, setCurrentStep] = useState(0);
     const { register, handleSubmit, formState: { errors }, reset, getValues, setValue} = useForm({mode: "all"});
     const [isSuccess, setIsSuccess] = useState(false);
+    const [elementosQuimicos, setElementosQuimicos] = useState();
+
+    useEffect(()=>{
+        const getElementosQuimicos = async () => {
+            const token = localStorage.getItem("token");
+            const url = "https://soil-management-4-soft-utn.onrender.com/elementos";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    // throw new Error(`Response status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setElementosQuimicos(data);
+            } catch (error) {
+                console.error(
+                    "Error al obtener los elementos quimicos:",
+                    error.message
+                );
+            }
+        };
+        getElementosQuimicos();
+        console.log(elementosQuimicos);
+    }, [])
 
     const handleBack = () => {
         if (currentStep > 0) {
@@ -103,7 +133,7 @@ const FormMuestras = ({parcelaId}) => {
                         <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
                         {!isSuccess ? (
                             <>
-                                <FormBody currentStep={currentStep} register={register} errors={errors} getValues={getValues} setValue={setValue}/>
+                                <FormBody currentStep={currentStep} register={register} errors={errors} getValues={getValues} setValue={setValue} elementosQuimicos={elementosQuimicos}/>
                                 <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal}/>
                             </>
                         ) : (
@@ -150,11 +180,11 @@ function StepIndicator({currentStep}){
     )
 }
 
-function FormBody({currentStep, register, errors, getValues, setValue}){
+function FormBody({currentStep, register, errors, getValues, setValue, elementosQuimicos}){
     return (
         <div className={`${styles["form-body"]}`}>
             {currentStep === 0 && <VariablesGenerales register={register} errors={errors}/>}
-            {currentStep === 1 && <VariablesQuimicas register={register} errors={errors} getValues={getValues} setValue={setValue}/>}
+            {currentStep === 1 && <VariablesQuimicas register={register} errors={errors} getValues={getValues} setValue={setValue} elementosQuimicos={elementosQuimicos}/>}
         </div>
     );
 }
@@ -295,7 +325,7 @@ function VariablesGenerales({register, errors}) {
 }
 
 
-function VariablesQuimicas({getValues, setValue}) {
+function VariablesQuimicas({getValues, setValue, elementosQuimicos}) {
     const [selectedItems, setSelectedItems] = useState([]);
     // console.log(getValues());
     setValue("selectedItems", selectedItems);
@@ -307,7 +337,7 @@ function VariablesQuimicas({getValues, setValue}) {
     const elementoMedidaRef = useRef("");
     
     const [initialItems, setInitialItems] = useState(() => {
-        const ordenado = jsonData.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre)); 
+        const ordenado = elementosQuimicos.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre)); 
         return ordenado;
     });
     

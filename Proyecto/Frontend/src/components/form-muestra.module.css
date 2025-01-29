@@ -75,7 +75,7 @@
 }
 
 .container{
-    max-height: 250px;
+    max-height: 225px;
     border-radius: 5px;
     overflow: auto;
 }
