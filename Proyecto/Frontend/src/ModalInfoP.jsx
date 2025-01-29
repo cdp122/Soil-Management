@@ -101,7 +101,7 @@ function ModalInfoP({ isOpen, onClose, parcelID }) {
                             <p><strong>Tipo de Suelo:</strong> {parcelData.tipos_suelo}</p>
                             <p><strong>Descripción:</strong> {parcelData.parc_descripcion}</p>
                             {/* <button className="info-p-add-sample">Añadir Muestra</button> */}
-                            <FormMuestras/>
+                            <FormMuestras parcelaId={parcelID}/>
                         </div>
                     )
                 )}

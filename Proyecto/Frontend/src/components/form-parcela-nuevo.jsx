@@ -102,7 +102,7 @@ const FormParcela = ({idZona, idUser}) => {
                         ) : (
                             // ******** Falta estilos *****
                             <div className="success-message"> 
-                                <Notification/>
+                                <Notification texto={"¡Parcela registrado con éxito!"}/>
                                 <button className="button is-primary" onClick={toggleModal}>Cerrar</button>
                             </div>
                         )}

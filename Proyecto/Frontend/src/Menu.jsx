@@ -12,7 +12,6 @@ function Menu({ onTabSelect }) {
             <div className='mn-container'>
                 <img className='soil-logo' src={soilLogo} alt="soil" />
                 <ul className='mn-options'>
-                    <FormMuestras></FormMuestras>
                     <li onClick={() => handleMenuClick("inicio")}>
                         INICIO
                     </li>
