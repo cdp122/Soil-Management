@@ -1,21 +1,16 @@
-import { useState } from "react"
-import Tab from "./Tab"
-import './styles/App.css'
+import { Outlet, Link } from 'react-router-dom';
+import './styles/App.css';
+import Menu from './Menu';
 
 function App() {
-  const [selectedTab, setSelectedTab] = useState("inicio")
-
-  const handleTabSelection = (tab) => {
-    setSelectedTab(tab)
-  }
-
   return (
-    <>
-      <div className='main-container'>
-      <Tab selectedTab={selectedTab} onTabSelect={handleTabSelection} />
+    <div className='main-container'>
+      <Menu />
+      <div className="tab-content">
+        <Outlet />
       </div>
-    </>
-  )
+    </div>
+  );
 }
 
 export default App;

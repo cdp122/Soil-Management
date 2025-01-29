@@ -111,6 +111,15 @@
     font-size: 18px; /* Tamaño de fuente más grande */
 }
 
+.sueloscrud-placeholder2 {
+    position: absolute;
+    text-align: center;
+    left: 49%;
+    margin-top: 50px;
+    color: #777; /* Color de texto más claro */
+    font-size: 18px; /* Tamaño de fuente más grande */
+}
+
 .sueloscrud-loading {
     position: absolute;
     top: 50%;

@@ -30,7 +30,12 @@
     padding: 10px 15px;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
-    color: black;
+    color: black; /* Cambiar el color de los enlaces a negro */
+}
+
+.mn-options li a {
+    color: black; /* Cambiar el color de los enlaces a negro */
+    text-decoration: none; /* Quitar el subrayado de los enlaces */
 }
 
 .mn-options li:hover {

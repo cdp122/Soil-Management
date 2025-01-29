@@ -94,9 +94,9 @@ function ModalInfoP({ isOpen, onClose, parcelID }) {
                         <div className="info-p-details">
                             <h2 className="info-p-title">{parcelData.parc_nombre}</h2>
                             <p><strong>Encargado:</strong> {userData.nombre} {userData.apellido} </p>
-                            <p><strong>Latitud:</strong> {parcelData.parc_coord_la}</p>
-                            <p><strong>Longitud:</strong> {parcelData.parc_coord_lo}</p>
-                            <p><strong>Área:</strong> {parcelData.parc_area}</p>
+                            <p><strong>Latitud:</strong> {parcelData.parc_coord_la} °</p>
+                            <p><strong>Longitud:</strong> {parcelData.parc_coord_lo} °</p>
+                            <p><strong>Área:</strong> {parcelData.parc_area} m²</p>
                             <p><strong>Tipo de Suelo:</strong> {parcelData.tipos_suelo}</p>
                             <p><strong>Descripción:</strong> {parcelData.parc_descripcion}</p>
                             <button className="info-p-add-sample">Añadir Muestra</button>

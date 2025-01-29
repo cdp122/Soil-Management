@@ -16,6 +16,7 @@ function SuelosCRUD() {
     const [zonaSeleccionada, setZonaSeleccionada] = useState(null); // Zona seleccionada
     const [loading, setLoading] = useState(false); // Estado de carga
     const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+    const [error, setError] = useState(''); // Estado para el mensaje de error
 
     // Validar el token y cargar datos del usuario
     useEffect(() => {
@@ -62,9 +63,14 @@ function SuelosCRUD() {
                     },
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
-                    const data = await response.json();
                     setZonas(data);
+                    setError('');
+                } else if (data.error === "No se encontraron zonas para el usuario") {
+                    setError("No tienes ninguna zona. Crea una nueva.");
+                    setZonas([]);
                 } else {
                     console.error('Error al cargar las zonas');
                 }
@@ -78,7 +84,7 @@ function SuelosCRUD() {
         if (authorized) {
             fetchZonas();
         }
-    }, [authorized, token]);
+    }, [authorized, token, userData.id]);
 
     // Obtener las parcelas de una zona específica
     const fetchParcelas = async (zonaId) => {
@@ -162,7 +168,7 @@ function SuelosCRUD() {
                                     <Parcela key={parcela.parc_id} parcelID={parcela.parc_id} parcelName={parcela.parc_nombre} parcelType={parcela.tipos_id}/>
                                 ))
                             ) : (
-                                <div className="sueloscrud-placeholder">
+                                <div className="sueloscrud-placeholder2">
                                     No hay parcelas disponibles en esta zona.
                                 </div>
                             )}
@@ -170,7 +176,7 @@ function SuelosCRUD() {
                     </>
                 ) : (
                     <div className="sueloscrud-placeholder">
-                        Selecciona una zona para ver las parcelas.
+                        {error || "Selecciona una zona para ver las parcelas."}
                     </div>
                 )}
             </div>

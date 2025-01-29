@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './styles/Modal.css';
+import LoadingGif from './assets/loading.gif'; // Asegúrate de que la ruta sea correcta
 
 function Modal({ onClose, refreshZonas, userId }) {
     const [nombreZona, setNombreZona] = useState('');
@@ -14,6 +15,7 @@ function Modal({ onClose, refreshZonas, userId }) {
     });
     const [tipos, setTipos] = useState([]);
     const [step, setStep] = useState(1);
+    const [loading, setLoading] = useState(false); // Estado de carga
 
     useEffect(() => {
         const fetchTipos = async () => {
@@ -51,6 +53,7 @@ function Modal({ onClose, refreshZonas, userId }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Activar estado de carga
         try {
             const zonaResponse = await fetch('https://soil-management-4-soft-utn.onrender.com/registrarzona', {
                 method: 'POST',
@@ -88,144 +91,155 @@ function Modal({ onClose, refreshZonas, userId }) {
 
                 if (parcelaResponse.ok) {
                     await refreshZonas(); // Refrescar la lista de zonas
+                    setLoading(false); // Desactivar estado de carga
                     onClose();
                 } else {
                     console.error('Error al crear la parcela', parcelaResponse.statusText);
+                    setLoading(false); // Desactivar estado de carga en caso de error
                 }
             } else {
                 console.error('Error al crear la zona');
+                setLoading(false); // Desactivar estado de carga en caso de error
             }
         } catch (error) {
             console.error('Error al crear la zona y la parcela:', error);
+            setLoading(false); // Desactivar estado de carga en caso de error
         }
     };
 
     return (
         <div className="modal-addz-overlay">
-            <div className="modal-addz-content">
-                <button type="button" className="cancel-addz-btn" onClick={onClose}>×</button>
-                {step === 1 ? (
-                    <>
-                        <h2>Crear Nueva Zona</h2>
-                        <form onSubmit={handleNext}>
-                            <div className="form-addz-group">
-                                <label htmlFor="nombreZona">Nombre de la Zona</label>
-                                <input
-                                    type="text"
-                                    id="nombreZona"
-                                    min={1}
-                                    max={50}
-                                    pattern="[a-zA-Z0-9,. ]*"
-                                    title='Ingrese solo letras, números, comas y puntos.'
-                                    value={nombreZona}
-                                    onChange={(e) => setNombreZona(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="form-addz-group">
-                                <label htmlFor="problema">Problema</label>
-                                <input
-                                    type="text"
-                                    id="problema"
-                                    min={1}
-                                    max={15}
-                                    pattern="[a-zA-Z0-9,. ]*"
-                                    title='Ingrese solo letras, números, comas y puntos.'
-                                    value={problema}
-                                    onChange={(e) => setProblema(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="modal-addz-buttons">
-                                <button type="submit" className="submit-addz-btn">Siguiente</button>
-                            </div>
-                        </form>
-                    </>
-                ) : (
-                    <>
-                        <h2>Crear Nueva Parcela</h2>
-                        <p className='addz-p'>Para crear tu zona, primero añade su primera parcela.</p>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-addz-grid">
+            {loading && (
+                <div className="loading-overlay">
+                    <img src={LoadingGif} alt="Cargando..." className="loading-gif" />
+                </div>
+            )}
+            {!loading && (
+                <div className="modal-addz-content">
+                    <button type="button" className="cancel-addz-btn" onClick={onClose}>×</button>
+                    {step === 1 ? (
+                        <>
+                            <h2>Crear Nueva Zona</h2>
+                            <form onSubmit={handleNext}>
                                 <div className="form-addz-group">
-                                    <label htmlFor="nombreParcela">Nombre de la Parcela</label>
+                                    <label htmlFor="nombreZona">Nombre de la Zona</label>
                                     <input
                                         type="text"
-                                        id="nombreParcela"
+                                        id="nombreZona"
                                         min={1}
                                         max={50}
                                         pattern="[a-zA-Z0-9,. ]*"
                                         title='Ingrese solo letras, números, comas y puntos.'
-                                        value={parcela.nombre}
-                                        onChange={(e) => setParcela({ ...parcela, nombre: e.target.value })}
+                                        value={nombreZona}
+                                        onChange={(e) => setNombreZona(e.target.value)}
+                                        placeholder="Ingrese el nombre de la zona"
                                         required
                                     />
                                 </div>
                                 <div className="form-addz-group">
-                                    <label htmlFor="area">Área</label>
-                                    <input
-                                        type="number"
-                                        placeholder='Valor en m²'    
-                                        id="area"
-                                        value={parcela.area}
-                                        onChange={(e) => setParcela({ ...parcela, area: e.target.value })}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-addz-group">
-                                    <label htmlFor="coordLa">Coordenada Latitud</label>
-                                    <input
-                                        type="number"
-                                        placeholder='Valor en grados °'
-                                        value={parcela.coordLa}
-                                        onChange={(e) => setParcela({ ...parcela, coordLa: e.target.value })}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-addz-group">
-                                    <label htmlFor="coordLo">Coordenada Longitud</label>
-                                    <input
-                                        type="number"
-                                        placeholder='Valor en grados °'
-                                        id="coordLo"
-                                        value={parcela.coordLo}
-                                        onChange={(e) => setParcela({ ...parcela, coordLo: e.target.value })}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-addz-group">
-                                    <label htmlFor="tipo">Tipo de Suelo</label>
-                                    <select
-                                        id="tipo"
-                                        value={parcela.tipo}
-                                        onChange={(e) => setParcela({ ...parcela, tipo: e.target.value })}
-                                        required
-                                    >
-                                        <option value="">Seleccione un tipo</option>
-                                        {tipos.map((tipo) => (
-                                            <option key={tipo.tipos_id} value={tipo.tipos_id}>{tipo.tipos_nombre}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="form-addz-group">
-                                    <label htmlFor="descripcion">Descripción</label>
+                                    <label htmlFor="problema">Problema</label>
                                     <textarea
-                                        id="descripcion"
-                                        value={parcela.descripcion}
-                                        onChange={(e) => setParcela({ ...parcela, descripcion: e.target.value })}
-                                        placeholder="Ingrese una descripción"
+                                        id="problema"
+                                        value={problema}
+                                        onChange={(e) => setProblema(e.target.value)}
+                                        placeholder="Describa el problema"
                                         required
+                                        minLength={1}
+                                        maxLength={50}
                                     />
                                 </div>
-                            </div>
-                            <div className="modal-addz-buttons">
-                                <button type="button" className="submit-addz-btn" onClick={handleBack}>Regresar</button>
-                                <button type="submit" className="submit-addz-btn">Crear</button>
-                            </div>
-                        </form>
-                    </>
-                )}
-            </div>
+                                <div className="modal-addz-buttons">
+                                    <button type="submit" className="submit-addz-btn">Siguiente</button>
+                                </div>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <h2>Crear Nueva Parcela</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-addz-grid">
+                                    <div className="form-addz-group">
+                                        <label htmlFor="nombreParcela">Nombre de la Parcela</label>
+                                        <input
+                                            type="text"
+                                            id="nombreParcela"
+                                            min={1}
+                                            max={50}
+                                            pattern="[a-zA-Z0-9,. ]*"
+                                            title='Ingrese solo letras, números, comas y puntos.'
+                                            value={parcela.nombre}
+                                            onChange={(e) => setParcela({ ...parcela, nombre: e.target.value })}
+                                            placeholder="Ingrese el nombre de la parcela"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-addz-group">
+                                        <label htmlFor="area">Área</label>
+                                        <input
+                                            type="number"
+                                            id="area"
+                                            value={parcela.area}
+                                            onChange={(e) => setParcela({ ...parcela, area: e.target.value })}
+                                            placeholder="Ingrese el área en m²"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-addz-group">
+                                        <label htmlFor="coordLa">Coordenada Latitud</label>
+                                        <input
+                                            type="text"
+                                            id="coordLa"
+                                            value={parcela.coordLa}
+                                            onChange={(e) => setParcela({ ...parcela, coordLa: e.target.value })}
+                                            placeholder="Ingrese la coordenada de latitud en grados °"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-addz-group">
+                                        <label htmlFor="coordLo">Coordenada Longitud</label>
+                                        <input
+                                            type="text"
+                                            id="coordLo"
+                                            value={parcela.coordLo}
+                                            onChange={(e) => setParcela({ ...parcela, coordLo: e.target.value })}
+                                            placeholder="Ingrese la coordenada de longitud en grados °"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-addz-group">
+                                        <label htmlFor="tipo">Tipo de Suelo</label>
+                                        <select
+                                            id="tipo"
+                                            value={parcela.tipo}
+                                            onChange={(e) => setParcela({ ...parcela, tipo: e.target.value })}
+                                            required
+                                        >
+                                            <option value="">Seleccione un tipo</option>
+                                            {tipos.map((tipo) => (
+                                                <option key={tipo.tipos_id} value={tipo.tipos_id}>{tipo.tipos_nombre}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="form-addz-group">
+                                        <label htmlFor="descripcion">Descripción</label>
+                                        <textarea
+                                            id="descripcion"
+                                            value={parcela.descripcion}
+                                            onChange={(e) => setParcela({ ...parcela, descripcion: e.target.value })}
+                                            placeholder="Ingrese una descripción"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="modal-addz-buttons">
+                                    <button type="button" className="submit-addz-btn" onClick={handleBack}>Regresar</button>
+                                    <button type="submit" className="submit-addz-btn">Crear</button>
+                                </div>
+                            </form>
+                        </>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

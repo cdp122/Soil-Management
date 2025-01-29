@@ -21,6 +21,24 @@
     animation: fadeIn 0.3s ease-in-out; /* Animación de entrada */
 }
 
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7); /* Fondo más oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Asegurarse de que el loading esté por encima del modal */
+}
+
+.loading-gif {
+    width: 80%; /* Ajustar el tamaño del GIF */
+    height: 80%; /* Ajustar el tamaño del GIF */
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
