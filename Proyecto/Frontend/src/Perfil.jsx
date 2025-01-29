@@ -9,7 +9,7 @@ function Perfil() {
     const [isEditing, setIsEditing] = useState(false); // Controla si el formulario de edición está visible
     const [isChangingPassword, setIsChangingPassword] = useState(false); // Controla si el formulario de contraseña está visible
     const [formData, setFormData] = useState({});
-    const [passwordData, setPasswordData] = useState({ currentPassword: "", newPassword: "" });
+    const [passwordData, setPasswordData] = useState({ newPassword: "", confirmPassword: "" });
     const token = localStorage.getItem("token");
     const cedula = localStorage.getItem("cedula");
 
@@ -125,12 +125,14 @@ function Perfil() {
 
     // Maneja la acción de cambiar la contraseña
     const handleModifyPassword = async () => {
-        if (passwordData.newPassword === userData.password) {
-            alert("La nueva contraseña no puede ser igual a la actual.");
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            alert("Las contraseñas no coinciden.");
+            console.log("Las contraseñas no coinciden");
             return;
         }
 
         try {
+            console.log("Entra al try");
             const response = await fetch(
                 `https://soil-management-4-soft-utn.onrender.com/password`,
                 {
@@ -139,16 +141,18 @@ function Perfil() {
                         "Content-Type": "application/json",
                         Authorization: token,
                     },
-                    body: JSON.stringify({ cedula: cedula, password: passwordData.newPassword }),
+                    body: JSON.stringify({ cedula: cedula, password: passwordData.newPassword })
                 }
             );
 
             if (response.ok) {
                 alert("Contraseña cambiada con éxito.");
+                console.log("Contraseña cambiada con éxito");
                 setIsChangingPassword(false);
-                setPasswordData({ currentPassword: "", newPassword: "" });
+                setPasswordData({ newPassword: "", confirmPassword: "" });
             } else {
                 alert("Error al cambiar la contraseña. Inténtalo nuevamente.");
+                console.log("Error al cambiar la contraseña. Inténtalo nuevamente.");
             }
         } catch (error) {
             console.error("Error al cambiar la contraseña:", error);
@@ -222,14 +226,23 @@ function Perfil() {
                 ) : isChangingPassword ? (
                     <>
                         {/* Formulario de cambio de contraseña */}
-                        <h2>Cambiar Contraseña</h2>
+                        <h2 id="H2FormEdi">Cambiar Contraseña</h2>
                         <div className="perfil-info-grid">
                             <div className="perfil-info-item">
                                 <label>Nueva Contraseña</label>
-                                <input
+                                <input className="NuevaPass"
                                     type="password"
                                     name="newPassword"
                                     value={passwordData.newPassword}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="perfil-info-item">
+                                <label>Confirmar Contraseña</label>
+                                <input className="NuevaPass"
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={passwordData.confirmPassword}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -249,11 +262,11 @@ function Perfil() {
                 ) : (
                     <>
                         {/* Formulario de edición */}
-                        <h2>Editar Información Personal</h2>
+                        <h2 id="H2FormEdi">Editar Información Personal</h2>
                         <div className="perfil-info-grid">
                             <div className="perfil-info-item">
                                 <label>Cédula</label>
-                                <input
+                                <input className="Cedula"
                                     type="text"
                                     name="cedula"
                                     value={formData.cedula || ""}
@@ -264,7 +277,7 @@ function Perfil() {
                             </div>
                             <div className="perfil-info-item">
                                 <label>Nombre</label>
-                                <input
+                                <input className="Nombre"
                                     type="text"
                                     name="nombre"
                                     value={formData.nombre || ""}
@@ -275,7 +288,7 @@ function Perfil() {
                             </div>
                             <div className="perfil-info-item">
                                 <label>Apellido</label>
-                                <input
+                                <input className="Apellido"
                                     type="text"
                                     name="apellido"
                                     value={formData.apellido || ""}
@@ -286,7 +299,7 @@ function Perfil() {
                             </div>
                             <div className="perfil-info-item">
                                 <label>Email</label>
-                                <input
+                                <input className="Email"
                                     type="email"
                                     name="correo"
                                     value={formData.correo || ""}
@@ -297,7 +310,7 @@ function Perfil() {
                             </div>
                             <div className="perfil-info-item">
                                 <label>Teléfono</label>
-                                <input
+                                <input className="Telefono"
                                     type="text"
                                     name="telefono"
                                     value={formData.telefono || ""}
