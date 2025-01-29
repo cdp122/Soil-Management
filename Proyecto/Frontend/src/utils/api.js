@@ -26,8 +26,25 @@ class Api {
     }
 
     async nuevaMuestra(data){
-        // TODO: Implementar el envio de muestras
-        console.log("Enviando muestra...", data);
+        try {
+            const response = await fetch(`${this.api_url}/muestras`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': localStorage.getItem('token')
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+            }
+    
+            return await response.json();
+        } catch (error) {
+            return { error: true, message: error.message };
+        }
     }
 }
 

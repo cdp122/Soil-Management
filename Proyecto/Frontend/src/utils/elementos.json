@@ -1,0 +1,97 @@
+[
+    {
+        "elem_simbolo": "C",
+        "elem_nombre": "Carbono",
+        "uni_simbolo": "%"
+    },
+    {
+        "elem_simbolo": "N",
+        "elem_nombre": "Nitrogeno",
+        "uni_simbolo": "%"
+    },
+    {
+        "elem_simbolo": "P",
+        "elem_nombre": "Fósforo",
+        "uni_simbolo": "%"
+    },
+    {
+        "elem_simbolo": "C:N",
+        "elem_nombre": "C:N",
+        "uni_simbolo": "N/A"
+    },
+    {
+        "elem_simbolo": "K",
+        "elem_nombre": "Potasio",
+        "uni_simbolo": "%"
+    },
+    {
+        "elem_simbolo": "Ca",
+        "elem_nombre": "Calcio",
+        "uni_simbolo": "kg"
+    },
+    {
+        "elem_simbolo": "Mg",
+        "elem_nombre": "Magnesio",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Na",
+        "elem_nombre": "Sodio",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "S",
+        "elem_nombre": "Azufre",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Fe",
+        "elem_nombre": "Hierro",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "B",
+        "elem_nombre": "Boro",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Zn",
+        "elem_nombre": "Zinc",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Co",
+        "elem_nombre": "Cobalto",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Mn",
+        "elem_nombre": "Manganeso",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Ni",
+        "elem_nombre": "Niquel",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Cu",
+        "elem_nombre": "Cobre",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Mo",
+        "elem_nombre": "Molibdeno",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Al",
+        "elem_nombre": "Aluminio",
+        "uni_simbolo": "mg"
+    },
+    {
+        "elem_simbolo": "Cd",
+        "elem_nombre": "Cadmio",
+        "uni_simbolo": "mg"
+    }
+]

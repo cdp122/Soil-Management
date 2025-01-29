@@ -68,7 +68,6 @@ const FormParcela = ({idZona, idUser}) => {
         const btnAdd = e.target.querySelector('.btn-add-parcela');
         btnAdd.classList.add('is-loading');
 
-        console.log(localStorage.getItem('token'));
         api.nuevaParcela(datosParcela).then((response) => {
             if (response.error) {
                 alert("Error al registrar la parcela:", response.message);
@@ -103,7 +102,7 @@ const FormParcela = ({idZona, idUser}) => {
                         ) : (
                             // ******** Falta estilos *****
                             <div className="success-message"> 
-                                <Notification/>
+                                <Notification texto={"¡Parcela registrado con éxito!"}/>
                                 <button className="button is-primary" onClick={toggleModal}>Cerrar</button>
                             </div>
                         )}

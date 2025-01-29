@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Loading from './assets/loading.gif';
 import './styles/ModalInfoP.css';
+import FormMuestras from './components/form-muestras'
 
 function ModalInfoP({ isOpen, onClose, parcelID }) {
     const token = localStorage.getItem('token'); // Recuperar token
@@ -99,7 +100,8 @@ function ModalInfoP({ isOpen, onClose, parcelID }) {
                             <p><strong>Área:</strong> {parcelData.parc_area} m²</p>
                             <p><strong>Tipo de Suelo:</strong> {parcelData.tipos_suelo}</p>
                             <p><strong>Descripción:</strong> {parcelData.parc_descripcion}</p>
-                            <button className="info-p-add-sample">Añadir Muestra</button>
+                            {/* <button className="info-p-add-sample">Añadir Muestra</button> */}
+                            <FormMuestras parcelaId={parcelID}/>
                         </div>
                     )
                 )}

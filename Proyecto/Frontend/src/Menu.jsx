@@ -1,6 +1,7 @@
 import soilLogo from './assets/soil-management-logo.png';
 import './styles/Menu.css';
 import { Link } from 'react-router-dom';
+import FormMuestras from './components/form-muestras'
 
 function Menu() {
   return (

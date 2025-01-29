@@ -1,8 +1,8 @@
-const Notification = () =>{
+const Notification = ({texto}) =>{
 
     return(
         <div>
-            <h2>¡Parcela registrada exitosamente!</h2>
+            <h2>{texto}</h2>
         </div>
     )
 }

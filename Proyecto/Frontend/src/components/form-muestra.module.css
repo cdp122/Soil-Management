@@ -75,7 +75,7 @@
 }
 
 .container{
-    max-height: 260px;
+    max-height: 250px;
     border-radius: 5px;
     overflow: auto;
 }
@@ -128,4 +128,19 @@
 .select option{
     background: #fff;
     color: #000;
+}
+
+.input-valor-elemento {
+    display: block;
+    height: 25px;
+    max-width: 80px;
+    width: auto;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--has-background-grey-light);
+}
+
+.input-valor-elemento:disabled{
+    background: transparent;
+    border: none;
 }
