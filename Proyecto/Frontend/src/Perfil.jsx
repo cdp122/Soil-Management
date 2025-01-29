@@ -144,6 +144,10 @@ function Perfil() {
                     body: JSON.stringify({ cedula: cedula, password: passwordData.newPassword })
                 }
             );
+            console.log("Fuera del fetch");
+
+            const data = await response.json();
+            console.log("Respuesta del servidor:", data);
 
             if (response.ok) {
                 alert("Contraseña cambiada con éxito.");

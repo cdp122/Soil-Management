@@ -10,8 +10,7 @@
 
 /* Tarjeta */
 .carta {
-    background: linear-gradient(#b4ff6fcb, #ffffff37) padding-box,
-        linear-gradient(145deg, transparent 10%, #47d7a2e4, #4cfe1ff2) border-box;
+    background-color: #4CAF50;
     width: 400px;
     padding: 20px;
     border-radius: 8px;
