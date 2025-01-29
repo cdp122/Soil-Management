@@ -264,10 +264,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                             <label className="label mb-1">Descripción para la parcela</label>
                             <textarea className="textarea has-fixed-size mb-1" placeholder="Descripción ..." 
                             {...register("parc_descripcion", {
-                                required:{
-                                    value: true,
-                                    message:"Ingrese una descripcion"
-                                }
+                                required: false
                             })}
                             />
                             {
