@@ -9,40 +9,45 @@ import api from "../utils/api";
 import Notification from "./notification/notification";
 
 const FormMuestras = ({parcelaId}) => {
+    console.log("Renderizando formulario main...");
     const [currentStep, setCurrentStep] = useState(0);
-    const { register, handleSubmit, formState: { errors }, reset, getValues, setValue} = useForm({mode: "all"});
+    const {register, handleSubmit, formState: { errors }, reset} = useForm({mode: "all"});
     const [isSuccess, setIsSuccess] = useState(false);
-    const [elementosQuimicos, setElementosQuimicos] = useState();
+    const [elementosIniciales, setElementosIniciales] = useState([]);
+    const [elementosSeleccionados, setElementosSeleccionados ] = useState([]);
+    const [isActive, setIsActive] = useState(false);
 
     useEffect(()=>{
-        const getElementosQuimicos = async () => {
-            const token = localStorage.getItem("token");
-            const url = "https://soil-management-4-soft-utn.onrender.com/elementos";
-            try {
-                const response = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        Authorization: token,
-                        "Content-Type": "application/json",
-                    },
-                });
-
-                if (!response.ok) {
-                    // throw new Error(`Response status: ${response.status}`);
+        if(isActive){
+            const getElementosQuimicos = async () => {
+                const token = localStorage.getItem("token");
+                const url = "https://soil-management-4-soft-utn.onrender.com/elementos";
+                try {
+                    const response = await fetch(url, {
+                        method: "GET",
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json",
+                        },
+                    });
+    
+                    if (!response.ok) {
+                        // throw new Error(`Response status: ${response.status}`);
+                    }
+    
+                    const data = await response.json();
+                    setElementosIniciales(data);
+                } catch (error) {
+                    console.error(
+                        "Error al obtener los elementos quimicos:",
+                        error.message
+                    );
                 }
-
-                const data = await response.json();
-                setElementosQuimicos(data);
-            } catch (error) {
-                console.error(
-                    "Error al obtener los elementos quimicos:",
-                    error.message
-                );
-            }
-        };
-        getElementosQuimicos();
-        console.log(elementosQuimicos);
-    }, [])
+            };
+            getElementosQuimicos();
+        }
+        
+    }, [isActive])
 
     const handleBack = () => {
         if (currentStep > 0) {
@@ -50,12 +55,12 @@ const FormMuestras = ({parcelaId}) => {
         }
     };
 
-    const [isActive, setIsActive] = useState(false);
 
     const toggleModal = () => {
         setIsActive(!isActive);
         setCurrentStep(0);
         setIsSuccess(false);
+        setElementosSeleccionados([]);
         reset();
     };
 
@@ -74,20 +79,13 @@ const FormMuestras = ({parcelaId}) => {
         };
     }),[isActive];
 
-
-    // const EnviarMuestra = handleSubmit((data) => {
-        
-
-    //     api.nuevaMuestra(data);
-    // });
-
     const EnviarMuestra = handleSubmit((data) => {
-        if(currentStep < 1){
+        if(currentStep < 1 && isFormValid(errors)){
             setCurrentStep(currentStep + 1);
             return;
         }
         
-        let elems = data.selectedItems.map(item => ({
+        let elems = data.selectedItems?.map(item => ({
             simb_elem: item.elem_simbolo,
             cant_elem: parseFloat(item.valor)
         }));
@@ -120,7 +118,6 @@ const FormMuestras = ({parcelaId}) => {
         // }, 2000);
     })
     
-
     return (
         <div>
             <button className="button is-primary" onClick={toggleModal}>
@@ -133,7 +130,7 @@ const FormMuestras = ({parcelaId}) => {
                         <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
                         {!isSuccess ? (
                             <>
-                                <FormBody currentStep={currentStep} register={register} errors={errors} getValues={getValues} setValue={setValue} elementosQuimicos={elementosQuimicos}/>
+                                <FormBody currentStep={currentStep} register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados} />
                                 <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal}/>
                             </>
                         ) : (
@@ -151,6 +148,7 @@ const FormMuestras = ({parcelaId}) => {
 };
 
 function FormHeader({handleModal, currentStep}) {
+    console.log("Renderizando form header...");
     return (
         <div className={`${styles["form-header"]}`}>
             <div>
@@ -165,6 +163,7 @@ function FormHeader({handleModal, currentStep}) {
 }
 
 function StepIndicator({currentStep}){
+    console.log("Renderizando step indicator...");
     return (
         <div className="indicator">
             <div className="indicator-points">
@@ -180,16 +179,18 @@ function StepIndicator({currentStep}){
     )
 }
 
-function FormBody({currentStep, register, errors, getValues, setValue, elementosQuimicos}){
+function FormBody({currentStep, register, errors, elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}){
+    console.log("Renderizando form body...");
     return (
         <div className={`${styles["form-body"]}`}>
             {currentStep === 0 && <VariablesGenerales register={register} errors={errors}/>}
-            {currentStep === 1 && <VariablesQuimicas register={register} errors={errors} getValues={getValues} setValue={setValue} elementosQuimicos={elementosQuimicos}/>}
+            {currentStep === 1 && <VariablesQuimicas register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados}/>}
         </div>
     );
 }
 
 function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
+    console.log("Renderizando form footer...");
     return (
         <div className={`${styles["form-footer"]} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
             {currentStep > 0 ?
@@ -206,7 +207,7 @@ function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
 }
 
 function VariablesGenerales({register, errors}) {
-
+    console.log("Renderizando variables generales...");
     return (
         <div className="fixed-grid has-2-cols">
             <div className="grid">
@@ -325,54 +326,42 @@ function VariablesGenerales({register, errors}) {
 }
 
 
-function VariablesQuimicas({getValues, setValue, elementosQuimicos}) {
-    const [selectedItems, setSelectedItems] = useState([]);
-    // console.log(getValues());
-    setValue("selectedItems", selectedItems);
-   
-    const {register, errors} = useForm();
+function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}) {
+    console.log("Renderizando variables quimicas...");
     
     const elementoSimboloRef = useRef("");
     const elementoValorRef = useRef("");
-    const elementoMedidaRef = useRef("");
-    
-    const [initialItems, setInitialItems] = useState(() => {
-        const ordenado = elementosQuimicos.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre)); 
-        return ordenado;
-    });
-    
-    
-    const moveToSelected = () => {
+
+    const moverASeleccionados = () => {
         const elementoSeleccionado = elementoSimboloRef.current.value;
         const elementoValor = elementoValorRef.current.value;
         if(elementoSeleccionado.trim().length == 0) return;
 
-        const selectedItem = initialItems.find(
+        const selectedItem = elementosIniciales.find(
             (item) => item.elem_simbolo === elementoSeleccionado
         );
     
         if (selectedItem) {
             
             selectedItem["valor"] = elementoValor;
-            setInitialItems((prev) => prev.filter((item) => item !== selectedItem));
-            setSelectedItems((prev) => [...prev, selectedItem]);
+            setElementosIniciales((prev) => prev.filter((item) => item !== selectedItem));
+            setElementosSeleccionados((prev) => [...prev, selectedItem]);
             elementoValorRef.current.value = "";
-            //   elementoMedidaRef.current.innerText = "";
         }
     };
 
-    const moveToInitial = (elem_simbolo) => {
+    const moverAIniciales = (elem_simbolo) => {
 
         if(elem_simbolo.trim().length == 0) return;
 
-        const selectedItem = selectedItems.find(
+        const selectedItem = elementosSeleccionados.find(
             (item) => item.elem_simbolo === elem_simbolo
         );
     
         if (selectedItem) {
 
-            setSelectedItems((prev) => prev.filter((item) => item !== selectedItem));
-            setInitialItems((prev) => {
+            setElementosSeleccionados((prev) => prev.filter((item) => item !== selectedItem));
+            setElementosIniciales((prev) => {
             const updatedItems = [...prev, selectedItem];
             updatedItems.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre)); // Ordenar alfabéticamente por elem_nombre
             return updatedItems;
@@ -381,16 +370,13 @@ function VariablesQuimicas({getValues, setValue, elementosQuimicos}) {
         
     };
 
-    const agregarElemento = (e) =>{
-        moveToSelected();
+    const agregarElemento = () =>{
+        moverASeleccionados();
     }
 
-    // const cambiarUnidadMedida = (e) =>{
-    //     const selectedItem = initialItems.find(
-    //         (item) => item.elem_simbolo == e.target.value
-    //     );
-    //     if(selectedItem) elementoMedidaRef.current.innerText = selectedItem.uni_simbolo;
-    // }
+    const removerElemento = (simb_elem) =>{
+        moverAIniciales(simb_elem);
+    }
 
     return (
         <div className={`${styles["container-quimico"]}`}>
@@ -401,14 +387,11 @@ function VariablesQuimicas({getValues, setValue, elementosQuimicos}) {
                             <select className="select-op" ref={elementoSimboloRef}>
                                 <option hidden value="">Seleccione un elemento</option>
                                 {
-                                    initialItems.map(elemento => <option key={elemento.elem_simbolo} value={elemento.elem_simbolo}>{elemento.elem_nombre} ({elemento.uni_simbolo})</option>)
+                                    elementosIniciales.map(elemento => <option key={elemento.elem_simbolo} value={elemento.elem_simbolo}>{elemento.elem_nombre} ({elemento.uni_simbolo})</option>)
                                 }
                             </select>
                         </span>
                     </p>
-                    {/* <p className="control">
-                        <span className="input" ref={elementoMedidaRef}></span>
-                    </p> */}
                     <p className="control">
                         <input
                             className="input"
@@ -437,8 +420,8 @@ function VariablesQuimicas({getValues, setValue, elementosQuimicos}) {
                     </thead>
                     <tbody>
                         {
-                            selectedItems.map((elemento, index) =>
-                                <RowTable key={index} index={index+1} elemento={elemento} handleRemover={moveToInitial}/>
+                            elementosSeleccionados?.map((elemento, index) =>
+                                <RowTable key={index} index={index+1} elemento={elemento} removerElemento={removerElemento} />
                             )
                         }
                     </tbody>
@@ -448,7 +431,7 @@ function VariablesQuimicas({getValues, setValue, elementosQuimicos}) {
     );
 }
 
-function RowTable ({index, elemento, handleRemover}){
+function RowTable ({index, elemento, removerElemento}){
     const {elem_simbolo, elem_nombre, uni_simbolo, valor} = elemento;
     const inputRef = useRef();
     const [editando, setEditando]  = useState(false);
@@ -472,8 +455,7 @@ function RowTable ({index, elemento, handleRemover}){
     }
 
     const eliminarElemento = () =>{
-        // console.log("Eliminando...", elem_simbolo)
-        handleRemover(elem_simbolo);
+        removerElemento(elem_simbolo);
     }
 
     return (
