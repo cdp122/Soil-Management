@@ -4,7 +4,6 @@ class Api {
     }
 
     async nuevaParcela(data) {
-        await console.log(data);
         try {
             const response = await fetch(`${this.api_url}/nuevaparcela`, {
                 method: "POST",
