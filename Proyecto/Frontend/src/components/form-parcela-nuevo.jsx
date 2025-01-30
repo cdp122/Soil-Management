@@ -281,7 +281,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
 FormParcela.propTypes = {
     idZona: PropTypes.number,
     idUser: PropTypes.number,
-    handleZonaClick: PropTypes.func
+    actualizarZonas: PropTypes.func
 }
 
 FormHeader.propTypes = {
