@@ -2,16 +2,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
 import { useForm} from "react-hook-form";
-import "./indicator.css"
 import styles from "./form-muestra.module.css"
 import { isFormValid } from "../utils/isFormValid";
 import api from "../utils/api";
+import {ToastContainer, toast} from "react-toastify";
 import Notification from "./notification/notification";
+import "./indicator.css"
+import { isNumber } from "chart.js/helpers";
 
 const FormMuestras = ({parcelaId}) => {
     const [currentStep, setCurrentStep] = useState(0);
     const {register, handleSubmit, formState: { errors }, reset} = useForm({mode: "all"});
-    const [isSuccess, setIsSuccess] = useState(false);
     const [elementosIniciales, setElementosIniciales] = useState([]);
     const [elementosSeleccionados, setElementosSeleccionados ] = useState([]);
     const [isActive, setIsActive] = useState(false);
@@ -33,8 +34,8 @@ const FormMuestras = ({parcelaId}) => {
                     if (!response.ok) {
                         // throw new Error(`Response status: ${response.status}`);
                     }
-    
                     const data = await response.json();
+                    data.sort((a,b) => a.elem_nombre.localeCompare(b.elem_nombre));
                     setElementosIniciales(data);
                 } catch (error) {
                     console.error(
@@ -58,7 +59,6 @@ const FormMuestras = ({parcelaId}) => {
     const toggleModal = () => {
         setIsActive(!isActive);
         setCurrentStep(0);
-        setIsSuccess(false);
         setElementosSeleccionados([]);
         reset();
     };
@@ -78,7 +78,7 @@ const FormMuestras = ({parcelaId}) => {
         };
     }),[isActive];
 
-    const EnviarMuestra = handleSubmit((data) => {
+    const EnviarMuestra = handleSubmit((data, e) => {
         if(currentStep < 1 && isFormValid(errors)){
             setCurrentStep(currentStep + 1);
             return;
@@ -99,26 +99,24 @@ const FormMuestras = ({parcelaId}) => {
 
         delete data.selectedItems;
 
-        // const btnAdd = e.target.querySelector('.btn-add-parcela');
-        // btnAdd.classList.add('is-loading');
+        const btnAdd = e.target;
+        btnAdd.classList.add('is-loading');
 
         api.nuevaMuestra(data).then((response) => {
             if (response.error) {
-                alert("Error al registrar la muestra:", response.message);
-                // btnAdd.classList.remove('is-loading');
+                toast.error('Ocurrió un error al registrar la muestra.')
             } else {
-                setIsSuccess(true);
-                // btnAdd.classList.remove('is-loading');
+                toast.success('¡Muestra registrada exitósamente!')
+                toggleModal();
             }
+            btnAdd.classList.remove('is-loading');
         });
-
-        // setTimeout(() => {
-        //     setIsSuccess(true);
-        // }, 2000);
+        
     })
     
     return (
         <div>
+            <ToastContainer/>
             <button className="button is-primary" onClick={toggleModal}>
                 Agregar muestra
             </button>
@@ -127,18 +125,8 @@ const FormMuestras = ({parcelaId}) => {
                 <div className={`${styles["form-container"]}`}>
                     <form onSubmit={EnviarMuestra} onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()} >
                         <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
-                        {!isSuccess ? (
-                            <>
-                                <FormBody currentStep={currentStep} register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados} />
-                                <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal}/>
-                            </>
-                        ) : (
-                            <div className="success-message"> 
-                                <Notification texto={"¡Muestra registrado con éxito!"}/>
-                                <button type="button" className="button is-primary" onClick={toggleModal}>Cerrar</button>
-                            </div>
-                        )}
-                        
+                        <FormBody currentStep={currentStep} register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados} />
+                        <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal}/>
                     </form>
                 </div>
             </div>
@@ -191,7 +179,7 @@ function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
             {currentStep > 0 ?
                 <>
                     <button className={`button ${styles["btn-white"]}`} onClick={handleBack}>Atrás</button>
-                    <button className="button is-link" onClick={handleSubmit}>Guardar</button>
+                    <button className="button is-link btn-add-muestra" onClick={handleSubmit}>Guardar</button>
                 </>
             :
                 <button className="button is-link" onClick={handleSubmit}>Siguiente</button>
@@ -224,7 +212,7 @@ function VariablesGenerales({register, errors}) {
                     })}
                     />
                     {
-                        errors?.mue_ph && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_ph.message}</span></div>
+                        errors?.ph && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.ph.message}</span></div>
                     }
                 </div>
                 
@@ -241,7 +229,7 @@ function VariablesGenerales({register, errors}) {
                         />
                     </div>
                     {
-                        errors?.mue_con_elec && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_con_elec.message}</span></div>
+                        errors?.con_elec && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.con_elec.message}</span></div>
                     }
                 </div>
                 
@@ -253,7 +241,7 @@ function VariablesGenerales({register, errors}) {
                     })}
                     />
                     {
-                        errors?.mue_salinidad && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_salinidad.message}</span></div>
+                        errors?.salinidad && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.salinidad.message}</span></div>
                     }
                 </div>
                 
@@ -270,7 +258,7 @@ function VariablesGenerales({register, errors}) {
                         })}
                         />
                         {
-                            errors?.mue_cap_inter_cati && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_cap_inter_cati.message}</span></div>
+                            errors?.inter_cati && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.inter_cati.message}</span></div>
                         }
                     </div>
                 </div>
@@ -286,7 +274,7 @@ function VariablesGenerales({register, errors}) {
                     })}
                     />
                     {
-                        errors?.mue_porc_mat_org && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_porc_mat_org.message}</span></div>
+                        errors?.mat_org && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mat_org.message}</span></div>
                     }
                 </div>
 
@@ -299,18 +287,20 @@ function VariablesGenerales({register, errors}) {
                             message: "Escoga fecha de registro"
                         },
                         validate: (valor) => {
-                            const fechaSeleccionada = new Date(valor);
+                            const partes = valor.split("-");
+                            const fechaSeleccionada = new Date(partes[0], partes[1] - 1, partes[2]);
                             const hoy = new Date();
+                            hoy.setHours(0, 0, 0, 0);
+                            
                             if(fechaSeleccionada > hoy){
                                 return "Escoga un fecha actual o anterior";
                             }
                             return true;
                         }
-                        
                     })}
                     />
                     {
-                        errors?.mue_fecha_registro && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mue_fecha_registro.message}</span></div>
+                        errors?.fecha_registro && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.fecha_registro.message}</span></div>
                     }
                 </div>
                 
@@ -322,6 +312,7 @@ function VariablesGenerales({register, errors}) {
 function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}) {
     const elementoSimboloRef = useRef("");
     const elementoValorRef = useRef("");
+    const [valorValido, setValorValido] = useState(true);
 
     const moverASeleccionados = () => {
         const elementoSeleccionado = elementoSimboloRef.current.value;
@@ -362,19 +353,32 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
     };
 
     const agregarElemento = () =>{
+        if(elementoSimboloRef.current.value.length == 0) return;
+
+        if(!isNumber(elementoValorRef.current.value)){
+            setValorValido(false);
+            return;
+        }
         moverASeleccionados();
+        setValorValido(true);
     }
 
     const removerElemento = (simb_elem) =>{
         moverAIniciales(simb_elem);
     }
 
+    const changeValor = () =>{
+        if(!valorValido & isNumber(elementoValorRef.current.value)){
+            setValorValido(true);
+        }
+    }
+
     return (
         <div className={`${styles["container-quimico"]}`}>
             <div className="control mt-1 mb-3">
-                <div className="field has-addons has-addons-right">
+                <div className="field has-addons has-addons-right mb-0">
                     <p className="control is-expanded">
-                        <span className="select is-fullwidth">
+                        <span className="select control is-fullwidth">
                             <select className="select-op" ref={elementoSimboloRef}>
                                 <option hidden value="">Seleccione un elemento</option>
                                 {
@@ -386,15 +390,19 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
                     <p className="control">
                         <input
                             className="input"
-                            type="text"
+                            type="number"
                             placeholder="Ingrese el valor"
                             ref={elementoValorRef}
+                            onChange={changeValor}
                         />
                     </p>
                     <p className="control">
                         <button type="button" className="button is-link" onClick={agregarElemento}>Agregar</button>
                     </p>
                 </div>
+                {
+                    !valorValido && <div className="error mt-0"><span><i className="fa-solid fa-circle-exclamation"></i> Ingrese un valor para el elemento</span></div>
+                }
             </div>
 
             <div className={`${styles["container"]}`}>

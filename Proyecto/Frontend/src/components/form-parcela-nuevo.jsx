@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from "react";
 import { useForm} from "react-hook-form";
+import {ToastContainer, toast} from "react-toastify";
 import styles from "./parcela.module.css";
 import "./form-parcela.css";
 import Notification from "./notification/notification";
 import api from "../utils/api";
 
-const FormParcela = ({idZona, idUser}) => {
+const FormParcela = ({idZona, idUser, actualizarZonas}) => {
     const [tiposSuelo, setTiposSuelo] = useState([]);
 
     useEffect(() => {
@@ -70,22 +71,21 @@ const FormParcela = ({idZona, idUser}) => {
 
         api.nuevaParcela(datosParcela).then((response) => {
             if (response.error) {
-                alert("Error al registrar la parcela:", response.message);
+                toast.error('Ocurrió un error al registrar la parcela.');
                 btnAdd.classList.remove('is-loading');
             } else {
                 setIsSuccess(true);
+                toast.success('¡Parcela registrada exitósamente!')
                 btnAdd.classList.remove('is-loading');
+                actualizarZonas(idZona);
             }
         });
-
-        // setTimeout(() => {
-        //     setIsSuccess(true);
-        //     btnAdd.classList.remove('is-loading');
-        // }, 2000);
+        
     })
 
     return (
         <div>
+            <ToastContainer/>
             <button className="button is-primary" onClick={toggleModal}>
                 Agregar nueva parcela
             </button>
@@ -117,7 +117,7 @@ function FormHeader({handleModal}) {
     return (
         <div className={`${styles['form-header']} `}>
             <div>
-                <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 mt-2">Agregar nueva parcela</span>
+                <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 pt-2">Agregar nueva parcela</span>
                 <button className={`${styles["btn-close"]} delete is-medium has-background-danger`} aria-label="close" onClick={handleModal}></button>
             </div>
            
@@ -260,9 +260,9 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                         </div>
                     </div>
                     <div className="cell">
-                        <div className="cell">
+                        <div className={`cell ${styles["descripcion-container"]}`}>
                             <label className="label mb-1">Descripción para la parcela</label>
-                            <textarea className="textarea has-fixed-size mb-1" placeholder="Descripción ..." 
+                            <textarea className={`textarea has-fixed-size ${styles["descripcion-textarea"]}`} placeholder="Descripción ..." 
                             {...register("parc_descripcion", {
                                 required: false
                             })}
@@ -280,7 +280,8 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
 
 FormParcela.propTypes = {
     idZona: PropTypes.number,
-    idUser: PropTypes.number
+    idUser: PropTypes.number,
+    actualizarZonas: PropTypes.func
 }
 
 FormHeader.propTypes = {

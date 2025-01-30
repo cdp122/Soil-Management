@@ -2,7 +2,7 @@ const Notification = ({texto}) =>{
 
     return(
         <div>
-            <h2>{texto}</h2>
+            <h2 style={{color:"#000"}}>{texto}</h2>
         </div>
     )
 }

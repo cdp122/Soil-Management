@@ -159,7 +159,7 @@ function SuelosCRUD() {
                             </div>
                             <div className="sueloscrud-buttons">
                                 <button className="sueloscrud-btn">Comparar Parcelas</button>
-                                <FormParcela idZona={zonaSeleccionada} idUser={userData.id}/>
+                                <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick}/>
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">

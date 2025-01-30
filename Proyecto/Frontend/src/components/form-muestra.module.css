@@ -18,6 +18,7 @@
     padding: 10px;
     width: 100%;
     min-height: 500px;
+    max-height: 200px;
     min-width: 300px;
     max-width: 700px;
     background: #e2e2e2;
@@ -27,18 +28,14 @@
 
 .form-container form{
     width: 100%;
-    min-height: 500px;
-    max-height: 500px;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
 
 .form-header{
+    margin: 0 !important;
     position: relative;
-}
-
-.form-header .title-header{
-    color: #000;
 }
 
 .btn-close{
@@ -106,7 +103,7 @@
 }
 
 /* Sobreponiendo modo oscuro */
-
+/* 
 .input{
     background: #fff;
     color: #000;
@@ -129,7 +126,7 @@
     background: #fff;
     color: #000;
 }
-
+*/
 .input-valor-elemento {
     display: block;
     height: 25px;
