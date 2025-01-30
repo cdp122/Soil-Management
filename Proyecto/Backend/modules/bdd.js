@@ -166,6 +166,7 @@ async function DefinirTiposUsuarios() {
 
     return TiposUsuarios;
 }
+
 async function DefinirTiposSuelos() {
     TiposSuelos = sequelize.define('TiposSuelos', {
         tipos_id: {

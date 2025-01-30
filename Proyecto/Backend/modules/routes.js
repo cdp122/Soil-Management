@@ -265,6 +265,45 @@ router.post('/variables', validateToken, async (req, res) => {
         res.status(500).json({ error: "Error al registrar las variable", detalles: error.original?.detail || error.message });
     }
 });
+
+//Consultar las muestras correspondientes a una parcela
+router.get('/muestras', validateToken, async (req, res) => {
+    if (!req.query.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
+
+    try {
+        const muestras = await Muestras.findAll({ where: { parc_id: req.query.parc_id } });
+
+        console.log("RUTAS >> MUESTRAS > Consulta de muestras realizada de la parcela", req.query.parc_id);
+        if (muestras.length > 0) res.json(muestras);
+        else res.status(400).json({ error: "No se encontraron muestras" });
+    }catch(error) {
+        console.log("RUTAS >> MUESTRAS > Error al consultar las muestras:", error);
+        res.status(500).json({ error: "Error al consultar las muestras", detalles: error.original?.detail || error.message });
+    }
+});
+
+//Para modificar las muestras
+router.put('/muestras', validateToken, async (req, res) => {
+    if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
+
+    try {
+        var muestras = await Muestras.findOne({ where: { mue_id: req.body.mue_id } });
+        const muestraModificada = req.body;
+        if (muestraModificada.mue_ph) muestras.mue_ph = muestraModificada.mue_ph;
+        if (muestraModificada.mue_con_elec) muestras.mue_con_elec = muestraModificada.mue_con_elec;
+        if (muestraModificada.mue_porc_mat_org) muestras.mue_porc_mat_org = muestraModificada.mue_porc_mat_org;
+        if (muestraModificada.mue_cap_inter_cati) muestras.mue_cap_inter_cati = muestraModificada.mue_cap_inter_cati;
+        if (muestraModificada.mue_salinidad) muestras.mue_salinidad = muestraModificada.mue_salinidad;
+        if (muestraModificada.mue_fecha_registro) muestras.mue_fecha_registro = muestraModificada.mue_fecha_registro;
+
+        await muestras.save();
+        console.log("RUTAS >> MUESTRAS > Muestra", muestras.mue_id, "editada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.log("RUTAS >> MUESTRAS > Error al modificar las muestras:", error);
+        res.status(500).json({ error: "Error al modificar las muestras", detalles: error.original?.detail || error.message });
+    }
+});
 //#endregion
 
 //#region Rutas relativas a usuarios
