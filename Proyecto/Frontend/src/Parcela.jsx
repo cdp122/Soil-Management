@@ -12,7 +12,7 @@ import salino from './assets/tipos_suelos/salino.jpeg';
 import volcanico from './assets/tipos_suelos/volcanico.jpeg';
 
 import Grafico from './components/Grafico';  // Importamos el gráfico
-const token = localStorage.getItem('token'); // Recuperar token
+
 
 const soilImages = {
     T001: arenoso,
@@ -27,16 +27,53 @@ const soilImages = {
     T010: aluvial,
 };
 
-function Parcela({ parcelID, parcelName, parcelType }) {
+function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isParcelaViewOpen, setIsParcelaViewOpen] = useState(false);
     const [calidadSuelo, setCalidadSuelo] = useState(25);
     const [historial, setHistorial] = useState([]); // Historial con las muestras de la parcela
     const [datosActuales, setDatosActuales] = useState({});
     const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
-
+    const token = localStorage.getItem('token'); // Recuperar token
+    const cedula = localStorage.getItem('cedula'); // Recuperar cédula
+    const [authorized, setAuthorized] = useState(false);
     // Cargar historial desde localStorage al iniciar
+
     useEffect(() => {
+        if (!isOpen) return;
+        const validateToken = async () => {
+            if (!token) {
+                console.error('No hay token disponible.');
+                return;
+            }
+            try {
+                const response = await fetch(
+                    `https://soil-management-4-soft-utn.onrender.com/profile?user=${cedula}`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserData(data); // Guardar datos del usuario
+                    setAuthorized(true);
+                } else {
+                    console.error('Token inválido o expirado.');
+                    setAuthorized(false);
+                    localStorage.removeItem('token'); // Limpiar token si es inválido
+                }
+            } catch (error) {
+                console.error('Error al validar el token:', error);
+                setAuthorized(false);
+            }
+        };
+
+        validateToken();
+
 
         const historialGuardado = JSON.parse(localStorage.getItem('historialParcelas')) || [];
         setHistorial(historialGuardado);
@@ -56,13 +93,13 @@ function Parcela({ parcelID, parcelName, parcelType }) {
 
             if (response.ok) {
                 console.log(data);
-                setDatosActuales(data[0]);
+                setDatosActuales(data);
                 setHistorial(data);
             } else {
-                alert('Error al cargar los datos actuales: ' + data.message);
+                alert('Error al cargar los datos actuales: 1 ' + data.message);
             }
         } catch (error) {
-            console.error('Error al cargar los datos actuales:', error);
+            console.error('Error al cargar los datos actuales: 2', error);
             alert('Error al conectar con la base de datos.');
         }
     };
@@ -157,6 +194,7 @@ function Parcela({ parcelID, parcelName, parcelType }) {
                                 <input type="number" value={datosActuales.mue_salinidad || '0'} disabled />
 
                                 <button className="agregar-btn">+</button>
+                                <button className="agregar-btn">editar</button>
                             </div>
 
                             <div className="historial-container">
