@@ -1,37 +1,52 @@
 .sueloscrud-container {
     display: flex;
-    height: calc(100vh - 100px); /* Ajustar la altura al 100% del contenedor principal */
+    height: calc(100vh - 100px);
+    /* Ajustar la altura al 100% del contenedor principal */
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    overflow: auto; /* Habilitar el scroll si es necesario */
-    background-color: #f9f9f9; /* Fondo más claro */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    overflow: auto;
+    /* Habilitar el scroll si es necesario */
+    background-color: #f9f9f9;
+    /* Fondo más claro */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra sutil */
 }
 
 .sueloscrud-content {
     flex: 1;
     padding: 20px;
-    background-color: #fff; /* Fondo blanco */
-    overflow: hidden; /* Ocultar el desbordamiento del contenido */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    background-color: #fff;
+    /* Fondo blanco */
+    overflow: hidden;
+    /* Ocultar el desbordamiento del contenido */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra sutil */
 }
 
 .sueloscrud-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px; /* Reducir margen inferior */
-    padding: 10px 20px; /* Reducir padding */
-    background-color: #4CAF50; /* Color de fondo verde */
-    color: white; /* Color de texto blanco */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    margin-bottom: 10px;
+    /* Reducir margen inferior */
+    padding: 10px 20px;
+    /* Reducir padding */
+    background-color: #4CAF50;
+    /* Color de fondo verde */
+    color: white;
+    /* Color de texto blanco */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra sutil */
 }
 
 .sueloscrud-title {
-    font-size: 20px; /* Reducir tamaño de fuente */
+    font-size: 20px;
+    /* Reducir tamaño de fuente */
     margin: 0;
-    color: white; /* Color de texto blanco */
+    color: white;
+    /* Color de texto blanco */
 }
 
 .sueloscrud-search {
@@ -40,11 +55,14 @@
 }
 
 .sueloscrud-search-input {
-    padding: 5px; /* Reducir padding */
+    padding: 5px;
+    /* Reducir padding */
     border: 1px solid #ccc;
     border-radius: 4px 0 0 4px;
-    width: 200px; /* Reducir ancho */
-    font-size: 14px; /* Reducir tamaño de fuente */
+    width: 200px;
+    /* Reducir ancho */
+    font-size: 14px;
+    /* Reducir tamaño de fuente */
 }
 
 .sueloscrud-buttons {
@@ -54,42 +72,57 @@
 
 .sueloscrud-buttons .sueloscrud-btn {
     margin-left: 10px;
-    padding: 5px 10px; /* Reducir padding */
-    background-color: #3a8b2f; /* Color de fondo más oscuro */
+    padding: 5px 10px;
+    /* Reducir padding */
+    background-color: #3a8b2f;
+    /* Color de fondo más oscuro */
     height: 40px;
     color: #fff;
     border: none;
     cursor: pointer;
     border-radius: 8px;
-    font-size: 14px; /* Reducir tamaño de fuente */
+    font-size: 14px;
+    /* Reducir tamaño de fuente */
 }
 
 .sueloscrud-buttons .sueloscrud-btn:hover {
-    background-color: #4ca04f; /* Color de fondo más oscuro al hacer hover */
+    background-color: #4ca04f;
+    /* Color de fondo más oscuro al hacer hover */
 }
 
 .sueloscrud-parcels {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 20px;
-    overflow-y: auto; /* Habilitar el scroll vertical */
-    max-height: calc(100vh - 200px); /* Ajustar la altura máxima para permitir el scroll */
-    padding: 10px; /* Padding interno */
-    background-color: #f9f9f9; /* Fondo más claro */
-    border-radius: 10px; /* Bordes redondeados */
+    overflow-y: auto;
+    /* Habilitar el scroll vertical */
+    max-height: calc(100vh - 200px);
+    /* Ajustar la altura máxima para permitir el scroll */
+    padding: 10px;
+    /* Padding interno */
+    background-color: #f9f9f9;
+    /* Fondo más claro */
+    border-radius: 10px;
+    /* Bordes redondeados */
 }
 
 .sueloscrud-parcel {
     text-align: center;
-    background-color: #fff; /* Fondo blanco */
-    padding: 10px; /* Padding interno */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-    transition: transform 0.2s; /* Transición suave */
+    background-color: #fff;
+    /* Fondo blanco */
+    padding: 10px;
+    /* Padding interno */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra sutil */
+    transition: transform 0.2s;
+    /* Transición suave */
 }
 
 .sueloscrud-parcel:hover {
-    transform: scale(1.05); /* Efecto de zoom al hacer hover */
+    transform: scale(1.05);
+    /* Efecto de zoom al hacer hover */
 }
 
 .sueloscrud-parcel-image {
@@ -97,7 +130,8 @@
     height: 120px;
     background-color: #ccc;
     margin: 0 auto 10px;
-    border-radius: 10px; /* Bordes redondeados */
+    border-radius: 10px;
+    /* Bordes redondeados */
 }
 
 .sueloscrud-parcel-image:hover {
@@ -107,8 +141,10 @@
 .sueloscrud-placeholder {
     text-align: center;
     margin-top: 50px;
-    color: #777; /* Color de texto más claro */
-    font-size: 18px; /* Tamaño de fuente más grande */
+    color: #777;
+    /* Color de texto más claro */
+    font-size: 18px;
+    /* Tamaño de fuente más grande */
 }
 
 .sueloscrud-placeholder2 {
@@ -116,8 +152,10 @@
     text-align: center;
     left: 49%;
     margin-top: 50px;
-    color: #777; /* Color de texto más claro */
-    font-size: 18px; /* Tamaño de fuente más grande */
+    color: #777;
+    /* Color de texto más claro */
+    font-size: 18px;
+    /* Tamaño de fuente más grande */
 }
 
 .sueloscrud-loading {
@@ -125,4 +163,251 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.entrarParcela {
+    background-color: #4CAF50;
+    border-radius: 25%;
+    width: 50px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Estilo del rectángulo sobrepuesto */
+.parcela-overlay {
+    position: absolute;
+    top: 120px;
+    /* Ajustar según la altura del navbar */
+    left: 220px;
+    /* Ajustar para que no cubra la barra lateral */
+    width: calc(100% - 240px);
+    /* Resta la barra lateral */
+    height: calc(100% - 150px);
+    /* Ajustar según la estructura */
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Contenedor interno del rectángulo */
+.parcela-container {
+    width: 80%;
+    height: 80%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Para evitar que los elementos desborden */
+}
+
+.parcela-content {
+    display: flex;
+    justify-content: space-between;
+    /* Espaciado entre las cajas */
+    align-items: flex-start;
+    gap: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: calc(100% - 60px);
+    padding: 10px;
+}
+
+/* Botón para cerrar la vista */
+.parcela-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.parcela-overlay {
+    position: absolute;
+    top: 95px;
+    /* Ajustar según la altura del navbar */
+    left: 220px;
+    /* Ajustar para que no cubra la barra lateral */
+    width: calc(100% - 250px);
+    /* Resta la barra lateral */
+    height: calc(100% - 120px);
+    /* Ajustar según la estructura */
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Contenedor interno del rectángulo */
+.parcela-container {
+    width: 80%;
+    height: 90%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+/* Botón para cerrar la vista */
+.parcela-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Estilo para el grupo de inputs */
+.grupoInput {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.grupoInput label {
+    font-weight: bold;
+}
+
+.grupoInput input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Asegurar que el botón de cierre siempre esté visible */
+.parcela-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 10;
+}
+
+.agregar-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    background-color: green;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+/* Contenedor de la barra de progreso */
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0;
+    width: 100%;
+}
+
+/* Barra de progreso */
+.progress-bar {
+    width: 80%;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ff2c2c;
+}
+
+/* Personalización de la barra */
+.progress-bar::-webkit-progress-bar {
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+.progress-bar::-webkit-progress-value {
+    background-color: #4caf50;
+    border-radius: 5px;
+}
+
+.progress-bar::-moz-progress-bar {
+    background-color: #4caf50;
+    border-radius: 5px;
+}
+
+/* Texto de porcentaje */
+.progress-container span {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Contenedor de historial y botón de actualización */
+.historial-container {
+    width: 50%;
+    /* Ocupa 35% del ancho */
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+/* Estilo del historial con scroll */
+.historial-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+/* Botones en la derecha */
+.actualizar-btn,
+.borrar-btn {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.actualizar-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.borrar-btn {
+    background-color: red;
+    color: white;
 }

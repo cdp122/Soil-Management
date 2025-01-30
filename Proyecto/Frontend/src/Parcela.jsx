@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ModalInfoP from './ModalInfoP';
 import aluvial from './assets/tipos_suelos/aluvial.jpeg';
 import arcilloso from './assets/tipos_suelos/arcilloso.jpg';
@@ -10,6 +10,9 @@ import organico from './assets/tipos_suelos/organico.jpeg';
 import pedregoso from './assets/tipos_suelos/pedregoso.jpg';
 import salino from './assets/tipos_suelos/salino.jpeg';
 import volcanico from './assets/tipos_suelos/volcanico.jpeg';
+
+import Grafico from './components/Grafico';  // Importamos el gráfico
+const token = localStorage.getItem('token'); // Recuperar token
 
 const soilImages = {
     T001: arenoso,
@@ -26,6 +29,43 @@ const soilImages = {
 
 function Parcela({ parcelID, parcelName, parcelType }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isParcelaViewOpen, setIsParcelaViewOpen] = useState(false);
+    const [calidadSuelo, setCalidadSuelo] = useState(25);
+    const [historial, setHistorial] = useState([]); // Historial con las muestras de la parcela
+    const [datosActuales, setDatosActuales] = useState({});
+    const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
+
+    // Cargar historial desde localStorage al iniciar
+    useEffect(() => {
+
+        const historialGuardado = JSON.parse(localStorage.getItem('historialParcelas')) || [];
+        setHistorial(historialGuardado);
+    }, []);
+
+    const fetchDatosActuales = async () => {
+        try {
+            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/muestras?parc_id=" + parcelID, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: token
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log(data);
+                setDatosActuales(data[0]);
+                setHistorial(data);
+            } else {
+                alert('Error al cargar los datos actuales: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error al cargar los datos actuales:', error);
+            alert('Error al conectar con la base de datos.');
+        }
+    };
 
     const handleImageClick = () => {
         setIsModalOpen(true);
@@ -35,20 +75,124 @@ function Parcela({ parcelID, parcelName, parcelType }) {
         setIsModalOpen(false);
     };
 
-    const soilImage = soilImages[parcelType] || test;
+    const handleEnterClick = () => {
+        setIsParcelaViewOpen(true);
+        // Recuperar datos actuales de la base de datos
+
+        fetchDatosActuales();
+    };
+
+    const handleCloseView = () => {
+        setIsParcelaViewOpen(false);
+    };
+
+    // Seleccionar una muestra y actualizar los datos en los inputs
+    const handleSeleccionarMuestra = (muestra) => {
+        setFechaSeleccionada(muestra.mue_fecha_registro);
+        setDatosActuales(muestra);
+    };
+
+    /*const handleActualizarDatos = async () => {
+        const fechaActual = new Date();
+        const fechaFormato = `${fechaActual.getDate()}/${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()} ${fechaActual.getHours()}:${fechaActual.getMinutes()}`;
+        console.log(fechaFormato);
+        setHistorial([...historial, { fecha: fechaFormato, ...datosActuales }]);
+    };*/
+
+
+    /*const handleBorrarHistorial = () => {
+        localStorage.removeItem('historialParcelas');
+        setHistorial([]);
+        setDatosActuales({});
+        setFechaSeleccionada(null);
+    };*/
+
+    const handleSeleccionarHistorial = (datos) => {
+        setFechaSeleccionada(datos.fecha);
+        setDatosActuales(datos);
+    };
+
+    const soilImage = soilImages[parcelType] || '';
 
     return (
-        <div className="sueloscrud-parcel">
-            <div className="sueloscrud-parcel-image">
-                <img src={soilImage} alt={parcelType} onClick={handleImageClick} />
+        <>
+            <div className="sueloscrud-parcel">
+                <div className="sueloscrud-parcel-image">
+                    <img src={soilImage} alt={parcelType} onClick={handleImageClick} />
+                </div>
+                <label className="sueloscrud-parcel-label">
+                    <input type="checkbox" /> {parcelName}
+                </label>
+                <button className="entrarParcela" onClick={handleEnterClick}>Entrar</button>
+                {isModalOpen && (
+                    <ModalInfoP isOpen={isModalOpen} onClose={handleCloseModal} parcelID={parcelID} />
+                )}
             </div>
-            <label className="sueloscrud-parcel-label">
-                <input type="checkbox" /> {parcelName}
-            </label>
-            {isModalOpen && (
-                <ModalInfoP isOpen={isModalOpen} onClose={handleCloseModal} parcelID={parcelID} />
+
+            {isParcelaViewOpen && (
+                <div className="parcela-overlay">
+                    <div className="parcela-container">
+                        <button className="parcela-close-btn" onClick={handleCloseView}>✖</button>
+                        <h2>Parcela {parcelName}</h2>
+                        <p>Porcentaje de Fertilidad</p>
+                        <div className="progress-container">
+                            <progress className="progress-bar" value={calidadSuelo} max="100"></progress>
+                            <span>{calidadSuelo}% Calidad de Suelo</span>
+                        </div>
+                        <div className="parcela-content">
+                            <div className="grupoInput">
+                                <label>Nivel de pH</label>
+                                <input type="number" value={datosActuales.mue_ph || '0'} disabled />
+
+                                <label>Conductividad Eléctrica</label>
+                                <input type="number" value={datosActuales.mue_con_elec || '0'} disabled />
+
+                                <label>Materia Orgánica</label>
+                                <input type="number" value={datosActuales.mue_porc_mat_org || '0'} disabled />
+
+                                <label>Intercambio Catiónico</label>
+                                <input type="number" value={datosActuales.mue_cap_inter_cati || '0'} disabled />
+
+                                <label>Salinidad</label>
+                                <input type="number" value={datosActuales.mue_salinidad || '0'} disabled />
+
+                                <button className="agregar-btn">+</button>
+                            </div>
+
+                            <div className="historial-container">
+                                <h3>Gráfico de Calidad de Suelo</h3>
+                                <Grafico data={datosActuales.graficoData || []} />
+
+                                <button className="actualizar-btn" onClick="W">Actualizar Datos</button>
+                                {/*<button className="borrar-btn" onClick={handleBorrarHistorial}>Borrar Historial</button>*/}
+
+                                <h3>Historial De Muestras</h3>
+                                <div className="historial-buttons">
+                                    {historial.map((muestra, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => handleSeleccionarMuestra(muestra)}
+                                            className="historial-btn"
+                                            style={{
+                                                backgroundColor: fechaSeleccionada === muestra.mue_fecha_registro ? "#007bff" : "#f1f1f1",
+                                                color: fechaSeleccionada === muestra.mue_fecha_registro ? "white" : "black",
+                                                margin: "5px",
+                                                padding: "10px",
+                                                border: "1px solid #ccc",
+                                                cursor: "pointer",
+                                                borderRadius: "5px",
+                                            }}
+                                        >
+                                            {`ID: ${muestra.mue_id} - Fecha: ${muestra.mue_fecha_registro}`}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     );
 }
 

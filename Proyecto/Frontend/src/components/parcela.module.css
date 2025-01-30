@@ -1,7 +1,7 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css";
 
-.container{
+.container {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
@@ -16,12 +16,12 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.parcela-form{
+.parcela-form {
     padding: 0 20px;
     background: rgba(0, 0, 0, 0.6);
 }
 
-.form-container{
+.form-container {
     padding: 10px;
     width: 100%;
     min-height: 520px;
@@ -34,12 +34,12 @@
     flex-direction: column;
 }
 
-.form-header{
+.form-header {
     position: relative;
     color: #000;
 }
 
-.btn-close{
+.btn-close {
     position: absolute !important;
     top: 0;
     right: 0;
@@ -49,7 +49,7 @@
 }
 
 
-.form-body{
+.form-body {
     /* background: peru; */
     padding: 0 50px;
     flex-grow: 1;
@@ -57,22 +57,21 @@
     overflow: auto;
 }
 
-.form-footer{
+.form-footer {
     gap: 15px;
     padding-right: 50px;
 }
 
-.datos-finales{
+.datos-finales {
     display: flex;
     gap: 20px;
 }
 
-.datos-finales .datos{
+.datos-finales .datos {
     width: 50%;
 }
 
-.descripcion textarea{
+.descripcion textarea {
     resize: none;
     height: 100%;
 }
-
