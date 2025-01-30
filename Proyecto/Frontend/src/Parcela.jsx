@@ -12,6 +12,9 @@ import salino from './assets/tipos_suelos/salino.jpeg';
 import volcanico from './assets/tipos_suelos/volcanico.jpeg';
 
 import Grafico from './components/Grafico';  // Importamos el gráfico
+import editIcon from './assets/edit.svg'; // Importamos el ícono de lápiz
+import { Icons } from 'react-toastify';
+import deleteIcon from './assets/delete.svg'; // Ícono de papelera en SVG
 
 
 const soilImages = {
@@ -37,7 +40,11 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     const token = localStorage.getItem('token'); // Recuperar token
     const cedula = localStorage.getItem('cedula'); // Recuperar cédula
     const [authorized, setAuthorized] = useState(false);
-    // Cargar historial desde localStorage al iniciar
+    const [dynamicFields, setDynamicFields] = useState([]); // Campos dinámicos
+
+
+    const [elementosIniciales, setElementosIniciales] = useState([]);
+    const [elementosSeleccionados, setElementosSeleccionados] = useState([]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -104,6 +111,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
         }
     };
 
+
     const handleImageClick = () => {
         setIsModalOpen(true);
     };
@@ -114,6 +122,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
 
     const handleEnterClick = () => {
         setIsParcelaViewOpen(true);
+        getElementosQuimicos();
         // Recuperar datos actuales de la base de datos
 
         fetchDatosActuales();
@@ -144,9 +153,42 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
         setFechaSeleccionada(null);
     };*/
 
-    const handleSeleccionarHistorial = (datos) => {
-        setFechaSeleccionada(datos.fecha);
-        setDatosActuales(datos);
+    const getElementosQuimicos = async () => {
+        const token = localStorage.getItem("token");
+        const url = "https://soil-management-4-soft-utn.onrender.com/elementos";
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: token,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                // throw new Error(`Response status: ${response.status}`);
+            }
+            const data = await response.json();
+            data.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre));
+            setElementosIniciales(data);
+            console.log(data);
+        } catch (error) {
+            console.error(
+                "Error al obtener los elementos quimicos:",
+                error.message
+            );
+        }
+    };
+
+
+    // Función para agregar dinámicamente un select y un input
+    const handleAgregarCampo = () => {
+        setDynamicFields([...dynamicFields, { id: Date.now(), value: '' }]);
+    };
+
+    // Función para eliminar un campo dinámico
+    const handleEliminarCampo = (id) => {
+        setDynamicFields(dynamicFields.filter(field => field.id !== id));
     };
 
     const soilImage = soilImages[parcelType] || '';
@@ -192,10 +234,35 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
 
                                 <label>Salinidad</label>
                                 <input type="number" value={datosActuales.mue_salinidad || '0'} disabled />
+                                {/* Campos dinámicos debajo de los inputs */}
+                                {dynamicFields.map((field) => (
+                                    <div key={field.id} className="dynamic-field">
+                                        <select>
+                                            <option value="">Selecciona elemento</option>
+                                            {elementosIniciales.map((elemento) => (
+                                                <option key={elemento.elem_id} value={elemento.elem_simbolo}>
+                                                    {elemento.elem_nombre} ({elemento.elem_simbolo})
+                                                </option>
+                                            ))}
+                                        </select>
 
-                                <button className="agregar-btn">+</button>
-                                <button className="agregar-btn">editar</button>
+                                        <input type="text" placeholder="Ingrese valor" />
+                                        <button onClick={() => handleEliminarCampo(field.id)}>
+                                            <img src={deleteIcon} alt="Eliminar" style={{ width: '20px', height: '20px' }} />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button className="agregar-btn" onClick={handleAgregarCampo}>+</button>
+
+                                <button className="agregar-btn">
+                                    <img src={editIcon} alt="Editar" style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        cursor: "pointer",
+                                    }} />
+                                </button>
                             </div>
+
 
                             <div className="historial-container">
                                 <h3>Gráfico de Calidad de Suelo</h3>

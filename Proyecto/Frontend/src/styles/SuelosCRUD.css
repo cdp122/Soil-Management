@@ -174,25 +174,7 @@
     gap: 10px;
 }
 
-/* Estilo del rectángulo sobrepuesto */
-.parcela-overlay {
-    position: absolute;
-    top: 120px;
-    /* Ajustar según la altura del navbar */
-    left: 220px;
-    /* Ajustar para que no cubra la barra lateral */
-    width: calc(100% - 240px);
-    /* Resta la barra lateral */
-    height: calc(100% - 150px);
-    /* Ajustar según la estructura */
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+
 
 /* Contenedor interno del rectángulo */
 .parcela-container {
@@ -237,11 +219,11 @@
 
 .parcela-overlay {
     position: absolute;
-    top: 95px;
+    top: 96px;
     /* Ajustar según la altura del navbar */
-    left: 220px;
+    left: 265px;
     /* Ajustar para que no cubra la barra lateral */
-    width: calc(100% - 250px);
+    width: calc(100% - 280px);
     /* Resta la barra lateral */
     height: calc(100% - 120px);
     /* Ajustar según la estructura */
@@ -256,7 +238,7 @@
 
 /* Contenedor interno del rectángulo */
 .parcela-container {
-    width: 80%;
+    width: 90%;
     height: 90%;
     background: #fff;
     padding: 20px;
@@ -281,7 +263,7 @@
 
 /* Estilo para el grupo de inputs */
 .grupoInput {
-    width: 30%;
+    width: 45%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -296,7 +278,7 @@
 }
 
 .grupoInput input {
-    width: 100%;
+    width: 40%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -321,7 +303,7 @@
     margin-top: 10px;
     padding: 8px 12px;
     border: none;
-    background-color: green;
+    background-color: rgb(3, 198, 3);
     color: white;
     font-size: 16px;
     border-radius: 5px;
@@ -410,4 +392,49 @@
 .borrar-btn {
     background-color: red;
     color: white;
+}
+
+.dynamic-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.dynamic-field select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dynamic-field select:hover {
+    border-color: #007bff;
+}
+
+.dynamic-field input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 150px;
+}
+
+.dynamic-field button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.dynamic-field button:hover {
+    transform: scale(1.1);
+}
+
+.dynamic-field button img {
+    width: 24px;
+    height: 24px;
 }

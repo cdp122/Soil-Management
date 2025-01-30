@@ -1,24 +1,24 @@
 /* eslint-disable */ // Validar despúes 
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
-import { useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import styles from "./form-muestra.module.css"
 import { isFormValid } from "../utils/isFormValid";
 import api from "../utils/api";
-import {ToastContainer, toast} from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import Notification from "./notification/notification";
 import "./indicator.css"
 import { isNumber } from "chart.js/helpers";
 
-const FormMuestras = ({parcelaId}) => {
+const FormMuestras = ({ parcelaId }) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const {register, handleSubmit, formState: { errors }, reset} = useForm({mode: "all"});
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({ mode: "all" });
     const [elementosIniciales, setElementosIniciales] = useState([]);
-    const [elementosSeleccionados, setElementosSeleccionados ] = useState([]);
+    const [elementosSeleccionados, setElementosSeleccionados] = useState([]);
     const [isActive, setIsActive] = useState(false);
 
-    useEffect(()=>{
-        if(isActive){
+    useEffect(() => {
+        if (isActive) {
             const getElementosQuimicos = async () => {
                 const token = localStorage.getItem("token");
                 const url = "https://soil-management-4-soft-utn.onrender.com/elementos";
@@ -30,12 +30,12 @@ const FormMuestras = ({parcelaId}) => {
                             "Content-Type": "application/json",
                         },
                     });
-    
+
                     if (!response.ok) {
                         // throw new Error(`Response status: ${response.status}`);
                     }
                     const data = await response.json();
-                    data.sort((a,b) => a.elem_nombre.localeCompare(b.elem_nombre));
+                    data.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre));
                     setElementosIniciales(data);
                 } catch (error) {
                     console.error(
@@ -46,7 +46,7 @@ const FormMuestras = ({parcelaId}) => {
             };
             getElementosQuimicos();
         }
-        
+
     }, [isActive])
 
     const handleBack = () => {
@@ -76,14 +76,14 @@ const FormMuestras = ({parcelaId}) => {
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }),[isActive];
+    }), [isActive];
 
     const EnviarMuestra = handleSubmit((data, e) => {
-        if(currentStep < 1 && isFormValid(errors)){
+        if (currentStep < 1 && isFormValid(errors)) {
             setCurrentStep(currentStep + 1);
             return;
         }
-        
+
         let elems = data.selectedItems?.map(item => ({
             simb_elem: item.elem_simbolo,
             cant_elem: parseFloat(item.valor)
@@ -111,12 +111,12 @@ const FormMuestras = ({parcelaId}) => {
             }
             btnAdd.classList.remove('is-loading');
         });
-        
+
     })
-    
+
     return (
         <div>
-            <ToastContainer/>
+            <ToastContainer />
             <button className="button is-primary" onClick={toggleModal}>
                 Agregar muestra
             </button>
@@ -124,9 +124,9 @@ const FormMuestras = ({parcelaId}) => {
             <div className={`${styles["parcela-form"]} modal ${isActive ? "is-active" : ""}`}>
                 <div className={`${styles["form-container"]}`}>
                     <form onSubmit={EnviarMuestra} onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()} >
-                        <FormHeader handleModal={toggleModal} currentStep={currentStep}/>
+                        <FormHeader handleModal={toggleModal} currentStep={currentStep} />
                         <FormBody currentStep={currentStep} register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados} />
-                        <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal}/>
+                        <FormFooter currentStep={currentStep} handleBack={handleBack} handleSubmit={EnviarMuestra} handleModal={toggleModal} />
                     </form>
                 </div>
             </div>
@@ -134,7 +134,7 @@ const FormMuestras = ({parcelaId}) => {
     );
 };
 
-function FormHeader({handleModal, currentStep}) {
+function FormHeader({ handleModal, currentStep }) {
     return (
         <div className={`${styles["form-header"]}`}>
             <div>
@@ -142,19 +142,19 @@ function FormHeader({handleModal, currentStep}) {
                 <button className={`${styles["btn-close"]} delete is-medium has-background-danger`} aria-label="close" onClick={handleModal}></button>
             </div>
             <div>
-                <StepIndicator currentStep={currentStep}/>
+                <StepIndicator currentStep={currentStep} />
             </div>
         </div>
     );
 }
 
-function StepIndicator({currentStep}){
+function StepIndicator({ currentStep }) {
     return (
         <div className="indicator">
             <div className="indicator-points">
-                <div className={`bar ${currentStep > 0? 'current-step-bar':''}`}></div>
-                <div className={`step1 ${currentStep == 0?'current-step':'step-complete'}`}><span>1</span></div>
-                <div className={`step2 ${currentStep > 0?'current-step':''}`}><span>2</span></div>
+                <div className={`bar ${currentStep > 0 ? 'current-step-bar' : ''}`}></div>
+                <div className={`step1 ${currentStep == 0 ? 'current-step' : 'step-complete'}`}><span>1</span></div>
+                <div className={`step2 ${currentStep > 0 ? 'current-step' : ''}`}><span>2</span></div>
             </div>
             <div className="indicator-titles">
                 <span>Parámetros generales</span>
@@ -164,16 +164,16 @@ function StepIndicator({currentStep}){
     )
 }
 
-function FormBody({currentStep, register, errors, elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}){
+function FormBody({ currentStep, register, errors, elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados }) {
     return (
         <div className={`${styles["form-body"]}`}>
-            {currentStep === 0 && <VariablesGenerales register={register} errors={errors}/>}
-            {currentStep === 1 && <VariablesQuimicas register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados}/>}
+            {currentStep === 0 && <VariablesGenerales register={register} errors={errors} />}
+            {currentStep === 1 && <VariablesQuimicas register={register} errors={errors} elementosIniciales={elementosIniciales} elementosSeleccionados={elementosSeleccionados} setElementosIniciales={setElementosIniciales} setElementosSeleccionados={setElementosSeleccionados} />}
         </div>
     );
 }
 
-function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
+function FormFooter({ currentStep, handleBack, handleSubmit, handleModal }) {
     return (
         <div className={`${styles["form-footer"]} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
             {currentStep > 0 ?
@@ -181,7 +181,7 @@ function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
                     <button className={`button ${styles["btn-white"]}`} onClick={handleBack}>Atrás</button>
                     <button className="button is-link btn-add-muestra" onClick={handleSubmit}>Guardar</button>
                 </>
-            :
+                :
                 <button className="button is-link" onClick={handleSubmit}>Siguiente</button>
             }
             <button type="button" className={`button ${styles["btn-white"]}`} onClick={handleModal}>Cancelar</button>
@@ -189,89 +189,89 @@ function FormFooter({currentStep, handleBack, handleSubmit, handleModal}){
     );
 }
 
-function VariablesGenerales({register, errors}) {
+function VariablesGenerales({ register, errors }) {
     return (
         <div className="fixed-grid has-2-cols">
             <div className="grid">
                 <div className="cell ">
                     <label>pH</label>
-                    <input type="number" className="input" 
-                    {...register("ph", {
-                        required:{
-                            value: true,
-                            message: "Ingrese valor"
-                        },
-                        min: {
-                            value: 0,
-                            message: "Valor inválido"
-                        },
-                        max: {
-                            value: 14,
-                            message: "Valor inválido"
-                        }
-                    })}
+                    <input type="number" className="input"
+                        {...register("ph", {
+                            required: {
+                                value: true,
+                                message: "Ingrese valor"
+                            },
+                            min: {
+                                value: 0,
+                                message: "Valor inválido"
+                            },
+                            max: {
+                                value: 14,
+                                message: "Valor inválido"
+                            }
+                        })}
                     />
                     {
                         errors?.ph && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.ph.message}</span></div>
                     }
                 </div>
-                
+
                 <div className={`cell ${styles["label-text"]}`}>
                     <label>Conductividad eléctrica (CE)</label>
                     <div className="control">
                         <input type="number" className="input"
-                        {...register("con_elec", {
-                            required:{
-                                value: true,
-                                message: "Ingrese valor"
-                            }
-                        })}
+                            {...register("con_elec", {
+                                required: {
+                                    value: true,
+                                    message: "Ingrese valor"
+                                }
+                            })}
                         />
                     </div>
                     {
                         errors?.con_elec && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.con_elec.message}</span></div>
                     }
                 </div>
-                
+
                 <div className="cell ">
                     <label>Salinidad</label>
-                    <input type="number" className="input" 
-                    {...register("salinidad", {
-                        required: false,
-                    })}
+                    <input type="number" className="input"
+                        {...register("salinidad", {
+                            required: false,
+                        })}
                     />
                     {
                         errors?.salinidad && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.salinidad.message}</span></div>
                     }
                 </div>
-                
+
                 <div className={`cell ${styles["label-text"]}`}>
                     <label>Capacidad de intercambio catiónico efectiva (CICe)</label>
                     <div className="control">
                         <input type="number" className="input"
-                        {...register("inter_cati",{
-                            required: false,
-                            min: {
-                                value: 0,
-                                message: "Ingrese valor válido"
-                            }
-                        })}
+                            {...register("inter_cati", {
+                                required: false,
+                                min: {
+                                    value: 0,
+                                    message: "Ingrese valor válido"
+                                }
+                            })}
                         />
                         {
                             errors?.inter_cati && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.inter_cati.message}</span></div>
                         }
                     </div>
                 </div>
-                
+
                 <div className="cell ">
                     <label>Materia orgánica (MO)</label>
                     <input type="number" className="input"
-                    {...register("mat_org", {
-                        required:{
-                            value: true,
-                            message: "Ingrese valor"
-                        }
-                    })}
+                        {...register("mat_org", {
+                            required: {
+                                value: true,
+                                message: "Ingrese valor"
+                            }
+                        })}
                     />
                     {
                         errors?.mat_org && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.mat_org.message}</span></div>
@@ -281,35 +281,35 @@ function VariablesGenerales({register, errors}) {
                 <div className="cell ">
                     <label>Fecha de registro</label>
                     <input type="date" className="input"
-                    {...register("fecha_registro", {
-                        required:{
-                            value: true,
-                            message: "Escoga fecha de registro"
-                        },
-                        validate: (valor) => {
-                            const partes = valor.split("-");
-                            const fechaSeleccionada = new Date(partes[0], partes[1] - 1, partes[2]);
-                            const hoy = new Date();
-                            hoy.setHours(0, 0, 0, 0);
-                            
-                            if(fechaSeleccionada > hoy){
-                                return "Escoga un fecha actual o anterior";
+                        {...register("fecha_registro", {
+                            required: {
+                                value: true,
+                                message: "Escoga fecha de registro"
+                            },
+                            validate: (valor) => {
+                                const partes = valor.split("-");
+                                const fechaSeleccionada = new Date(partes[0], partes[1] - 1, partes[2]);
+                                const hoy = new Date();
+                                hoy.setHours(0, 0, 0, 0);
+
+                                if (fechaSeleccionada > hoy) {
+                                    return "Escoga un fecha actual o anterior";
+                                }
+                                return true;
                             }
-                            return true;
-                        }
-                    })}
+                        })}
                     />
                     {
                         errors?.fecha_registro && <div className="error"><span><i className="fa-solid fa-circle-exclamation"></i> {errors?.fecha_registro.message}</span></div>
                     }
                 </div>
-                
+
             </div>
         </div>
     );
 }
 
-function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados}) {
+function VariablesQuimicas({ elementosIniciales, elementosSeleccionados, setElementosIniciales, setElementosSeleccionados }) {
     const elementoSimboloRef = useRef("");
     const elementoValorRef = useRef("");
     const [valorValido, setValorValido] = useState(true);
@@ -317,14 +317,14 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
     const moverASeleccionados = () => {
         const elementoSeleccionado = elementoSimboloRef.current.value;
         const elementoValor = elementoValorRef.current.value;
-        if(elementoSeleccionado.trim().length == 0) return;
+        if (elementoSeleccionado.trim().length == 0) return;
 
         const selectedItem = elementosIniciales.find(
             (item) => item.elem_simbolo === elementoSeleccionado
         );
-    
+
         if (selectedItem) {
-            
+
             selectedItem["valor"] = elementoValor;
             setElementosIniciales((prev) => prev.filter((item) => item !== selectedItem));
             setElementosSeleccionados((prev) => [...prev, selectedItem]);
@@ -334,28 +334,28 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
 
     const moverAIniciales = (elem_simbolo) => {
 
-        if(elem_simbolo.trim().length == 0) return;
+        if (elem_simbolo.trim().length == 0) return;
 
         const selectedItem = elementosSeleccionados.find(
             (item) => item.elem_simbolo === elem_simbolo
         );
-    
+
         if (selectedItem) {
 
             setElementosSeleccionados((prev) => prev.filter((item) => item !== selectedItem));
             setElementosIniciales((prev) => {
-            const updatedItems = [...prev, selectedItem];
-            updatedItems.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre)); // Ordenar alfabéticamente por elem_nombre
-            return updatedItems;
-          });
+                const updatedItems = [...prev, selectedItem];
+                updatedItems.sort((a, b) => a.elem_nombre.localeCompare(b.elem_nombre)); // Ordenar alfabéticamente por elem_nombre
+                return updatedItems;
+            });
         }
-        
+
     };
 
-    const agregarElemento = () =>{
-        if(elementoSimboloRef.current.value.length == 0) return;
+    const agregarElemento = () => {
+        if (elementoSimboloRef.current.value.length == 0) return;
 
-        if(!isNumber(elementoValorRef.current.value)){
+        if (!isNumber(elementoValorRef.current.value)) {
             setValorValido(false);
             return;
         }
@@ -363,12 +363,12 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
         setValorValido(true);
     }
 
-    const removerElemento = (simb_elem) =>{
+    const removerElemento = (simb_elem) => {
         moverAIniciales(simb_elem);
     }
 
-    const changeValor = () =>{
-        if(!valorValido & isNumber(elementoValorRef.current.value)){
+    const changeValor = () => {
+        if (!valorValido & isNumber(elementoValorRef.current.value)) {
             setValorValido(true);
         }
     }
@@ -420,7 +420,7 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
                     <tbody>
                         {
                             elementosSeleccionados?.map((elemento, index) =>
-                                <RowTable key={index} index={index+1} elemento={elemento} removerElemento={removerElemento} />
+                                <RowTable key={index} index={index + 1} elemento={elemento} removerElemento={removerElemento} />
                             )
                         }
                     </tbody>
@@ -430,10 +430,10 @@ function VariablesQuimicas({elementosIniciales, elementosSeleccionados, setEleme
     );
 }
 
-function RowTable ({index, elemento, removerElemento}){
-    const {elem_simbolo, elem_nombre, uni_simbolo, valor} = elemento;
+function RowTable({ index, elemento, removerElemento }) {
+    const { elem_simbolo, elem_nombre, uni_simbolo, valor } = elemento;
     const inputRef = useRef();
-    const [editando, setEditando]  = useState(false);
+    const [editando, setEditando] = useState(false);
 
     const editarValor = () => {
         setEditando(true);
@@ -445,15 +445,15 @@ function RowTable ({index, elemento, removerElemento}){
         }
     }, [editando]);
 
-    const handleOnBlur= () =>{
+    const handleOnBlur = () => {
         const nuevoValor = inputRef.current.value;
-        if(nuevoValor != 0){
-            elemento.valor = nuevoValor; 
+        if (nuevoValor != 0) {
+            elemento.valor = nuevoValor;
         }
         setEditando(false);
     }
 
-    const eliminarElemento = () =>{
+    const eliminarElemento = () => {
         removerElemento(elem_simbolo);
     }
 
@@ -464,11 +464,11 @@ function RowTable ({index, elemento, removerElemento}){
             <td>{elem_nombre}</td>
             <td>{uni_simbolo}</td>
             <td>
-            {
-                editando? <input ref={inputRef} type="number" className={`${styles["input-valor-elemento"]}`} onBlur={handleOnBlur}/>
-                :
-                valor
-            }
+                {
+                    editando ? <input ref={inputRef} type="number" className={`${styles["input-valor-elemento"]}`} onBlur={handleOnBlur} />
+                        :
+                        valor
+                }
             </td>
             <td>
                 <div className={`buttons ${styles["buttons-table"]}`}>
