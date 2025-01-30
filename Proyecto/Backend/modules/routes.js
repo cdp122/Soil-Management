@@ -285,23 +285,72 @@ router.get('/muestras', validateToken, async (req, res) => {
 //Para modificar las muestras
 router.put('/muestras', validateToken, async (req, res) => {
     if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
+    //Si hay variables secundarias debe de comprobarse de la buena estructura del json
+    if (req.body.elems) {
+        console.log("RUTAS >> MUESTRAS > Se identificaron elementos en la actualización de muestras. Comprobando estructura de elementos...");
+        var elem;
+        for (var elems in req.body.elems) {
+            elem = req.body.elems[elems];
+            if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el símbolo del elemento en el registro " + (elems + 1) }); return; }
+            if (!elem.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento en el registro " + (elems + 1) }); return; }
+        }
+        console.log("RUTAS >> MUESTRAS > Estructura de elementos correcta. Iniciando con la actualización...");
+    }
 
     try {
         var muestras = await Muestras.findOne({ where: { mue_id: req.body.mue_id } });
-        const muestraModificada = req.body;
-        if (muestraModificada.mue_ph) muestras.mue_ph = muestraModificada.mue_ph;
-        if (muestraModificada.mue_con_elec) muestras.mue_con_elec = muestraModificada.mue_con_elec;
-        if (muestraModificada.mue_porc_mat_org) muestras.mue_porc_mat_org = muestraModificada.mue_porc_mat_org;
-        if (muestraModificada.mue_cap_inter_cati) muestras.mue_cap_inter_cati = muestraModificada.mue_cap_inter_cati;
-        if (muestraModificada.mue_salinidad) muestras.mue_salinidad = muestraModificada.mue_salinidad;
-        if (muestraModificada.mue_fecha_registro) muestras.mue_fecha_registro = muestraModificada.mue_fecha_registro;
+        if (!muestras) {
+            res.status(404).json({ error: "Muestra no encontrada" });
+            return;
+        }
+        if (req.body.mue_ph) muestras.mue_ph = req.body.mue_ph;
+        if (req.body.mue_con_elec) muestras.mue_con_elec = req.body.mue_con_elec;
+        if (req.body.mue_porc_mat_org) muestras.mue_porc_mat_org = req.body.mue_porc_mat_org;
+        if (req.body.mue_cap_inter_cati) muestras.mue_cap_inter_cati = req.body.mue_cap_inter_cati;
+        if (req.body.mue_salinidad) muestras.mue_salinidad = req.body.mue_salinidad;
+        if (req.body.mue_fecha_registro) muestras.mue_fecha_registro = req.body.mue_fecha_registro;
 
-        await muestras.save();
+        await BDD.transaction(async (t) => {
+            var elem;
+
+            for (var elems in req.body.elems) {
+                elem = req.body.elems[elems];
+                if (!elem.var_id) {
+                    await VariablesSecundarias.create({
+                        mue_id: muestra.mue_id, elem_simbolo: elem.simb_elem, anpar_elem_cant: elem.cant_elem
+                    }, { transaction: t });
+                }
+                else {
+                    var variable = await VariablesSecundarias.findOne({ where: { anpar_varsec: elem.var_id } });
+                    if (variable) {
+                        variable.elem_simbolo = elem.simb_elem;
+                        variable.anpar_elem_cant = elem.cant_elem;
+                        await variable.save({ transaction: t });
+                    }
+                    else { throw new Error("No se encontró la variable con id " + elem.var_id); }
+                }
+                await muestras.save({ transaction: t });
+            }
+        });
         console.log("RUTAS >> MUESTRAS > Muestra", muestras.mue_id, "editada correctamente");
         res.json({ status: "OK" });
     } catch (error) {
         console.log("RUTAS >> MUESTRAS > Error al modificar las muestras:", error);
         res.status(500).json({ error: "Error al modificar las muestras", detalles: error.original?.detail || error.message });
+    }
+});
+
+router.get('varibales', validateToken, async (req, res) => {
+    if (!req.query.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
+
+    try {
+        const variables = await VariablesSecundarias.findAll({ where: { mue_id: req.query.mue_id } });
+        console.log("RUTAS >> VARIABLES > Consulta de variables realizada de la muestra", req.query.mue_id);
+        if (variables.length > 0) res.json(variables);
+        else res.status(400).json({ error: "No se encontraron variables" });
+    } catch (error) {
+        console.error("RUTAS >> VARIABLES > Error al consultar variables:", error);
+        res.status(500).json({ error: "Error al consultar variables", detalles: error.original?.detail || error.message });
     }
 });
 //#endregion
