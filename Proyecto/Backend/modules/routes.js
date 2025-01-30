@@ -147,7 +147,6 @@ router.post('/nuevaparcela', validateToken, async (req, res) => {
     if (!req.body["parc_area"]) { res.status(400).json({ error: "No se ha proporcionado el area de la parcela" }); return; }
     if (!req.body["parc_coord_la"] && req.body["parc_coord_la"] == null) { res.status(400).json({ error: "No se ha proporcionado la coordenada de latitud de la parcela" }); return; }
     if (!req.body["parc_coord_lo"] && req.body["parc_coord_la"] == null) { res.status(400).json({ error: "No se ha proporcionado la coordenada de longitud de la parcela" }); return; }
-    if (!req.body["parc_descripcion"]) { res.status(400).json({ error: "No se ha proporcionado la descripcion de la parcela" }); return; }
 
     console.log("RUTAS >> NUEVA PARCELA > Registrando nueva parcela...");
     const parcela = req.body;
