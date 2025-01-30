@@ -66,17 +66,15 @@
     width: 50%;
 }
 
-<<<<<<< HEAD
 .descripcion textarea {
     resize: none;
     height: 100%;
 }
-=======
-.descripcion-container{
+
+.descripcion-container {
     height: 100%;
 }
 
-.descripcion-textarea{
+.descripcion-textarea {
     height: 65%;
 }
->>>>>>> c4d34db5cbc5a8bf71908dff4dc1e7cc2a069ee5
