@@ -88,28 +88,44 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
 
     const fetchDatosActuales = async () => {
         try {
-            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/muestras?parc_id=" + parcelID, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: token
+            const response = await fetch(
+                `https://soil-management-4-soft-utn.onrender.com/muestras?parc_id=${parcelID}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: token,
+                    },
                 }
-            });
+            );
 
             const data = await response.json();
 
             if (response.ok) {
-                console.log(data);
+                console.log("Muestras obtenidas:", data);
                 setHistorial(data);
 
-                // Ordenar por fecha (descendente) para obtener la muestra más reciente
-                const muestraMasReciente = data.sort((a, b) =>
-                    new Date(b.mue_fecha_registro) - new Date(a.mue_fecha_registro)
-                )[0];
+                // Ordenar primero por fecha más reciente, luego por ID descendente
+                const muestrasOrdenadas = data.sort((a, b) => {
+                    const fechaA = new Date(a.mue_fecha_registro);
+                    const fechaB = new Date(b.mue_fecha_registro);
+
+                    // Comparar fechas primero
+                    if (fechaB - fechaA !== 0) {
+                        return fechaB - fechaA; // Más reciente primero
+                    }
+                    // Si las fechas son iguales, ordenar por ID de muestra (descendente)
+                    return b.mue_id - a.mue_id;
+                });
+
+                // Tomar la muestra más reciente y con ID más alto
+                const muestraMasReciente = muestrasOrdenadas[0];
 
                 if (muestraMasReciente) {
                     setDatosActuales(muestraMasReciente);
                     setFechaSeleccionada(muestraMasReciente.mue_fecha_registro);
+
+                    // Obtener variables secundarias de la muestra más reciente
                     getElementosMuestra(muestraMasReciente.mue_id);
                 }
             } else {
@@ -145,6 +161,9 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     const handleSeleccionarMuestra = (muestra) => {
         setFechaSeleccionada(muestra.mue_fecha_registro);
         setDatosActuales(muestra);
+        // Limpiar elementos previos antes de cargar nuevos datos
+        setElementosSeleccionados([]);
+        getElementosMuestra(muestra.mue_id);
     };
 
     /*const handleActualizarDatos = async () => {
@@ -192,7 +211,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     //Fetch para recibir los elementos que tiene una muestra mediante el id
     const getElementosMuestra = async (mue_id) => {
         try {
-            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/varibales?mue_id=${mue_id}`,
+            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/variables?mue_id=${mue_id}`,
                 {
                     method: 'GET',
                     headers: {
@@ -202,11 +221,23 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-            else {
-                const data = await response.json();
-                console.log("Elementos de la muestra:", data);
-                setElementosSeleccionados(data); // Guardar elementos de la muestra en el estado
+
+            const data = await response.json();
+            console.log("Elementos de la muestra:", data);
+
+            // Si la muestra no tiene elementos, limpiar la lista
+            if (!data || data.length === 0) {
+                setElementosSeleccionados([]);
+                return;
             }
+            // Filtrar y ordenar los elementos según el tipo de muestra
+            const elementosFiltrados = data.map(({ anpar_elem_cant, elem_simbolo }) => ({
+                cantidad: anpar_elem_cant,
+                simbolo: elem_simbolo
+            }));
+            setElementosSeleccionados(elementosFiltrados);
+
+
         } catch (error) {
             console.error('Error al obtener los elementos de la muestra:', error.message);
         }
@@ -283,7 +314,13 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                         );
                                     })
                                 }
-
+                                {/* Mostrar los elementos secundarios de la muestra dinámicamente */}
+                                {elementosSeleccionados.map((elemento, index) => (
+                                    <div className="grupoInput2" key={index}>
+                                        <label>{elemento.simbolo}</label>
+                                        <input type="number" value={elemento.cantidad || '0'} disabled />
+                                    </div>
+                                ))}
 
                                 {/* Campos dinámicos debajo de los inputs */}
                                 {dynamicFields.map((field) => (
