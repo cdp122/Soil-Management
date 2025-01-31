@@ -100,16 +100,27 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
 
             if (response.ok) {
                 console.log(data);
-                setDatosActuales(data);
                 setHistorial(data);
+
+                // Ordenar por fecha (descendente) para obtener la muestra más reciente
+                const muestraMasReciente = data.sort((a, b) =>
+                    new Date(b.mue_fecha_registro) - new Date(a.mue_fecha_registro)
+                )[0];
+
+                if (muestraMasReciente) {
+                    setDatosActuales(muestraMasReciente);
+                    setFechaSeleccionada(muestraMasReciente.mue_fecha_registro);
+                    getElementosMuestra(muestraMasReciente.mue_id);
+                }
             } else {
-                alert('Error al cargar los datos actuales: 1 ' + data.message);
+                alert('Error al cargar los datos actuales: ' + data.message);
             }
         } catch (error) {
-            console.error('Error al cargar los datos actuales: 2', error);
+            console.error('Error al cargar los datos actuales:', error);
             alert('Error al conectar con la base de datos.');
         }
     };
+
 
 
     const handleImageClick = () => {
@@ -123,9 +134,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     const handleEnterClick = () => {
         setIsParcelaViewOpen(true);
         getElementosQuimicos();
-        // Recuperar datos actuales de la base de datos
-
-        fetchDatosActuales();
+        fetchDatosActuales(); // Cargar muestra más reciente al abrir la parcela        
     };
 
     const handleCloseView = () => {
@@ -180,6 +189,31 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
         }
     };
 
+    //Fetch para recibir los elementos que tiene una muestra mediante el id
+    const getElementosMuestra = async (mue_id) => {
+        try {
+            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/varibales?mue_id=${mue_id}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: token,
+                    },
+                });
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+            else {
+                const data = await response.json();
+                console.log("Elementos de la muestra:", data);
+                setElementosSeleccionados(data); // Guardar elementos de la muestra en el estado
+            }
+        } catch (error) {
+            console.error('Error al obtener los elementos de la muestra:', error.message);
+        }
+    };
+
+
+
 
     // Función para agregar dinámicamente un select y un input
     const handleAgregarCampo = () => {
@@ -223,17 +257,34 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                 <label>Nivel de pH</label>
                                 <input type="number" value={datosActuales.mue_ph || '0'} disabled />
 
-                                <label>Conductividad Eléctrica</label>
-                                <input type="number" value={datosActuales.mue_con_elec || '0'} disabled />
-
                                 <label>Materia Orgánica</label>
                                 <input type="number" value={datosActuales.mue_porc_mat_org || '0'} disabled />
+                                {/* Diccionario para renombrar claves */}
+                                {Object.entries(datosActuales)
+                                    .filter(([key]) =>
+                                        key !== "mue_fecha_registro" &&
+                                        key !== "mue_id" &&
+                                        key !== "parc_id" &&
+                                        key !== "mue_ph" &&
+                                        key !== "mue_porc_mat_org"
+                                    )
+                                    .map(([key, value]) => {
+                                        const nombresCampos = {
+                                            mue_con_elec: "Conductividad Eléctrica",
+                                            mue_cap_inter_cati: "Intercambio Catiónico",
+                                            mue_salinidad: "Salinidad"
+                                        };
 
-                                <label>Intercambio Catiónico</label>
-                                <input type="number" value={datosActuales.mue_cap_inter_cati || '0'} disabled />
+                                        return (
+                                            <div className="grupoInput2" key={key}>
+                                                <label  >{nombresCampos[key] || key.replace(/_/g, " ").toUpperCase()}</label>
+                                                <input type="number" value={value || '0'} disabled />
+                                            </div>
+                                        );
+                                    })
+                                }
 
-                                <label>Salinidad</label>
-                                <input type="number" value={datosActuales.mue_salinidad || '0'} disabled />
+
                                 {/* Campos dinámicos debajo de los inputs */}
                                 {dynamicFields.map((field) => (
                                     <div key={field.id} className="dynamic-field">

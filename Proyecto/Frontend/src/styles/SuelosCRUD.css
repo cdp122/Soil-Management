@@ -203,19 +203,7 @@
     padding: 10px;
 }
 
-/* Botón para cerrar la vista */
-.parcela-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    background: red;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
+
 
 .parcela-overlay {
     position: absolute;
@@ -247,23 +235,11 @@
     text-align: center;
 }
 
-/* Botón para cerrar la vista */
-.parcela-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    background: red;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
+
 
 /* Estilo para el grupo de inputs */
 .grupoInput {
-    width: 45%;
+    width: 55%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -284,11 +260,33 @@
     border-radius: 5px;
 }
 
+.grupoInput2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.grupoInput2 label {
+    font-weight: bold;
+}
+
+.grupoInput2 input {
+    width: 40%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
 /* Asegurar que el botón de cierre siempre esté visible */
 .parcela-close-btn {
     position: absolute;
     top: 10px;
-    right: 20px;
+    right: 17px;
     background: red;
     color: white;
     border: none;
