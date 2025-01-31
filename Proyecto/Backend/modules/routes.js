@@ -339,7 +339,8 @@ router.put('/muestras', validateToken, async (req, res) => {
     }
 });
 
-router.get('varibales', validateToken, async (req, res) => {
+//Para conseguir las variables de acuerdo a las muestras
+router.get('/varibales', validateToken, async (req, res) => {
     if (!req.query.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
 
     try {
