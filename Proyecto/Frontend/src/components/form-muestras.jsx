@@ -84,20 +84,20 @@ const FormMuestras = ({ parcelaId }) => {
             return;
         }
 
-        let elems = data.selectedItems?.map(item => ({
-            simb_elem: item.elem_simbolo,
-            cant_elem: parseFloat(item.valor)
-        }));
+        if(elementosSeleccionados.length > 0){
+            let elems = elementosSeleccionados?.map(item => ({
+                simb_elem: item.elem_simbolo,
+                cant_elem: parseFloat(item.valor)
+            }));
+            data["elems"] = elems;
+        }
 
-        data["elems"] = elems;
         data["parc_id"] = parcelaId;
         data.con_elec = parseFloat(data.con_elec);
         data.inter_cati = parseFloat(data.inter_cati);
         data.mat_org = parseFloat(data.mat_org);
         data.ph = parseFloat(data.ph);
         data.salinidad = parseFloat(data.salinidad);
-
-        delete data.selectedItems;
 
         const btnAdd = e.target;
         btnAdd.classList.add('is-loading');
