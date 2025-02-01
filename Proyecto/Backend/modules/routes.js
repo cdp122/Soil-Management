@@ -442,13 +442,8 @@ router.post('/register', async (req, res) => {
         console.log("RUTAS >> USUARIOS > Usuario registrado correctamente");
         res.json({ status: "OK" });
     } catch (error) {
-        if (error.name === "SequelizeUniqueConstraintError") {
-            console.log("RUTAS >> REGISTRAR USUARIO > Se intentó registrar un usuario con un correo existente, abortando registro.");
-            res.status(400).json({ error: "Ya existe un usuario con ese correo" });
-        } else {
-            console.error("RUTAS >> REGISTRAR USUARIO > Error al registrar el usuario:", error);
-            res.status(500).json({ error: "Error al registrar el usuario", detalles: error.original?.detail || error.message });
-        }
+        console.error("RUTAS >> REGISTRAR USUARIO > Error al registrar el usuario:", error);
+        res.status(500).json({ error: "Error al registrar el usuario", detalles: error.original?.detail || error.message });        
     }
 });
 
