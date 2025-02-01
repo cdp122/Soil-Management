@@ -374,7 +374,7 @@
 /* Botones en la derecha */
 .actualizar-btn,
 .borrar-btn {
-    width: 100%;
+    width: 50%;
     padding: 10px;
     margin: 5px 0;
     border: none;

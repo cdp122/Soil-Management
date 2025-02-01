@@ -93,33 +93,22 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                 }
             );
             const data = await response.json();
-
             if (response.ok) {
                 console.log("Muestras obtenidas:", data);
                 setHistorial(data);
-
-                // Ordenar primero por fecha más reciente, luego por ID descendente
-                const muestrasOrdenadas = data.sort((a, b) => {
+                const muestrasOrdenadas = data.sort((a, b) => {// Ordenar primero por fecha más reciente, luego por ID descendente
                     const fechaA = new Date(a.mue_fecha_registro);
                     const fechaB = new Date(b.mue_fecha_registro);
-
-                    // Comparar fechas primero
-                    if (fechaB - fechaA !== 0) {
+                    if (fechaB - fechaA !== 0) { // Comparar fechas primero
                         return fechaB - fechaA; // Más reciente primero
                     }
-                    // Si las fechas son iguales, ordenar por ID de muestra (descendente)
-                    return b.mue_id - a.mue_id;
+                    return b.mue_id - a.mue_id; // Si las fechas son iguales, ordenar por ID de muestra (descendente)
                 });
-
-                // Tomar la muestra más reciente y con ID más alto
-                const muestraMasReciente = muestrasOrdenadas[0];
-
+                const muestraMasReciente = muestrasOrdenadas[0];                // Tomar la muestra más reciente y con ID más alto
                 if (muestraMasReciente) {
                     setDatosActuales(muestraMasReciente);
                     setFechaSeleccionada(muestraMasReciente.mue_fecha_registro);
-
-                    // Obtener variables secundarias de la muestra más reciente
-                    getElementosMuestra(muestraMasReciente.mue_id);
+                    getElementosMuestra(muestraMasReciente.mue_id); // Obtener variables secundarias de la muestra más reciente
                 }
             } else {
                 alert('Error al cargar los datos actuales: ' + data.message);
@@ -156,10 +145,22 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     };
     const handleElementChange = (index, field, value) => {
         const updatedElements = [...elementosSeleccionados];
-        updatedElements[index] = {
-            ...updatedElements[index],
-            [field]: value,
-        };
+
+        if (field === "simbolo") {
+            // Buscar el elem_simbolo en la lista de elementos iniciales
+            const elementoEncontrado = elementosIniciales.find(e => e.elem_nombre === value);
+
+            updatedElements[index] = {
+                ...updatedElements[index],
+                simbolo: elementoEncontrado ? elementoEncontrado.elem_simbolo : "", // Guardamos el `elem_simbolo`
+            };
+        } else {
+            updatedElements[index] = {
+                ...updatedElements[index],
+                [field]: value, // Guardamos la cantidad
+            };
+        }
+
         setElementosSeleccionados(updatedElements);
     };
     const handleSeleccionarMuestra = (muestra) => {
@@ -169,67 +170,31 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
         setElementosSeleccionados([]); // Limpiar elementos previos antes de cargar nuevos datos
         getElementosMuestra(muestra.mue_id);
     };
+    const handleDynamicFieldChange = (index, field, value) => {
+        const updatedFields = [...dynamicFields];
+        updatedFields[index] = {
+            ...updatedFields[index],
+            [field]: value,
+        };
+        setDynamicFields(updatedFields);
+    };
+
     // Función para agregar dinámicamente un select y un input
     const handleAgregarCampo = () => {
-        setDynamicFields([...dynamicFields, { id: Date.now(), value: '' }]);
+        setDynamicFields([
+            ...dynamicFields,
+            { id: Date.now(), simbolo: "", cantidad: "" } // Asegurar que los nuevos campos tengan valores adecuados
+        ]);
     };
+
     // Función para eliminar un campo dinámico
     const handleEliminarCampo = (id) => {
         setDynamicFields(dynamicFields.filter(field => field.id !== id));
     };
-    // Función para actualizar los datos de la muestra
-    /*const handleActualizarDatos = async () => {
-        const datosPrueba = {
-            mue_id: 1,
-            mue_ph: 2,
-            mue_con_elec: 1,
-            mue_porc_mat_org: 1,
-            mue_cap_inter_cati: 1,
-            mue_salinidad: 2,
-            mue_fecha_registro: "2025-01-31",
-            elems: [
-                {
-                    var_id: 1,  // ID existente en la BDD
-                    simb_elem: "C",
-                    cant_elem: 2
-                },
-                {
-                    var_id: 2,  // ID existente en la BDD
-                    simb_elem: "Mg",
-                    cant_elem: 2
-                }
-            ]
-        };
-
-        try {
-            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/muestras", {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                },
-                body: JSON.stringify(datosPrueba),
-            });
-
-            const result = await response.json();
-            console.log("Respuesta del servidor:", result);
-
-            if (response.ok) {
-                alert("Datos actualizados correctamente.");
-                setIsEditing(false);
-            } else {
-                alert("Error al actualizar: " + (result.error || "Error desconocido."));
-            }
-        } catch (error) {
-            console.error("Error al actualizar:", error);
-            alert("Error de conexión con el servidor.");
-        }
-    };*/
     const handleActualizarDatos = async () => {
         const datosModificados = {
             mue_id: datosActuales.mue_id,
         };
-
         console.log("Datos actuales:", datosActuales);
         console.log("Datos originales:", datosOriginales);
 
@@ -265,12 +230,10 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             return elemModificado;
         });
 
-        // Verificar estructura del JSON a enviar
-        const jsonBody = JSON.stringify(datosModificados, null, 2);
+        const jsonBody = JSON.stringify(datosModificados, null, 2); // Verificar estructura del JSON a enviar
         console.log("Datos modificados a enviar:", jsonBody);
-
         try {
-            const response = await fetch("https://bf50-186-71-12-133.ngrok-free.app/muestras", {
+            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/muestras", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -293,7 +256,51 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             alert("Error en la conexión con el servidor.");
         }
     };
+    const handleAgregarNuevosElementos = async () => {
+        const nuevosElementos = dynamicFields
+            .filter(field => field.simbolo && field.cantidad) // Filtrar solo los completos
+            .map(field => ({
+                simb_elem: field.simbolo,
+                cant_elem: parseFloat(field.cantidad)
+            }));
 
+        if (nuevosElementos.length === 0) {
+            alert("No hay nuevos elementos para añadir.");
+            return;
+        }
+
+        const datosEnviar = {
+            mue_id: datosActuales.mue_id,
+            elems: nuevosElementos
+        };
+
+        console.log("Nuevos elementos a enviar:", JSON.stringify(datosEnviar, null, 2));
+
+        try {
+            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/muestras", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+                body: JSON.stringify(datosEnviar),
+            });
+
+            const result = await response.json();
+            console.log("Respuesta del servidor:", result);
+
+            if (response.ok) {
+                alert("Nuevos elementos añadidos correctamente.");
+                setDynamicFields([]); // Limpiar los campos dinámicos después de enviar
+                fetchDatosActuales(); // Refrescar datos después de añadir nuevos elementos
+            } else {
+                alert("Error al añadir elementos: " + (result.error || "Error desconocido en el servidor."));
+            }
+        } catch (error) {
+            console.error("Error al añadir los elementos:", error);
+            alert("Error en la conexión con el servidor.");
+        }
+    };
 
     const getElementosQuimicos = async () => {
         const token = localStorage.getItem("token");
@@ -306,7 +313,6 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                     "Content-Type": "application/json",
                 },
             });
-
             if (!response.ok) {
                 // throw new Error(`Response status: ${response.status}`);
             }
@@ -321,7 +327,6 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             );
         }
     };
-
     //Fetch para recibir los elementos que tiene una muestra mediante el id
     const getElementosMuestra = async (mue_id) => {
         try {
@@ -335,10 +340,8 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-
             const data = await response.json();
             console.log("Elementos de la muestra:", data);
-
             // Si la muestra no tiene elementos, limpiar la lista
             if (!data || data.length === 0) {
                 setElementosSeleccionados([]);
@@ -353,15 +356,11 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             }));
             setElementosSeleccionados(elementosFiltrados);
             setElementosOriginales(elementosFiltrados);
-
-
         } catch (error) {
             console.error('Error al obtener los elementos de la muestra:', error.message);
         }
     };
-
     const soilImage = soilImages[parcelType] || '';
-
     return (
         <>
             <div className="sueloscrud-parcel">
@@ -448,23 +447,33 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                     </div>
                                 ))}
                                 {/* Campos dinámicos debajo de los inputs */}
-                                {dynamicFields.map((field) => (
+                                {dynamicFields.map((field, index) => (
                                     <div key={field.id} className="dynamic-field">
-                                        <select>
+                                        <select
+                                            value={field.simbolo}
+                                            onChange={(e) => handleDynamicFieldChange(index, "simbolo", e.target.value)}
+                                        >
                                             <option value="">Selecciona elemento</option>
                                             {elementosIniciales.map((elemento) => (
-                                                <option key={elemento.elem_id} value={elemento.elem_simbolo}>
+                                                <option key={elemento.elem_simbolo} value={elemento.elem_simbolo}>
                                                     {elemento.elem_nombre} ({elemento.elem_simbolo})
                                                 </option>
                                             ))}
                                         </select>
 
-                                        <input type="text" placeholder="Ingrese valor" />
+                                        <input
+                                            type="text"
+                                            placeholder="Ingrese valor"
+                                            value={field.cantidad}
+                                            onChange={(e) => handleDynamicFieldChange(index, "cantidad", e.target.value)}
+                                        />
+
                                         <button onClick={() => handleEliminarCampo(field.id)}>
                                             <img src={deleteIcon} alt="Eliminar" style={{ width: '20px', height: '20px' }} />
                                         </button>
                                     </div>
                                 ))}
+
                                 <button className="agregar-btn" onClick={handleAgregarCampo}>+</button>
 
                                 <button className="agregar-btn" onClick={handleEdit}>
@@ -480,6 +489,10 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                 <button className="actualizar-btn" onClick={handleActualizarDatos} disabled={!isEditing}>
                                     Actualizar Datos
                                 </button>
+                                <button className="actualizar-btn" onClick={handleAgregarNuevosElementos}>
+                                    Añadir Nuevos Elementos
+                                </button>
+
                                 {/*<button className="borrar-btn" onClick={handleBorrarHistorial}>Borrar Historial</button>*/}
 
                                 <h3>Historial De Muestras</h3>
@@ -511,5 +524,4 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
         </>
     );
 }
-
 export default Parcela;
