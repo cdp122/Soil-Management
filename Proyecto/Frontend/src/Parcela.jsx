@@ -186,6 +186,12 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             { id: Date.now(), simbolo: "", cantidad: "" } // Asegurar que los nuevos campos tengan valores adecuados
         ]);
     };
+    const obtenerElementosDisponibles = () => {
+        return elementosIniciales.filter(
+            (elem) => !elementosSeleccionados.some((e) => e.simbolo === elem.elem_simbolo)
+        );
+    };
+
 
     // Función para eliminar un campo dinámico
     const handleEliminarCampo = (id) => {
@@ -454,7 +460,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                             onChange={(e) => handleDynamicFieldChange(index, "simbolo", e.target.value)}
                                         >
                                             <option value="">Selecciona elemento</option>
-                                            {elementosIniciales.map((elemento) => (
+                                            {obtenerElementosDisponibles().map((elemento) => (
                                                 <option key={elemento.elem_simbolo} value={elemento.elem_simbolo}>
                                                     {elemento.elem_nombre} ({elemento.elem_simbolo})
                                                 </option>
@@ -473,6 +479,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                         </button>
                                     </div>
                                 ))}
+
 
                                 <button className="agregar-btn" onClick={handleAgregarCampo}>+</button>
 

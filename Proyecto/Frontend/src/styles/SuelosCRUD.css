@@ -107,17 +107,21 @@
 }
 
 .sueloscrud-parcel {
+    display: flex;
+    flex-direction: column;
+    /* Organiza los elementos en columna */
+    justify-content: space-between;
+    /* Espacia los elementos */
+    align-items: center;
+    /* Centra los elementos horizontalmente */
     text-align: center;
     background-color: #fff;
-    /* Fondo blanco */
     padding: 10px;
-    /* Padding interno */
     border-radius: 10px;
-    /* Bordes redondeados */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Sombra sutil */
     transition: transform 0.2s;
-    /* Transición suave */
+    height: 100%;
+    /* Hace que todos los elementos ocupen el mismo espacio */
 }
 
 .sueloscrud-parcel:hover {
@@ -133,6 +137,12 @@
     border-radius: 10px;
     /* Bordes redondeados */
 }
+
+.sueloscrud-parcel-image img {
+    border-radius: 10%;
+
+}
+
 
 .sueloscrud-parcel-image:hover {
     cursor: pointer;
@@ -167,8 +177,8 @@
 
 .entrarParcela {
     background-color: #4CAF50;
-    border-radius: 25%;
-    width: 50px;
+    border-radius: 10%;
+    width: 50%;
     justify-content: center;
     align-items: center;
     gap: 10px;
