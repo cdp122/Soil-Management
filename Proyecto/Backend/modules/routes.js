@@ -282,7 +282,7 @@ router.get('/muestras', validateToken, async (req, res) => {
 });
 
 //Para modificar las muestras *
-router.put('/muestras', async (req, res) => {
+router.put('/muestras', validateToken, async (req, res) => {
     if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
     //Si hay variables secundarias debe de comprobarse de la buena estructura del json
     if (req.body.elems) {
@@ -351,6 +351,32 @@ router.get('/variables', validateToken, async (req, res) => {
     } catch (error) {
         console.error("RUTAS >> VARIABLES > Error al consultar variables:", error);
         res.status(500).json({ error: "Error al consultar variables", detalles: error.original?.detail || error.message });
+    }
+});
+
+//Para eliminar las muestras *
+router.delete('/parcelas',validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.parc_id && !req.body.parcelas) { res.status(400).json({ error: "No se ha proporcionado el/los id de la(s) parcela(s)" }); return; }
+
+    try {
+        if (req.body.parc_id) {
+            await Parcelas.destroy({ where: { parc_id: req.body.parc_id } });
+            console.log("RUTAS >> PARCELAS > Parcela eliminada correctamente");
+        }
+        else if (req.body.parcelas) {
+            await BDD.transaction(async (t) => {
+                for (const parcela of req.body.parcelas) {
+                    await Parcelas.destroy({ where: { parc_id: parcela }, transaction: t });
+                }
+            });
+            console.log("RUTAS >> PARCELAS > Parcelas eliminadas correctamente");
+        }
+
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> PARCELAS > Error al eliminar parcelas:", error);
+        res.status(500).json({ error: "Error al eliminar parcelas", detalles: error.original?.detail || error.message });
     }
 });
 //#endregion
