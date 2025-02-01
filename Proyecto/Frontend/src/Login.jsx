@@ -62,7 +62,7 @@ function Login({ onSwitchToRegister, onSwitchToRecover }) {
             // Guardado del usuario
             localStorage.setItem("cedula", formData.cedula);
 
-            navigate('/app');
+            navigate('/app/suelos');
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
             if (error.message.startsWith("Contra")) {

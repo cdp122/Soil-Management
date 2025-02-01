@@ -35,8 +35,8 @@
 }
 
 .loading-gif {
-    width: 80%; /* Ajustar el tamaño del GIF */
-    height: 80%; /* Ajustar el tamaño del GIF */
+    width: 150px; /* Ajustar el tamaño del GIF */
+    height: 150px; /* Ajustar el tamaño del GIF */
 }
 
 @keyframes fadeIn {
@@ -64,22 +64,41 @@
     display: block;
     font-weight: bold;
     margin-bottom: 5px; /* Reducir margen inferior */
-    color: #333; /* Color de texto */
+    color: #000; /* Color de texto */
 }
 
 .form-addz-group input, .form-addz-group textarea, .form-addz-group select {
     width: 100%;
     padding: 8px; /* Reducir padding */
     border-radius: 6px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--has-background-grey-lighter);
     box-sizing: border-box;
     font-size: 14px; /* Reducir tamaño de fuente */
+    background: #fff;
+    color: #000;
+    outline-color: var(--has-background-white-ter);
 }
 
 .form-addz-group textarea {
     resize: vertical;
     min-height: 100px; /* Reducir altura */
     max-height: calc(100vh - 470px); /* Altura máxima */
+}
+
+.form-addz-group input::placeholder, .form-addz-group textarea::placeholder {
+    color: var(--has-background-grey-light);
+}
+
+.form-addz-group select {
+    background: #fff;
+    color: #000;
+    outline-color: var(--has-background-white-ter);
+    border-color: var(--has-background-grey-lighter);
+}
+
+.form-addz-group select option {
+    background: #fff;
+    color: #000;
 }
 
 .modal-addz-buttons {
