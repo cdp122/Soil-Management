@@ -25,9 +25,10 @@
 
 .sueloscrud-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    flex-flow: column;
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    /* margin-bottom: 10px; */
     /* Reducir margen inferior */
     padding: 10px 20px;
     /* Reducir padding */
@@ -49,29 +50,33 @@
     /* Color de texto blanco */
 }
 
-.sueloscrud-search {
+.sueloscrud-header-controls{
     display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
+.sueloscrud-search {
+    width: 40%;
+    height: 35px;
+}
+
 .sueloscrud-search-input {
-    padding: 5px;
-    /* Reducir padding */
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
-    width: 200px;
-    /* Reducir ancho */
-    font-size: 14px;
-    /* Reducir tamaño de fuente */
+    width: 100%;
+    border: none;
+    height: 100%;
+    padding-left: 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
 }
 
 .sueloscrud-buttons {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 .sueloscrud-buttons .sueloscrud-btn {
-    margin-left: 10px;
     padding: 5px 10px;
     /* Reducir padding */
     background-color: #3a8b2f;
@@ -82,7 +87,14 @@
     cursor: pointer;
     border-radius: 8px;
     font-size: 14px;
-    /* Reducir tamaño de fuente */
+}
+
+.btn-eliminar-parcela{
+    background: #e71616 !important;
+}
+
+.btn-eliminar-parcela:hover{
+    background: #f34a4a !important;
 }
 
 .sueloscrud-buttons .sueloscrud-btn:hover {

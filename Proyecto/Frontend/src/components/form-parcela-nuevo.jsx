@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from "react";
 import { useForm} from "react-hook-form";
-import {ToastContainer, toast} from "react-toastify";
 import styles from "./parcela.module.css";
 import "./form-parcela.css";
 import Notification from "./notification/notification";
 import api from "../utils/api";
+import {ToastContainer, toast} from "react-toastify";
+
 
 const FormParcela = ({idZona, idUser, actualizarZonas}) => {
     const [tiposSuelo, setTiposSuelo] = useState([]);
@@ -86,7 +87,7 @@ const FormParcela = ({idZona, idUser, actualizarZonas}) => {
     return (
         <div>
             <ToastContainer/>
-            <button className="button is-primary" onClick={toggleModal}>
+            <button className="sueloscrud-btn" onClick={toggleModal}>
                 Agregar nueva parcela
             </button>
 

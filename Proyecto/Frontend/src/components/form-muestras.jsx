@@ -117,7 +117,7 @@ const FormMuestras = ({ parcelaId }) => {
     return (
         <div>
             <ToastContainer />
-            <button className="button is-primary" onClick={toggleModal}>
+            <button className="info-p-add-sample" onClick={toggleModal}>
                 Agregar muestra
             </button>
 

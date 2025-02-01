@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ModalInfoP from './ModalInfoP';
 import aluvial from './assets/tipos_suelos/aluvial.jpeg';
 import arcilloso from './assets/tipos_suelos/arcilloso.jpg';
@@ -28,7 +28,7 @@ const soilImages = {
     T010: aluvial,
 };
 
-function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
+function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccionada, parcelasSeleccionadasHandler}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isParcelaViewOpen, setIsParcelaViewOpen] = useState(false);
     const [calidadSuelo, setCalidadSuelo] = useState(25);
@@ -44,6 +44,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     const [datosOriginales, setDatosOriginales] = useState({});
     const [elementosIniciales, setElementosIniciales] = useState([]);
     const [elementosSeleccionados, setElementosSeleccionados] = useState([]);
+    const [checbox, setCheckbox] = useState(isParcelaSeleccionada);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -367,6 +368,16 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
         }
     };
     const soilImage = soilImages[parcelType] || '';
+<<<<<<< HEAD
+=======
+    
+    const parcelaCheckHandler = (e) => {
+        const seleccionado = e.target.checked;
+        setCheckbox(seleccionado);
+        parcelasSeleccionadasHandler(parcelID, seleccionado);
+    };
+
+>>>>>>> 35f405e (Eliminar parcelas, editar parcela y estilos)
     return (
         <>
             <div className="sueloscrud-parcel">
@@ -374,7 +385,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                     <img src={soilImage} alt={parcelType} onClick={handleImageClick} />
                 </div>
                 <label className="sueloscrud-parcel-label">
-                    <input type="checkbox" /> {parcelName}
+                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler}/> {parcelName}
                 </label>
                 <button className="entrarParcela" onClick={handleEnterClick}>Entrar</button>
                 {isModalOpen && (
