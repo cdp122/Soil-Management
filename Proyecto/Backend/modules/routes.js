@@ -265,7 +265,7 @@ router.post('/variables', validateToken, async (req, res) => {
     }
 });
 
-//Consultar las muestras correspondientes a una parcela
+//Consultar las muestras correspondientes a una parcela *
 router.get('/muestras', validateToken, async (req, res) => {
     if (!req.query.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
 
@@ -281,8 +281,8 @@ router.get('/muestras', validateToken, async (req, res) => {
     }
 });
 
-//Para modificar las muestras
-router.put('/muestras', validateToken, async (req, res) => {
+//Para modificar las muestras *
+router.put('/muestras', async (req, res) => {
     if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
     //Si hay variables secundarias debe de comprobarse de la buena estructura del json
     if (req.body.elems) {
@@ -316,7 +316,7 @@ router.put('/muestras', validateToken, async (req, res) => {
                 elem = req.body.elems[elems];
                 if (!elem.var_id) {
                     await VariablesSecundarias.create({
-                        mue_id: muestra.mue_id, elem_simbolo: elem.simb_elem, anpar_elem_cant: elem.cant_elem
+                        mue_id: muestras.mue_id, elem_simbolo: elem.simb_elem, anpar_elem_cant: elem.cant_elem
                     }, { transaction: t });
                 }
                 else {
@@ -339,10 +339,8 @@ router.put('/muestras', validateToken, async (req, res) => {
     }
 });
 
-//Para conseguir las variables de acuerdo a las muestras
-router.get('/variables'
-
-    , async (req, res) => {
+//Para conseguir las variables de acuerdo a las muestras *
+router.get('/variables', validateToken, async (req, res) => {
     if (!req.query.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
 
     try {
