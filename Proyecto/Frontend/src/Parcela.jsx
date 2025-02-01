@@ -10,12 +10,10 @@ import organico from './assets/tipos_suelos/organico.jpeg';
 import pedregoso from './assets/tipos_suelos/pedregoso.jpg';
 import salino from './assets/tipos_suelos/salino.jpeg';
 import volcanico from './assets/tipos_suelos/volcanico.jpeg';
-
 import Grafico from './components/Grafico';  // Importamos el gráfico
 import editIcon from './assets/edit.svg'; // Importamos el ícono de lápiz
 import { Icons } from 'react-toastify';
 import deleteIcon from './assets/delete.svg'; // Ícono de papelera en SVG
-
 
 const soilImages = {
     T001: arenoso,
@@ -41,8 +39,9 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
     const cedula = localStorage.getItem('cedula'); // Recuperar cédula
     const [authorized, setAuthorized] = useState(false);
     const [dynamicFields, setDynamicFields] = useState([]); // Campos dinámicos
-
-
+    const [isEditing, setIsEditing] = useState(false);
+    const [elementosOriginales, setElementosOriginales] = useState([]);
+    const [datosOriginales, setDatosOriginales] = useState({});
     const [elementosIniciales, setElementosIniciales] = useState([]);
     const [elementosSeleccionados, setElementosSeleccionados] = useState([]);
 
@@ -63,7 +62,6 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                         },
                     }
                 );
-
                 if (response.ok) {
                     const data = await response.json();
                     setUserData(data); // Guardar datos del usuario
@@ -78,14 +76,10 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                 setAuthorized(false);
             }
         };
-
         validateToken();
-
-
         const historialGuardado = JSON.parse(localStorage.getItem('historialParcelas')) || [];
         setHistorial(historialGuardado);
     }, []);
-
     const fetchDatosActuales = async () => {
         try {
             const response = await fetch(
@@ -98,7 +92,6 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                     },
                 }
             );
-
             const data = await response.json();
 
             if (response.ok) {
@@ -136,50 +129,171 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
             alert('Error al conectar con la base de datos.');
         }
     };
-
-
-
     const handleImageClick = () => {
         setIsModalOpen(true);
     };
-
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-
     const handleEnterClick = () => {
         setIsParcelaViewOpen(true);
         getElementosQuimicos();
         fetchDatosActuales(); // Cargar muestra más reciente al abrir la parcela        
     };
-
     const handleCloseView = () => {
-        setIsParcelaViewOpen(false);
+        setIsParcelaViewOpen(false);  // Cierra la vista
+        setIsEditing(false);          // Desactiva el modo edición
+        fetchDatosActuales();         // Recarga los datos desde la base de datos
     };
-
-    // Seleccionar una muestra y actualizar los datos en los inputs
+    const handleEdit = () => {
+        setIsEditing(true);
+    };
+    const handleChange = (event, field) => {
+        setDatosActuales((prevState) => ({
+            ...prevState,
+            [field]: event.target.value,
+        }));
+    };
+    const handleElementChange = (index, field, value) => {
+        const updatedElements = [...elementosSeleccionados];
+        updatedElements[index] = {
+            ...updatedElements[index],
+            [field]: value,
+        };
+        setElementosSeleccionados(updatedElements);
+    };
     const handleSeleccionarMuestra = (muestra) => {
         setFechaSeleccionada(muestra.mue_fecha_registro);
         setDatosActuales(muestra);
-        // Limpiar elementos previos antes de cargar nuevos datos
-        setElementosSeleccionados([]);
+        setDatosOriginales(muestra); // Guardar datos originales
+        setElementosSeleccionados([]); // Limpiar elementos previos antes de cargar nuevos datos
         getElementosMuestra(muestra.mue_id);
     };
-
+    // Función para agregar dinámicamente un select y un input
+    const handleAgregarCampo = () => {
+        setDynamicFields([...dynamicFields, { id: Date.now(), value: '' }]);
+    };
+    // Función para eliminar un campo dinámico
+    const handleEliminarCampo = (id) => {
+        setDynamicFields(dynamicFields.filter(field => field.id !== id));
+    };
+    // Función para actualizar los datos de la muestra
     /*const handleActualizarDatos = async () => {
-        const fechaActual = new Date();
-        const fechaFormato = `${fechaActual.getDate()}/${fechaActual.getMonth() + 1}/${fechaActual.getFullYear()} ${fechaActual.getHours()}:${fechaActual.getMinutes()}`;
-        console.log(fechaFormato);
-        setHistorial([...historial, { fecha: fechaFormato, ...datosActuales }]);
-    };*/
+        const datosPrueba = {
+            mue_id: 1,
+            mue_ph: 2,
+            mue_con_elec: 1,
+            mue_porc_mat_org: 1,
+            mue_cap_inter_cati: 1,
+            mue_salinidad: 2,
+            mue_fecha_registro: "2025-01-31",
+            elems: [
+                {
+                    var_id: 1,  // ID existente en la BDD
+                    simb_elem: "C",
+                    cant_elem: 2
+                },
+                {
+                    var_id: 2,  // ID existente en la BDD
+                    simb_elem: "Mg",
+                    cant_elem: 2
+                }
+            ]
+        };
 
+        try {
+            const response = await fetch("https://soil-management-4-soft-utn.onrender.com/muestras", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+                body: JSON.stringify(datosPrueba),
+            });
 
-    /*const handleBorrarHistorial = () => {
-        localStorage.removeItem('historialParcelas');
-        setHistorial([]);
-        setDatosActuales({});
-        setFechaSeleccionada(null);
+            const result = await response.json();
+            console.log("Respuesta del servidor:", result);
+
+            if (response.ok) {
+                alert("Datos actualizados correctamente.");
+                setIsEditing(false);
+            } else {
+                alert("Error al actualizar: " + (result.error || "Error desconocido."));
+            }
+        } catch (error) {
+            console.error("Error al actualizar:", error);
+            alert("Error de conexión con el servidor.");
+        }
     };*/
+    const handleActualizarDatos = async () => {
+        const datosModificados = {
+            mue_id: datosActuales.mue_id,
+        };
+
+        console.log("Datos actuales:", datosActuales);
+        console.log("Datos originales:", datosOriginales);
+
+        // Comparar y agregar solo los campos modificados
+        if (datosActuales.mue_ph !== datosOriginales.mue_ph) {
+            datosModificados.mue_ph = parseFloat(datosActuales.mue_ph);
+        }
+        if (datosActuales.mue_con_elec !== datosOriginales.mue_con_elec) {
+            datosModificados.mue_con_elec = parseFloat(datosActuales.mue_con_elec);
+        }
+        if (datosActuales.mue_porc_mat_org !== datosOriginales.mue_porc_mat_org) {
+            datosModificados.mue_porc_mat_org = parseFloat(datosActuales.mue_porc_mat_org);
+        }
+        if (datosActuales.mue_cap_inter_cati !== datosOriginales.mue_cap_inter_cati) {
+            datosModificados.mue_cap_inter_cati = parseFloat(datosActuales.mue_cap_inter_cati);
+        }
+        if (datosActuales.mue_salinidad !== datosOriginales.mue_salinidad) {
+            datosModificados.mue_salinidad = parseFloat(datosActuales.mue_salinidad);
+        }
+        if (datosActuales.mue_fecha_registro !== datosOriginales.mue_fecha_registro) {
+            datosModificados.mue_fecha_registro = datosActuales.mue_fecha_registro;
+        }
+
+        // Comparar y agregar solo los elementos modificados, asegurando que `simb_elem` siempre esté presente
+        datosModificados.elems = elementosSeleccionados.map((elem, index) => {
+            const originalElem = elementosOriginales[index] || {};
+            const elemModificado = {
+                var_id: elem.var_id, // Se debe incluir siempre el var_id
+                simb_elem: elem.simbolo, // Asegurar que siempre se incluya
+                cant_elem: parseFloat(elem.cantidad) // Asegurar que siempre se incluya
+            };
+
+            return elemModificado;
+        });
+
+        // Verificar estructura del JSON a enviar
+        const jsonBody = JSON.stringify(datosModificados, null, 2);
+        console.log("Datos modificados a enviar:", jsonBody);
+
+        try {
+            const response = await fetch("https://bf50-186-71-12-133.ngrok-free.app/muestras", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+                body: jsonBody,
+            });
+
+            const result = await response.json();
+            console.log("Respuesta del servidor:", result); // Imprimir respuesta del backend
+
+            if (response.ok) {
+                alert("Datos actualizados correctamente.");
+                setIsEditing(false); // Deshabilitar edición después de actualizar
+            } else {
+                alert("Error al actualizar los datos: " + (result.error || "Error desconocido en el servidor."));
+            }
+        } catch (error) {
+            console.error("Error al actualizar los datos:", error);
+            alert("Error en la conexión con el servidor.");
+        }
+    };
+
 
     const getElementosQuimicos = async () => {
         const token = localStorage.getItem("token");
@@ -231,29 +345,19 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                 return;
             }
             // Filtrar y ordenar los elementos según el tipo de muestra
-            const elementosFiltrados = data.map(({ anpar_elem_cant, elem_simbolo }) => ({
-                cantidad: anpar_elem_cant,
-                simbolo: elem_simbolo
+            const elementosFiltrados = data.map(({ anpar_varsec, mue_id, elem_simbolo, anpar_elem_cant }) => ({
+                var_id: anpar_varsec,
+                mue_id: mue_id,
+                simbolo: elem_simbolo,
+                cantidad: anpar_elem_cant
             }));
             setElementosSeleccionados(elementosFiltrados);
+            setElementosOriginales(elementosFiltrados);
 
 
         } catch (error) {
             console.error('Error al obtener los elementos de la muestra:', error.message);
         }
-    };
-
-
-
-
-    // Función para agregar dinámicamente un select y un input
-    const handleAgregarCampo = () => {
-        setDynamicFields([...dynamicFields, { id: Date.now(), value: '' }]);
-    };
-
-    // Función para eliminar un campo dinámico
-    const handleEliminarCampo = (id) => {
-        setDynamicFields(dynamicFields.filter(field => field.id !== id));
     };
 
     const soilImage = soilImages[parcelType] || '';
@@ -285,11 +389,22 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                         </div>
                         <div className="parcela-content">
                             <div className="grupoInput">
+                                {/* Inputs estáticos */}
                                 <label>Nivel de pH</label>
-                                <input type="number" value={datosActuales.mue_ph || '0'} disabled />
-
+                                <input
+                                    type="number"
+                                    value={datosActuales.mue_ph || ''}
+                                    onChange={(e) => handleChange(e, "mue_ph")}
+                                    disabled={!isEditing}
+                                />
                                 <label>Materia Orgánica</label>
-                                <input type="number" value={datosActuales.mue_porc_mat_org || '0'} disabled />
+                                <input
+                                    type="number"
+                                    value={datosActuales.mue_porc_mat_org || ''}
+                                    onChange={(e) => handleChange(e, "mue_porc_mat_org")}
+                                    disabled={!isEditing}
+                                />
+
                                 {/* Diccionario para renombrar claves */}
                                 {Object.entries(datosActuales)
                                     .filter(([key]) =>
@@ -308,20 +423,30 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
 
                                         return (
                                             <div className="grupoInput2" key={key}>
-                                                <label  >{nombresCampos[key] || key.replace(/_/g, " ").toUpperCase()}</label>
-                                                <input type="number" value={value || '0'} disabled />
+                                                <label>{nombresCampos[key] || key.replace(/_/g, " ").toUpperCase()}</label>
+                                                <input
+                                                    type="number"
+                                                    value={value || ''}
+                                                    onChange={(e) => handleChange(e, key)}
+                                                    disabled={!isEditing}
+                                                />
                                             </div>
                                         );
                                     })
                                 }
+
                                 {/* Mostrar los elementos secundarios de la muestra dinámicamente */}
                                 {elementosSeleccionados.map((elemento, index) => (
                                     <div className="grupoInput2" key={index}>
                                         <label>{elemento.simbolo}</label>
-                                        <input type="number" value={elemento.cantidad || '0'} disabled />
+                                        <input
+                                            type="number"
+                                            value={elemento.cantidad || ''}
+                                            onChange={(e) => handleElementChange(index, "cantidad", e.target.value)}
+                                            disabled={!isEditing}
+                                        />
                                     </div>
                                 ))}
-
                                 {/* Campos dinámicos debajo de los inputs */}
                                 {dynamicFields.map((field) => (
                                     <div key={field.id} className="dynamic-field">
@@ -342,12 +467,8 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                 ))}
                                 <button className="agregar-btn" onClick={handleAgregarCampo}>+</button>
 
-                                <button className="agregar-btn">
-                                    <img src={editIcon} alt="Editar" style={{
-                                        width: "20px",
-                                        height: "20px",
-                                        cursor: "pointer",
-                                    }} />
+                                <button className="agregar-btn" onClick={handleEdit}>
+                                    <img src={editIcon} alt="Editar" style={{ width: "20px", height: "20px", cursor: "pointer" }} />
                                 </button>
                             </div>
 
@@ -356,7 +477,9 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen }) {
                                 <h3>Gráfico de Calidad de Suelo</h3>
                                 <Grafico data={datosActuales.graficoData || []} />
 
-                                <button className="actualizar-btn" onClick="W">Actualizar Datos</button>
+                                <button className="actualizar-btn" onClick={handleActualizarDatos} disabled={!isEditing}>
+                                    Actualizar Datos
+                                </button>
                                 {/*<button className="borrar-btn" onClick={handleBorrarHistorial}>Borrar Historial</button>*/}
 
                                 <h3>Historial De Muestras</h3>
