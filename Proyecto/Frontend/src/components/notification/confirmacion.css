@@ -1,0 +1,85 @@
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css";
+
+.confirmacion-fondo{
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.confirmacion-contenedor{
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-width: 300px;
+    max-width: 450px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 10px;
+}
+
+.confirmacion-superior{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.confirmacion-icono{
+    width: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmacion-icono i{
+    font-size: 2.7rem;
+    padding: 14px;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+}
+
+.confirmacion-info span{
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.confirmacion-info p{
+    text-align: left;
+    font-size: 1rem;
+    letter-spacing: initial;
+    color: #555;
+}
+
+.confirmacion-botones{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.confirmacion-botones button{
+    min-width: 90px;
+    height: 35px;
+    border-radius: 10px;
+    /* border: 1px solid red; */
+    font-weight: 600;
+}
+
+.confirmacion-botones button:nth-child(1){
+    background: #d8d8d8;
+}
+
+.confirmacion-botones button:nth-child(2){
+    background: #fdcdcd;
+    color: #c40202;
+}
+
+.confirmacion-botones button:nth-child(1):hover{
+    background: #e4e4e4;
+}
+
+.confirmacion-botones button:nth-child(2):hover{
+    background: #ffdada;
+}

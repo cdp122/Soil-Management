@@ -368,8 +368,6 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccion
         }
     };
     const soilImage = soilImages[parcelType] || '';
-<<<<<<< HEAD
-=======
     
     const parcelaCheckHandler = (e) => {
         const seleccionado = e.target.checked;
@@ -377,7 +375,6 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccion
         parcelasSeleccionadasHandler(parcelID, seleccionado);
     };
 
->>>>>>> 35f405e (Eliminar parcelas, editar parcela y estilos)
     return (
         <>
             <div className="sueloscrud-parcel">
