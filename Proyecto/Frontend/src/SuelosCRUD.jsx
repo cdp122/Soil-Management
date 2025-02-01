@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Loading from './assets/loading.gif';
 import FormParcela from './components/form-parcela-nuevo';
 import Parcela from './Parcela';
 import Zonas from './Zonas';
 import './styles/SuelosCRUD.css';
 import FormMuestras from "./components/form-muestras";
+import Confirmacion from './components/notification/confirmacion';
+import { toast } from 'react-toastify';
+import api from './utils/api';
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -17,7 +20,8 @@ function SuelosCRUD() {
     const [loading, setLoading] = useState(false); // Estado de carga
     const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
     const [error, setError] = useState(''); // Estado para el mensaje de error
-
+    const parcelasSeleccionadas = useRef(new Set());
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
     // Validar el token y cargar datos del usuario
     useEffect(() => {
         const validateToken = async () => {
@@ -136,8 +140,36 @@ function SuelosCRUD() {
 
     const zonaSeleccionadaNombre = zonas.find((z) => z.cons_id === zonaSeleccionada)?.cons_nombre;
 
+    const parcelasSeleccionadasHandler = (idParcela, isChecked) => {
+        if (isChecked) {
+            parcelasSeleccionadas.current.add(idParcela);
+        } else {
+            parcelasSeleccionadas.current.delete(idParcela);
+        }
+        console.log(parcelasSeleccionadas.current);
+    };
+
+    const eliminarParcelas = () => {
+        // api.eliminarParcelas(zonaSeleccionada, Array.from(parcelasSeleccionadas.current));   
+        toast.success("Parcelas eliminadas exitósamente", {autoClose: 1900});
+        setMostrarConfirmacion(false);
+        parcelasSeleccionadas.current = new Set();
+        setTimeout(() => {
+            handleZonaClick(zonaSeleccionada);
+        }, 2000);
+    }
+
+    const mostrarConfirmacionClick = () =>{
+        if(parcelasSeleccionadas.current.size < 1){
+            toast.warning("Para eliminar seleccione al menos una parcela");
+            return;
+        }
+        setMostrarConfirmacion(true);
+    }
+
     return (
         <div className="sueloscrud-container">
+            <Confirmacion titulo="Eliminando parcelas" texto="¿Está seguro de eliminar la parcela/s?. Recuerde que si no quedan parcelas, la zona también se eliminará. Confirme la acción." isActivo={mostrarConfirmacion}  setActivo={setMostrarConfirmacion} action={eliminarParcelas}/>
             <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas} />
             <div className="sueloscrud-content">
                 {loading ? (
@@ -145,27 +177,33 @@ function SuelosCRUD() {
                 ) : zonaSeleccionada ? (
                     <>
                         <div className="sueloscrud-header">
-                            <h2 className="sueloscrud-title">
-                                {zonaSeleccionadaNombre}
-                            </h2>
-                            <div className="sueloscrud-search">
-                                <input
-                                    type="text"
-                                    placeholder="Búsqueda"
-                                    className="sueloscrud-search-input"
-                                    value={searchTerm}
-                                    onChange={handleSearchChange}
-                                />
+                            <div>
+                                <h2 className="sueloscrud-title">
+                                    Parcelas - {zonaSeleccionadaNombre}
+                                </h2>
                             </div>
-                            <div className="sueloscrud-buttons">
-                                <button className="sueloscrud-btn">Comparar Parcelas</button>
-                                <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick}/>
+                            
+                            <div className='sueloscrud-header-controls'>
+                                <div className="sueloscrud-search">
+                                    <input
+                                        type="text"
+                                        placeholder="Búsqueda"
+                                        className="sueloscrud-search-input"
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                    />
+                                </div>
+                                <div className="sueloscrud-buttons">
+                                    <button className='sueloscrud-btn btn-eliminar-parcela' onClick={mostrarConfirmacionClick}>Eliminar parcela/s</button>
+                                    <button className="sueloscrud-btn">Comparar Parcelas</button>
+                                    <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick}/>
+                                </div>
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
                             {filteredParcelas.length > 0 ? (
                                 filteredParcelas.map((parcela) => (
-                                    <Parcela key={parcela.parc_id} parcelID={parcela.parc_id} parcelName={parcela.parc_nombre} parcelType={parcela.tipos_id}/>
+                                    <Parcela key={parcela.parc_id} parcelID={parcela.parc_id} parcelName={parcela.parc_nombre} parcelType={parcela.tipos_id} isParcelaSeleccionada={parcelasSeleccionadas.current.has(parcela.parc_id)} parcelasSeleccionadasHandler={parcelasSeleccionadasHandler}/>
                                 ))
                             ) : (
                                 <div className="sueloscrud-placeholder2">

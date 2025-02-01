@@ -46,6 +46,36 @@ class Api {
             return { error: true, message: error.message };
         }
     }
+
+    async eliminarParcelas(zona_id, parcelas){
+        const data = {
+            cons_id: zona_id,
+            parcelas: parcelas
+        }
+
+        console.log(JSON.stringify(data));
+        // try {
+        //     const response = await fetch(`${this.api_url}/muestras`, {
+        //         method: "DELETE",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             'Authorization': localStorage.getItem('token')
+        //         },
+        //         body: JSON.stringify(data),
+        //     });
+    
+        //     if (!response.ok) {
+        //         const errorData = await response.json();
+        //         throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+        //     }
+    
+        //     return await response.json();
+        // } catch (error) {
+        //     return { error: true, message: error.message };
+        // }
+    }
+
+    
 }
 
 // const urlLocal = "https://beb9-186-71-12-133.ngrok-free.app"

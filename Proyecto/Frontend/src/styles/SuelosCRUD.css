@@ -25,9 +25,10 @@
 
 .sueloscrud-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    flex-flow: column;
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    /* margin-bottom: 10px; */
     /* Reducir margen inferior */
     padding: 10px 20px;
     /* Reducir padding */
@@ -49,20 +50,24 @@
     /* Color de texto blanco */
 }
 
-.sueloscrud-search {
+.sueloscrud-header-controls{
     display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
+.sueloscrud-search {
+    width: 40%;
+    height: 35px;
+}
+
 .sueloscrud-search-input {
-    padding: 5px;
-    /* Reducir padding */
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
-    width: 200px;
-    /* Reducir ancho */
-    font-size: 14px;
-    /* Reducir tamaño de fuente */
+    width: 100%;
+    border: none;
+    height: 100%;
+    padding-left: 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
 }
 
 .sueloscrud-buttons {
@@ -72,7 +77,6 @@
 }
 
 .sueloscrud-buttons .sueloscrud-btn {
-    margin-left: 10px;
     padding: 5px 10px;
     /* Reducir padding */
     background-color: #3a8b2f;
@@ -83,7 +87,14 @@
     cursor: pointer;
     border-radius: 8px;
     font-size: 14px;
-    /* Reducir tamaño de fuente */
+}
+
+.btn-eliminar-parcela{
+    background: #e71616 !important;
+}
+
+.btn-eliminar-parcela:hover{
+    background: #f34a4a !important;
 }
 
 .sueloscrud-buttons .sueloscrud-btn:hover {
@@ -108,17 +119,21 @@
 }
 
 .sueloscrud-parcel {
+    display: flex;
+    flex-direction: column;
+    /* Organiza los elementos en columna */
+    justify-content: space-between;
+    /* Espacia los elementos */
+    align-items: center;
+    /* Centra los elementos horizontalmente */
     text-align: center;
     background-color: #fff;
-    /* Fondo blanco */
     padding: 10px;
-    /* Padding interno */
     border-radius: 10px;
-    /* Bordes redondeados */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Sombra sutil */
     transition: transform 0.2s;
-    /* Transición suave */
+    height: 100%;
+    /* Hace que todos los elementos ocupen el mismo espacio */
 }
 
 .sueloscrud-parcel:hover {
@@ -134,6 +149,12 @@
     border-radius: 10px;
     /* Bordes redondeados */
 }
+
+.sueloscrud-parcel-image img {
+    border-radius: 10%;
+
+}
+
 
 .sueloscrud-parcel-image:hover {
     cursor: pointer;
@@ -168,32 +189,14 @@
 
 .entrarParcela {
     background-color: #4CAF50;
-    border-radius: 25%;
-    width: 50px;
+    border-radius: 10%;
+    width: 50%;
     justify-content: center;
     align-items: center;
     gap: 10px;
 }
 
-/* Estilo del rectángulo sobrepuesto */
-.parcela-overlay {
-    position: absolute;
-    top: 120px;
-    /* Ajustar según la altura del navbar */
-    left: 220px;
-    /* Ajustar para que no cubra la barra lateral */
-    width: calc(100% - 240px);
-    /* Resta la barra lateral */
-    height: calc(100% - 150px);
-    /* Ajustar según la estructura */
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+
 
 /* Contenedor interno del rectángulo */
 .parcela-container {
@@ -222,27 +225,15 @@
     padding: 10px;
 }
 
-/* Botón para cerrar la vista */
-.parcela-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    background: red;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
+
 
 .parcela-overlay {
     position: absolute;
-    top: 95px;
+    top: 96px;
     /* Ajustar según la altura del navbar */
-    left: 220px;
+    left: 265px;
     /* Ajustar para que no cubra la barra lateral */
-    width: calc(100% - 250px);
+    width: calc(100% - 280px);
     /* Resta la barra lateral */
     height: calc(100% - 120px);
     /* Ajustar según la estructura */
@@ -257,7 +248,7 @@
 
 /* Contenedor interno del rectángulo */
 .parcela-container {
-    width: 80%;
+    width: 90%;
     height: 90%;
     background: #fff;
     padding: 20px;
@@ -266,23 +257,11 @@
     text-align: center;
 }
 
-/* Botón para cerrar la vista */
-.parcela-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    background: red;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
+
 
 /* Estilo para el grupo de inputs */
 .grupoInput {
-    width: 30%;
+    width: 55%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -297,7 +276,29 @@
 }
 
 .grupoInput input {
+    width: 40%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.grupoInput2 {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.grupoInput2 label {
+    font-weight: bold;
+}
+
+.grupoInput2 input {
+    width: 40%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -307,7 +308,7 @@
 .parcela-close-btn {
     position: absolute;
     top: 10px;
-    right: 20px;
+    right: 17px;
     background: red;
     color: white;
     border: none;
@@ -322,7 +323,7 @@
     margin-top: 10px;
     padding: 8px 12px;
     border: none;
-    background-color: green;
+    background-color: rgb(3, 198, 3);
     color: white;
     font-size: 16px;
     border-radius: 5px;
@@ -395,7 +396,7 @@
 /* Botones en la derecha */
 .actualizar-btn,
 .borrar-btn {
-    width: 100%;
+    width: 50%;
     padding: 10px;
     margin: 5px 0;
     border: none;
@@ -411,4 +412,49 @@
 .borrar-btn {
     background-color: red;
     color: white;
+}
+
+.dynamic-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.dynamic-field select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dynamic-field select:hover {
+    border-color: #007bff;
+}
+
+.dynamic-field input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 150px;
+}
+
+.dynamic-field button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.dynamic-field button:hover {
+    transform: scale(1.1);
+}
+
+.dynamic-field button img {
+    width: 24px;
+    height: 24px;
 }

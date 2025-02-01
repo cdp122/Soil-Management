@@ -75,3 +75,49 @@
 .info-p-add-sample:hover {
     background-color: #45a049;
 }
+
+.parcela-modificando-input{
+    margin-left: 10px;
+    width: 100px;
+    height: 30px;
+}
+
+.parcela-modificando-select{
+    height: 30px;
+    width: 150px;
+}
+
+.parcela-modificando-textarea{
+    width: 100%;
+    resize: none;
+    height: 80px;
+    outline: none;
+    overflow-y: scroll;
+}
+
+.info-p-modificar-button{
+    padding-top: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.info-p-modificar-button .info-p-btn{
+    height: 45px;
+    background: #4CAF50;
+    width: 50%;
+    font-size: 18px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.info-p-modificar-button .info-p-btn:nth-child(1){
+    background: #6e6e6e;
+}
+
+.info-p-modificar-button .info-p-btn:nth-child(1):hover{
+    background: #535353;
+}
+
+.info-p-modificar-button .info-p-btn:nth-child(2):hover{
+    background: #45a049;
+}
