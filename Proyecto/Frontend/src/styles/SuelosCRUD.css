@@ -50,7 +50,7 @@
     /* Color de texto blanco */
 }
 
-.sueloscrud-header-controls{
+.sueloscrud-header-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -89,11 +89,11 @@
     font-size: 14px;
 }
 
-.btn-eliminar-parcela{
+.btn-eliminar-parcela {
     background: #e71616 !important;
 }
 
-.btn-eliminar-parcela:hover{
+.btn-eliminar-parcela:hover {
     background: #f34a4a !important;
 }
 
@@ -261,7 +261,7 @@
 
 /* Estilo para el grupo de inputs */
 .grupoInput {
-    width: 55%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;

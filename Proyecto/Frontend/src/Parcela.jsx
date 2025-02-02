@@ -28,7 +28,7 @@ const soilImages = {
     T010: aluvial,
 };
 
-function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccionada, parcelasSeleccionadasHandler}) {
+function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSeleccionada, parcelasSeleccionadasHandler }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isParcelaViewOpen, setIsParcelaViewOpen] = useState(false);
     const [calidadSuelo, setCalidadSuelo] = useState(25);
@@ -263,6 +263,34 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccion
             alert("Error en la conexión con el servidor.");
         }
     };
+
+    //Fetch para eliminar variables secundarias de mi muestra
+    const handleEliminarElemento = async (var_id) => {
+        if (!window.confirm("¿Estás seguro de que deseas eliminar este elemento?")) return;
+
+        try {
+            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/variables/${var_id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: token,
+                    "Content-Type": "application/json"
+                },
+            });
+
+            if (response.ok) {
+                alert("Elemento eliminado correctamente.");
+                setElementosSeleccionados(prev => prev.filter(elemento => elemento.var_id !== var_id));
+            } else {
+                const result = await response.json();
+                alert("Error al eliminar el elemento: " + (result.error || "Error desconocido en el servidor."));
+            }
+        } catch (error) {
+            console.error("Error al eliminar el elemento:", error);
+            alert("Error en la conexión con el servidor.");
+        }
+    };
+
+
     const handleAgregarNuevosElementos = async () => {
         const nuevosElementos = dynamicFields
             .filter(field => field.simbolo && field.cantidad) // Filtrar solo los completos
@@ -368,7 +396,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccion
         }
     };
     const soilImage = soilImages[parcelType] || '';
-    
+
     const parcelaCheckHandler = (e) => {
         const seleccionado = e.target.checked;
         setCheckbox(seleccionado);
@@ -382,7 +410,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccion
                     <img src={soilImage} alt={parcelType} onClick={handleImageClick} />
                 </div>
                 <label className="sueloscrud-parcel-label">
-                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler}/> {parcelName}
+                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler} /> {parcelName}
                 </label>
                 <button className="entrarParcela" onClick={handleEnterClick}>Entrar</button>
                 {isModalOpen && (
@@ -458,6 +486,9 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen , isParcelaSeleccion
                                             onChange={(e) => handleElementChange(index, "cantidad", e.target.value)}
                                             disabled={!isEditing}
                                         />
+                                        <button onClick={() => handleEliminarElemento(elemento.var_id)}>
+                                            <img src={deleteIcon} alt="Eliminar" style={{ width: '20px', height: '20px' }} />
+                                        </button>
                                     </div>
                                 ))}
                                 {/* Campos dinámicos debajo de los inputs */}
