@@ -135,7 +135,7 @@ p {
 }
 
 /* Footer */
-.footer {
+.ini-footer {
     margin-top: 20px;
     padding: 20px;
     background-color: #9c9c9c;
@@ -144,11 +144,11 @@ p {
     position: relative;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: auto;
     border-radius: 10px;
 }
 
-.footer p {
+.ini-footer p {
     text-align: center;
 }
 

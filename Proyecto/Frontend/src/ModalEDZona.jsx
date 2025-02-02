@@ -78,6 +78,10 @@ function ModalEDZona({ isOpen, onClose, zona, refreshZonas, mode }) {
                                 <input
                                     type="text"
                                     id="nombreZona"
+                                    min={1}
+                                    max={50}
+                                    pattern="[a-zA-Z0-9,. ]*"
+                                    title='Ingrese solo letras, números, comas y puntos.'
                                     value={nombre}
                                     onChange={(e) => setNombre(e.target.value)}
                                     required
@@ -87,6 +91,8 @@ function ModalEDZona({ isOpen, onClose, zona, refreshZonas, mode }) {
                                 <label htmlFor="problema">Problema</label>
                                 <textarea
                                     id="problema"
+                                    minLength={1}
+                                    maxLength={50}
                                     value={problema}
                                     onChange={(e) => setProblema(e.target.value)}
                                     required

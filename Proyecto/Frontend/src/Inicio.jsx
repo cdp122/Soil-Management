@@ -71,7 +71,7 @@ function Inicio() {
             </div>
 
             {/* Footer */}
-            <footer className="footer">
+            <footer className="ini-footer">
                 <p>© 2025 Soil Management. Todos los derechos reservados.</p><br></br><p>Ibarra - Ecuador</p>
             </footer>
         </div>
