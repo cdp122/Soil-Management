@@ -180,7 +180,7 @@ function SuelosCRUD() {
     return (
         <div className="sueloscrud-container">
             <Confirmacion titulo="Eliminando parcelas" texto="¿Está seguro de eliminar la parcela/s?. Recuerde que si no quedan parcelas, la zona también se eliminará. Confirme la acción." isActivo={mostrarConfirmacion}  setActivo={setMostrarConfirmacion} action={eliminarParcelas}/>
-            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas} className="Hola"/>
+            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas}/>
             <div className="sueloscrud-content">
                 {loading ? (
                     <div className="sueloscrud-loading"><img src={Loading} alt="Cargando..." className="sueloscrud-loading" /></div>

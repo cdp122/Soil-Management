@@ -104,7 +104,7 @@ const FormParcela = ({idZona, idUser, actualizarZonas}) => {
                             // ******** Falta estilos *****
                             <div className="success-message"> 
                                 <Notification texto={"¡Parcela registrado con éxito!"}/>
-                                <button className="button is-primary" onClick={toggleModal}>Cerrar</button>
+                                <button className="button is-primary btn-form-parcela" onClick={toggleModal}>Cerrar</button>
                             </div>
                         )}
                     </form>
@@ -119,7 +119,7 @@ function FormHeader({handleModal}) {
         <div className={`${styles['form-header']} `}>
             <div>
                 <span className="subtitle is-4 is-block has-text-centered has-text-weight-semibold mb-2 pt-2">Agregar nueva parcela</span>
-                <button className={`${styles["btn-close"]} delete is-medium has-background-danger`} aria-label="close" onClick={handleModal}></button>
+                <button className={`${styles["btn-close"]} delete is-medium has-background-danger btn-form-parcela`} aria-label="close" onClick={handleModal}></button>
             </div>
            
         </div>
@@ -138,8 +138,8 @@ function FormBody({register, errors, tiposSuelo}){
 function FormFooter({handleSubmit, handleModal}){
     return (
         <div className={`${styles['form-footer']} is-fullwidth is-flex is-justify-content-end mb-2 mt-5 parcela-form-footer`}>
-            <button className="button is-primary btn-add-parcela" onClick={handleSubmit}>Añadir</button>
-            <button className="button" onClick={handleModal}>Cancelar</button>
+            <button className="button is-primary btn-add-parcela btn-form-parcela" onClick={handleSubmit}>Añadir</button>
+            <button className="button btn-form-parcela" onClick={handleModal}>Cancelar</button>
         </div>
     );
 }
@@ -197,7 +197,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                                 </div>
                                 <div className="cell">
                                     <label className="label mb-1">Latitud</label>
-                                    <input type="number" className="input" placeholder="Valor en °" step="0.00001"
+                                    <input type="number" className="input" placeholder="Valor en °" step="0.000001"
                                     {...register("parc_coord_la", {
                                         required: {
                                             value: true,
@@ -219,7 +219,7 @@ function DatosGenerales({register, errors,  tiposSuelo}) {
                                 </div>
                                 <div className="cell">
                                     <label className="label mb-1">Longitud</label>
-                                    <input type="number" className="input" placeholder="Valor en °" step="0.00001"
+                                    <input type="number" className="input" placeholder="Valor en °" step="0.000001"
                                     {...register("parc_coord_lo", {
                                         required: {
                                             value: true,

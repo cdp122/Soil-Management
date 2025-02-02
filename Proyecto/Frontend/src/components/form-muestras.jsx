@@ -184,13 +184,13 @@ function FormFooter({ currentStep, handleBack, handleSubmit, handleModal }) {
         <div className={`${styles["form-footer"]} is-fullwidth is-flex is-justify-content-end mb-2 mt-5`}>
             {currentStep > 0 ?
                 <>
-                    <button className={`button ${styles["btn-white"]}`} onClick={handleBack}>Atrás</button>
-                    <button className="button is-link btn-add-muestra" onClick={handleSubmit}>Guardar</button>
+                    <button className={`button ${styles["btn-white"]} btn-form-parcela`} onClick={handleBack}>Atrás</button>
+                    <button className="button is-link btn-add-muestra btn-form-parcela" onClick={handleSubmit}>Guardar</button>
                 </>
                 :
-                <button className="button is-link" onClick={handleSubmit}>Siguiente</button>
+                <button className="button is-link btn-form-parcela" onClick={handleSubmit}>Siguiente</button>
             }
-            <button type="button" className={`button ${styles["btn-white"]}`} onClick={handleModal}>Cancelar</button>
+            <button type="button" className={`button ${styles["btn-white"]} btn-form-parcela`} onClick={handleModal}>Cancelar</button>
         </div>
     );
 }
@@ -404,7 +404,7 @@ function VariablesQuimicas({ elementosIniciales, elementosSeleccionados, setElem
                         />
                     </p>
                     <p className="control">
-                        <button type="button" className="button is-link" onClick={agregarElemento}>Agregar</button>
+                        <button type="button" className="button is-link btn-form-parcela" onClick={agregarElemento}>Agregar</button>
                     </p>
                 </div>
                 {
