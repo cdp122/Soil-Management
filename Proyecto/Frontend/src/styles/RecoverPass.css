@@ -3,9 +3,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    top:7%;
     height: 70vh;
-    /* Para centrar verticalmente toda la pantalla */
-    background-color: #d7d9d4;
 }
 
 /* Tarjeta */

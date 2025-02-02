@@ -55,7 +55,7 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
 
             if (response.ok) {
                 const data = await response.json();
-                setZonas(data);
+                setZonas(data.zonas);
             } else {
                 console.error('Error al cargar las zonas');
             }

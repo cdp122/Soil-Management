@@ -7,6 +7,7 @@ import './styles/SuelosCRUD.css';
 import FormMuestras from "./components/form-muestras";
 import Confirmacion from './components/notification/confirmacion';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'; // Para redirecciones
 import api from './utils/api';
 
 function SuelosCRUD() {
@@ -41,10 +42,13 @@ function SuelosCRUD() {
                 } else {
                     setAuthorized(false);
                     localStorage.removeItem('token');
+                    navigate('/');
                 }
             } catch (error) {
                 console.error('Error al validar el token:', error);
+                
                 setAuthorized(false);
+                navigate('/');
             } finally {
                 setLoading(false);
             }
@@ -71,7 +75,6 @@ function SuelosCRUD() {
 
                 if (response.ok) {
                     setZonas(data.zonas);
-                    console.log(data);
                     setError('');
                 } else if (data.error === "No se encontraron zonas para el usuario") {
                     setError("No tienes ninguna zona. Crea una nueva.");
@@ -88,6 +91,7 @@ function SuelosCRUD() {
 
         if (authorized) {
             fetchZonas();
+            
         }
     }, [authorized, token, userData.id]);
 

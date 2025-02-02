@@ -9,6 +9,8 @@
     flex-direction: column;
     box-sizing: border-box;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    top: 5%;
+    position:relative;
     margin: auto;
 }
 
