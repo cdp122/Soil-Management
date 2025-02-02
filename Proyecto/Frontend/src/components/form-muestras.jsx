@@ -12,7 +12,7 @@ import { isNumber } from "chart.js/helpers";
 
 const FormMuestras = ({ parcelaId }) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const { register, handleSubmit, formState: { errors }, reset } = useForm({ mode: "all" });
+    const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({ mode: "all" });
     const [elementosIniciales, setElementosIniciales] = useState([]);
     const [elementosSeleccionados, setElementosSeleccionados] = useState([]);
     const [isActive, setIsActive] = useState(false);
@@ -84,7 +84,7 @@ const FormMuestras = ({ parcelaId }) => {
             return;
         }
 
-        if(elementosSeleccionados.length > 0){
+        if (elementosSeleccionados.length > 0) {
             let elems = elementosSeleccionados?.map(item => ({
                 simb_elem: item.elem_simbolo,
                 cant_elem: parseFloat(item.valor)
@@ -114,6 +114,12 @@ const FormMuestras = ({ parcelaId }) => {
 
     })
 
+    const obtenerFechaHoy = () => {
+        const hoy = new Date();
+        return hoy.toISOString().split("T")[0];
+    };
+
+    setValue("fecha_registro", obtenerFechaHoy());
     return (
         <div>
             <ToastContainer />
@@ -221,8 +227,9 @@ function VariablesGenerales({ register, errors }) {
                     <div className="control">
                         <input type="number" className="input"
                             {...register("con_elec", {
-                                required: {
-                                    value: true,
+                                required: false,
+                                min: {
+                                    value: 0,
                                     message: "Ingrese valor"
                                 }
                             })}

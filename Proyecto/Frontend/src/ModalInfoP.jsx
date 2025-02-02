@@ -4,8 +4,9 @@ import Loading from './assets/loading.gif';
 import './styles/ModalInfoP.css';
 import FormMuestras from './components/form-muestras'
 import { toast } from 'react-toastify';
+import api from './utils/api';
 
-function ModalInfoP({ isOpen, onClose, parcelID }) {
+function ModalInfoP({ isOpen, onClose, parcelID}) {
     const token = localStorage.getItem('token'); // Recuperar token
     const cedula = localStorage.getItem('cedula'); // Recuperar cédula
     const [authorized, setAuthorized] = useState(false);
@@ -15,6 +16,7 @@ function ModalInfoP({ isOpen, onClose, parcelID }) {
     const [isEditando, setIsEditando] = useState(false);
     const [tiposSuelo, setTiposSuelo] = useState([]);
     const btnGuardar = useRef();
+
     useEffect(() => {
         const getTipos = async () => {
             const token = localStorage.getItem("token");
@@ -124,15 +126,40 @@ function ModalInfoP({ isOpen, onClose, parcelID }) {
     const guardarCambios = (e) =>{
         e.preventDefault();
         const formData = new FormData(e.target);
-        const datos = {};
+        const tipos_id = tiposSuelo.find(suelo => suelo.tipos_nombre === parcelData.tipos_suelo)?.tipos_id
+        const parcelaActual = {
+            tipos_id: tipos_id,
+            nombre: parcelData.parc_nombre,
+            coord_la: parcelData.parc_coord_la,
+            coord_lo: parcelData.parc_coord_lo,
+            area: parcelData.parc_area,
+            descripcion: parcelData.parc_descripcion
+        };
+
+        const datosNuevos = {};
+
         formData.forEach((value, key) => {
-            datos[key] = value;
+            if(parcelaActual[key] != value.trim()){
+                datosNuevos[key] = value;
+            }
         });
 
-        console.log(datos);
-        toast.success("¡Datos de la parcela actualizado con éxito!")
-        toast.error("Ocurrió un error al actualizar los datos de la parcela.")
-        
+        if(Object.keys(datosNuevos).length < 1){
+            toast.info("No se ha modificado ningún dato de la parcela.");
+            return;
+        }
+
+        datosNuevos["parc_id"] = parcelData.parc_id;
+        // datosNuevos["cons_id"] = parcelData.cons_id;
+        api.actualizarParcela(datosNuevos).then(response => {
+            if(response.error){
+                toast.error("Ocurrió un error al actualizar los datos de la parcela, inténtelo mas tarde.");
+            }else{
+                toast.success("¡Datos de la parcela actualizada exitósamente!");
+                setIsEditando(false);
+                setLoading(false);
+            }
+        })
     }
 
 
@@ -150,15 +177,18 @@ function ModalInfoP({ isOpen, onClose, parcelID }) {
                             {
                             isEditando? <>
                             <form onSubmit={guardarCambios}>
+                                <p><strong>Nombre:</strong>
+                                    <input name="nombre" className="parcela-modificando-input parcela-modificando-nombre" type="text" defaultValue={parcelData.parc_nombre} maxLength="50"/>
+                                </p>
                                 <p><strong>Latitud:</strong>
-                                    <input name="latitud" className="parcela-modificando-input" type="number" defaultValue={parcelData.parc_coord_la} maxLength="50" step="0.000001" min="-90" max="90"/> °
+                                    <input name="coord_la" className="parcela-modificando-input" type="number" defaultValue={parcelData.parc_coord_la} step="0.000001" min="-90" max="90"/> °
                                 </p>
                                 <p><strong>Longitud:</strong>
-                                    <input name="longitud" className="parcela-modificando-input" type="number" defaultValue={parcelData.parc_coord_lo} step="0.000001" min="-180" max="180"/> °
+                                    <input name="coord_lo" className="parcela-modificando-input" type="number" defaultValue={parcelData.parc_coord_lo} step="0.000001" min="-180" max="180"/> °
                                 </p>
                                 <p><strong>Área:</strong><input name="area" className="parcela-modificando-input" type="number" defaultValue={parcelData.parc_area} step="0.001" min="0"/> m²</p>
                                 <p><strong>Tipo de Suelo: </strong>
-                                <select name="tipo" className="parcela-modificando-select" defaultValue={
+                                <select name="tipos_id" className="parcela-modificando-select" defaultValue={
                                     tiposSuelo.find(suelo => suelo.tipos_nombre === parcelData.tipos_suelo)?.tipos_id
                                 }>
                                         {tiposSuelo.map((suelo) => (

@@ -11,9 +11,11 @@ import pedregoso from './assets/tipos_suelos/pedregoso.jpg';
 import salino from './assets/tipos_suelos/salino.jpeg';
 import volcanico from './assets/tipos_suelos/volcanico.jpeg';
 import Grafico from './components/Grafico';  // Importamos el gráfico
-import editIcon from './assets/edit.svg'; // Importamos el ícono de lápiz
-import { Icons } from 'react-toastify';
-import deleteIcon from './assets/delete.svg'; // Ícono de papelera en SVG
+import editIcon from './assets/editP.svg'; // Importamos el ícono de lápiz
+import { Icons, toast, ToastContainer } from 'react-toastify';
+import deleteIcon from './assets/deleteP.svg'; // Ícono de papelera en SVG
+import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 const soilImages = {
     T001: arenoso,
@@ -94,30 +96,44 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 }
             );
             const data = await response.json();
+
             if (response.ok) {
                 console.log("Muestras obtenidas:", data);
+
+                // Verificar si no hay muestras en la parcela
+                if (!data || data.length === 0) {
+                    toast.warn("No hay muestras registradas en la parcela.");
+                    console.warn("No hay muestras registradas en la parcela.");
+                    return false; // Retornar false para indicar que no hay muestras
+                }
+
                 setHistorial(data);
-                const muestrasOrdenadas = data.sort((a, b) => {// Ordenar primero por fecha más reciente, luego por ID descendente
+
+                // Ordenar primero por fecha más reciente, luego por ID descendente
+                const muestrasOrdenadas = data.sort((a, b) => {
                     const fechaA = new Date(a.mue_fecha_registro);
                     const fechaB = new Date(b.mue_fecha_registro);
-                    if (fechaB - fechaA !== 0) { // Comparar fechas primero
-                        return fechaB - fechaA; // Más reciente primero
-                    }
-                    return b.mue_id - a.mue_id; // Si las fechas son iguales, ordenar por ID de muestra (descendente)
+                    return fechaB - fechaA || b.mue_id - a.mue_id;
                 });
-                const muestraMasReciente = muestrasOrdenadas[0];                // Tomar la muestra más reciente y con ID más alto
+
+                // Tomar la muestra más reciente y con ID más alto
+                const muestraMasReciente = muestrasOrdenadas[0];
                 if (muestraMasReciente) {
                     setDatosActuales(muestraMasReciente);
                     setFechaSeleccionada(muestraMasReciente.mue_fecha_registro);
-                    getElementosMuestra(muestraMasReciente.mue_id); // Obtener variables secundarias de la muestra más reciente
+                    getElementosMuestra(muestraMasReciente.mue_id);
                 }
+
+                return true; // Retornar true si hay muestras
             } else {
-                alert('Error al cargar los datos actuales: ' + data.message);
+
+                toast.error("No hay muestras en la parcela");
             }
         } catch (error) {
-            console.error('Error al cargar los datos actuales:', error);
-            alert('Error al conectar con la base de datos.');
+            alert('Error al cargar los datos actuales: 2', error);
+
         }
+        return false; // En caso de error, retornar false
     };
     const handleImageClick = () => {
         setIsModalOpen(true);
@@ -125,15 +141,27 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-    const handleEnterClick = () => {
+    // Modificar handleEnterClick para verificar si hay muestras
+    const handleEnterClick = async () => {
+        const hayMuestras = await fetchDatosActuales();
+
+        if (!hayMuestras) {
+            // Si no hay muestras, abrir el modal para agregar una nueva muestra
+            toast.info("No hay muestras en esta parcela. Registre una nueva. Click en la Imagen");
+            setIsParcelaViewOpen(false); // Asegurar que la vista de parcela no se abra
+            setTimeout(() => {
+                document.querySelector(".button.is-primary").click(); // Simular clic en el botón de agregar muestra
+            }, 500);
+            return;
+        }
+
+        // Si hay muestras, abrir la vista de la parcela normalmente
         setIsParcelaViewOpen(true);
         getElementosQuimicos();
-        fetchDatosActuales(); // Cargar muestra más reciente al abrir la parcela        
     };
     const handleCloseView = () => {
         setIsParcelaViewOpen(false);  // Cierra la vista
         setIsEditing(false);          // Desactiva el modo edición
-        fetchDatosActuales();         // Recarga los datos desde la base de datos
     };
     const handleEdit = () => {
         setIsEditing(true);
@@ -253,40 +281,53 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             console.log("Respuesta del servidor:", result); // Imprimir respuesta del backend
 
             if (response.ok) {
-                alert("Datos actualizados correctamente.");
+                toast.success("Datos actualizados correctamente.");
                 setIsEditing(false); // Deshabilitar edición después de actualizar
             } else {
                 alert("Error al actualizar los datos: " + (result.error || "Error desconocido en el servidor."));
+                toast.error("Error al actualizar los datos, inténtelo más tarde");
             }
         } catch (error) {
             console.error("Error al actualizar los datos:", error);
-            alert("Error en la conexión con el servidor.");
+            toast.error("Error en la conexión con el servidor.");
         }
     };
 
     //Fetch para eliminar variables secundarias de mi muestra
     const handleEliminarElemento = async (var_id) => {
-        if (!window.confirm("¿Estás seguro de que deseas eliminar este elemento?")) return;
+        // Mostrar confirmación antes de eliminar
+        const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        });
 
-        try {
-            const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/variables/${var_id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: token,
-                    "Content-Type": "application/json"
-                },
-            });
+        // Si el usuario confirma, proceder con la eliminación
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/variables/${var_id}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "application/json"
+                    },
+                });
 
-            if (response.ok) {
-                alert("Elemento eliminado correctamente.");
-                setElementosSeleccionados(prev => prev.filter(elemento => elemento.var_id !== var_id));
-            } else {
-                const result = await response.json();
-                alert("Error al eliminar el elemento: " + (result.error || "Error desconocido en el servidor."));
+                if (response.ok) {
+                    toast.success("Elemento eliminado correctamente.");
+                    setElementosSeleccionados(prev => prev.filter(elemento => elemento.var_id !== var_id));
+                } else {
+                    const result = await response.json();
+                    toast.error("Error al eliminar el elemento: " + (result.error || "Inténtelo más tarde"));
+                }
+            } catch (error) {
+                toast.error("Error en la conexión con el servidor.");
             }
-        } catch (error) {
-            console.error("Error al eliminar el elemento:", error);
-            alert("Error en la conexión con el servidor.");
         }
     };
 
@@ -300,7 +341,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             }));
 
         if (nuevosElementos.length === 0) {
-            alert("No hay nuevos elementos para añadir.");
+            toast.warning("No hay nuevos elementos para añadir.");
             return;
         }
 
@@ -325,15 +366,17 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             console.log("Respuesta del servidor:", result);
 
             if (response.ok) {
-                alert("Nuevos elementos añadidos correctamente.");
+                toast.success("Nuevos elementos añadidos correctamente.");
                 setDynamicFields([]); // Limpiar los campos dinámicos después de enviar
                 fetchDatosActuales(); // Refrescar datos después de añadir nuevos elementos
             } else {
                 alert("Error al añadir elementos: " + (result.error || "Error desconocido en el servidor."));
+                toast.error("Error al añadir elemento, ", result.error || "Inténtelo más tarde");
             }
         } catch (error) {
             console.error("Error al añadir los elementos:", error);
             alert("Error en la conexión con el servidor.");
+            toast.error("Error en la conexión con el servidor");
         }
     };
 
@@ -360,6 +403,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 "Error al obtener los elementos quimicos:",
                 error.message
             );
+            toast.error("Error al obtener los elementos quimicos: ", error.message);
         }
     };
     //Fetch para recibir los elementos que tiene una muestra mediante el id
@@ -392,7 +436,8 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             setElementosSeleccionados(elementosFiltrados);
             setElementosOriginales(elementosFiltrados);
         } catch (error) {
-            console.error('Error al obtener los elementos de la muestra:', error.message);
+
+            toast.error('Error al obtener los elementos de la muestra:', error.message);
         }
     };
     const soilImage = soilImages[parcelType] || '';
@@ -405,14 +450,19 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
 
     return (
         <>
+
             <div className="sueloscrud-parcel">
                 <div className="sueloscrud-parcel-image">
                     <img src={soilImage} alt={parcelType} onClick={handleImageClick} />
                 </div>
-                <label className="sueloscrud-parcel-label">
-                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler} /> {parcelName}
+                <label className="containerButton">
+                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler} />
+                    <div className="checkmark"></div>
+                    <span>{parcelName}</span>
                 </label>
-                <button className="entrarParcela" onClick={handleEnterClick}>Entrar</button>
+                <button className="entrarParcela" onClick={handleEnterClick}>
+                    <p>Entrar</p>
+                </button>
                 {isModalOpen && (
                     <ModalInfoP isOpen={isModalOpen} onClose={handleCloseModal} parcelID={parcelID} />
                 )}
