@@ -84,7 +84,7 @@ const FormMuestras = ({ parcelaId }) => {
             return;
         }
 
-        if(elementosSeleccionados.length > 0){
+        if (elementosSeleccionados.length > 0) {
             let elems = elementosSeleccionados?.map(item => ({
                 simb_elem: item.elem_simbolo,
                 cant_elem: parseFloat(item.valor)
@@ -227,8 +227,9 @@ function VariablesGenerales({ register, errors }) {
                     <div className="control">
                         <input type="number" className="input"
                             {...register("con_elec", {
-                                required: {
-                                    value: true,
+                                required: false,
+                                min: {
+                                    value: 0,
                                     message: "Ingrese valor"
                                 }
                             })}

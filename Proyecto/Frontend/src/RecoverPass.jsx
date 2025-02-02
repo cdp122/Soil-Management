@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./styles/RecoverPass.css";
-
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 function RecoverPass({ onSwitchToLogin }) {
     const [formData, setFormData] = useState({
         cedula: "",
@@ -60,6 +61,7 @@ function RecoverPass({ onSwitchToLogin }) {
             console.log("Respuesta de validación:", data);
 
             if (data.valid) {
+                toast
                 setStep(2); // Pasar al formulario de nueva contraseña
                 setErrorMessage("");
             } else {
@@ -76,12 +78,13 @@ function RecoverPass({ onSwitchToLogin }) {
         const { cedula } = formData;
 
         if (!newPassword.trim() || !confirmPassword.trim()) {
-            setErrorMessage("La nueva contraseña y la confirmación no pueden estar vacías.");
+            toast.info('La nueva contraseña y la confirmación no pueden estar vacías.');
+
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            setErrorMessage("Las contraseñas no coinciden.");
+            toast.info('Las contraseñas no coinciden.');
             return;
         }
 
@@ -101,8 +104,7 @@ function RecoverPass({ onSwitchToLogin }) {
             console.log("Respuesta de cambio de contraseña:", data);
 
             if (data.success) {
-                setSuccessMessage("Contraseña actualizada con éxito.");
-                setErrorMessage("");
+                toast.success('Contraseña actualizada con éxito.');
 
                 // Redirigir al login después de un pequeño retraso
                 setTimeout(() => {
@@ -118,94 +120,97 @@ function RecoverPass({ onSwitchToLogin }) {
     };
 
     return (
-        <div className="container">
-            <div className="carta">
-                <div className="header">
-                    <div className="title">
-                        <span className="icon">ℹ️</span>
-                        <h2 className="h2Recover">
-                            {step === 1 ? "Recuperación de Contraseña" : "Nueva Contraseña"}
-                        </h2>
+        <>
+            <ToastContainer />
+            <div className="container">
+                <div className="carta">
+                    <div className="header">
+                        <div className="title">
+                            <span className="icon">ℹ️</span>
+                            <h2 className="h2Recover">
+                                {step === 1 ? "Recuperación de Contraseña" : "Nueva Contraseña"}
+                            </h2>
+                        </div>
+                        <button className="close-btn" onClick={onSwitchToLogin}>
+                            &times;
+                        </button>
                     </div>
-                    <button className="close-btn" onClick={onSwitchToLogin}>
-                        &times;
-                    </button>
+                    {step === 1 && (
+                        <>
+                            <p className="subtitulo">
+                                Ingrese los siguientes datos para verificar su identidad
+                            </p>
+                            <div className="input-container">
+                                <input
+                                    type="text"
+                                    name="cedula"
+                                    className="input-field"
+                                    placeholder="Ingrese su cédula"
+                                    value={formData.cedula}
+                                    onChange={handleInputChange}
+                                />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="input-field"
+                                    placeholder="Ingrese su correo"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                />
+                                <input
+                                    type="text"
+                                    name="telefono"
+                                    className="input-field"
+                                    placeholder="Ingrese su teléfono"
+                                    value={formData.telefono}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            {errorMessage && <div className="error-message">{errorMessage}</div>}
+                            <div className="actions">
+                                <button className="cancel-btn" onClick={onSwitchToLogin}>
+                                    Cancelar
+                                </button>
+                                <button className="accept-btn" onClick={handleValidateData}>
+                                    Verificar
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {step === 2 && (
+                        <>
+                            <p className="subtitulo">Ingrese su nueva contraseña</p>
+                            <div className="input-container">
+                                <input
+                                    type="password"
+                                    className="input-field"
+                                    placeholder="Nueva contraseña"
+                                    value={newPassword}
+                                    onChange={handleNewPasswordChange}
+                                />
+                                <input
+                                    type="password"
+                                    className="input-field"
+                                    placeholder="Confirmar nueva contraseña"
+                                    value={confirmPassword}
+                                    onChange={handleConfirmPasswordChange}
+                                />
+                            </div>
+                            {errorMessage && <div className="error-message">{errorMessage}</div>}
+                            {successMessage && <div className="success-message">{successMessage}</div>}
+                            <div className="actions">
+                                <button className="cancel-btn" onClick={onSwitchToLogin}>
+                                    Cancelar
+                                </button>
+                                <button className="accept-btn" onClick={handleSaveNewPassword}>
+                                    Guardar
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
-                {step === 1 && (
-                    <>
-                        <p className="subtitulo">
-                            Ingrese los siguientes datos para verificar su identidad
-                        </p>
-                        <div className="input-container">
-                            <input
-                                type="text"
-                                name="cedula"
-                                className="input-field"
-                                placeholder="Ingrese su cédula"
-                                value={formData.cedula}
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="email"
-                                name="email"
-                                className="input-field"
-                                placeholder="Ingrese su correo"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="text"
-                                name="telefono"
-                                className="input-field"
-                                placeholder="Ingrese su teléfono"
-                                value={formData.telefono}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                        {errorMessage && <div className="error-message">{errorMessage}</div>}
-                        <div className="actions">
-                            <button className="cancel-btn" onClick={onSwitchToLogin}>
-                                Cancelar
-                            </button>
-                            <button className="accept-btn" onClick={handleValidateData}>
-                                Verificar
-                            </button>
-                        </div>
-                    </>
-                )}
-                {step === 2 && (
-                    <>
-                        <p className="subtitulo">Ingrese su nueva contraseña</p>
-                        <div className="input-container">
-                            <input
-                                type="password"
-                                className="input-field"
-                                placeholder="Nueva contraseña"
-                                value={newPassword}
-                                onChange={handleNewPasswordChange}
-                            />
-                            <input
-                                type="password"
-                                className="input-field"
-                                placeholder="Confirmar nueva contraseña"
-                                value={confirmPassword}
-                                onChange={handleConfirmPasswordChange}
-                            />
-                        </div>
-                        {errorMessage && <div className="error-message">{errorMessage}</div>}
-                        {successMessage && <div className="success-message">{successMessage}</div>}
-                        <div className="actions">
-                            <button className="cancel-btn" onClick={onSwitchToLogin}>
-                                Cancelar
-                            </button>
-                            <button className="accept-btn" onClick={handleSaveNewPassword}>
-                                Guardar
-                            </button>
-                        </div>
-                    </>
-                )}
             </div>
-        </div>
+        </>
     );
 }
 

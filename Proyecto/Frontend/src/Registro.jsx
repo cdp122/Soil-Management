@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './styles/Registro.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 function Registro({ onSwitchToLogin }) {
     const [roles, setRoles] = useState([]); // Estado para almacenar los roles obtenidos del backend
@@ -26,6 +27,7 @@ function Registro({ onSwitchToLogin }) {
                 setRoles(data);
             } catch (error) {
                 console.error('Error al cargar los roles:', error);
+                toast.error('Error al cargar los roles');
             }
         };
 
@@ -74,15 +76,18 @@ function Registro({ onSwitchToLogin }) {
 
             const result = await response.json();
             console.log('Registro exitoso:', result);
+            toast.success('Registro exitoso');
             alert('Registro exitoso');
             onSwitchToLogin(); // Cambiar a la pestaña de inicio de sesión
         } catch (error) {
             console.error('Error al registrar:', error);
+            toast.error(`Error al registrar: ${error.message}`);
         }
     };
 
     return (
         <>
+            <ToastContainer />
             <div className='rg-container'>
                 <div className='rg-form'>
                     <h1 className='rg-title'>Registro</h1>

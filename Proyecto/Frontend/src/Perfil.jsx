@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Loading from "./assets/loading.gif";
 import "./styles/Perfil.css";
 import Icon from "./assets/user.svg";
+import { ToastContainer, toast } from "react-toastify";
 
 function Perfil() {
     const [authorized, setAuthorized] = useState(false);
@@ -113,9 +114,14 @@ function Perfil() {
                 const updatedData = await response.json();
                 setUserData(updatedData);
                 setIsEditing(false);
-                alert("Datos actualizados con éxito.");
+                toast.success("Datos actualizados con éxito.");
+                setTimeout(() => {
+                    window.location.reload(); // 🔄 Recargar la página después de un breve tiempo
+                }, 1500); // Espera 1.5 segundos para que se vea la notificación
+
             } else {
                 alert("Error al actualizar los datos. Inténtelo nuevamente.");
+                toast.error("Error al actualizar los datos. Inténtelo nuevamente.");
             }
         } catch (error) {
             console.error("Error al guardar los cambios:", error);
@@ -126,13 +132,15 @@ function Perfil() {
     // Maneja la acción de cambiar la contraseña
     const handleModifyPassword = async () => {
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            alert("Las contraseñas no coinciden.");
+
+            toast.info('las contraseñas no coinciden');
             console.log("Las contraseñas no coinciden");
+
             return;
         }
 
         try {
-            console.log("Entra al try");
+            toast.success('Contraseña cambiada con éxito');
             const response = await fetch(
                 `https://soil-management-4-soft-utn.onrender.com/password`,
                 {
@@ -149,17 +157,19 @@ function Perfil() {
             const data = await response.json();
             console.log("Respuesta del servidor:", data);
 
-            if (response.ok) {
-                alert("Contraseña cambiada con éxito.");
+            if (!response.ok) { // puede ser falla porque no recibo una respuesta de la base
+                toast.success('Contraseña cambiada con éxito');
                 console.log("Contraseña cambiada con éxito");
                 setIsChangingPassword(false);
                 setPasswordData({ newPassword: "", confirmPassword: "" });
             } else {
                 alert("Error al cambiar la contraseña. Inténtalo nuevamente.");
+                toast.error('Error al cambiar la contraseña. Inténtalo nuevamente.');
                 console.log("Error al cambiar la contraseña. Inténtalo nuevamente.");
             }
         } catch (error) {
             console.error("Error al cambiar la contraseña:", error);
+            toast.error('Error al cambiar la contraseña.');
             alert("Ocurrió un error al cambiar la contraseña.");
         }
     };
@@ -169,173 +179,176 @@ function Perfil() {
     }
 
     return (
-        <main className="perfil-main">
-            <div className="perfil-container">
-                {!isEditing && !isChangingPassword ? (
-                    <>
-                        {/* Vista de perfil */}
-                        <div className="perfil-header">
-                            <div className="perfil-img-wrapper">
-                                <img src={Icon} alt="Perfil" className="perfil-img" />
+        <>
+            <ToastContainer />
+            <main className="perfil-main">
+                <div className="perfil-container">
+                    {!isEditing && !isChangingPassword ? (
+                        <>
+                            {/* Vista de perfil */}
+                            <div className="perfil-header">
+                                <div className="perfil-img-wrapper">
+                                    <img src={Icon} alt="Perfil" className="perfil-img" />
+                                </div>
+                                <h1 className="perfil-name">
+                                    {userData?.nombre || "Nombre del Usuario"} {userData?.apellido || ""}
+                                </h1>
+                                <p className="perfil-role">Rol: {userData?.tipo}</p>
                             </div>
-                            <h1 className="perfil-name">
-                                {userData?.nombre || "Nombre del Usuario"} {userData?.apellido || ""}
-                            </h1>
-                            <p className="perfil-role">Rol: {userData?.tipo}</p>
-                        </div>
 
-                        <div className="perfil-info">
-                            <h2>Información Personal</h2>
+                            <div className="perfil-info">
+                                <h2>Información Personal</h2>
+                                <div className="perfil-info-grid">
+                                    <div className="perfil-info-item">
+                                        <h3>Cédula</h3>
+                                        <p>{userData?.cedula || "No especificado"}</p>
+                                    </div>
+                                    <div className="perfil-info-item">
+                                        <h3>Email</h3>
+                                        <p>{userData?.correo || "usuario@email.com"}</p>
+                                    </div>
+                                    <div className="perfil-info-item">
+                                        <h3>Teléfono</h3>
+                                        <p>{userData?.telefono || "+123 456 7890"}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="perfil-actions">
+                                <button className="btnPerfil" onClick={() => setIsEditing(true)}>
+                                    Modificar Datos
+                                </button>
+                                <button
+                                    className="btnPerfil"
+                                    onClick={() => setIsChangingPassword(true)}
+                                >
+                                    Modificar Contraseña
+                                </button>
+                                <button className="btnPerfil" onClick={handleSuspendAccount}>
+                                    Suspender Cuenta
+                                </button>
+                                <button
+                                    className="btnDanger"
+                                    onClick={() => {
+                                        localStorage.removeItem("token");
+                                        setAuthorized(false);
+                                        window.location.href = "/";
+                                    }}
+                                >
+                                    Cerrar Sesión
+                                </button>
+                            </div>
+                        </>
+                    ) : isChangingPassword ? (
+                        <>
+                            {/* Formulario de cambio de contraseña */}
+                            <h2 id="H2FormEdi">Cambiar Contraseña</h2>
                             <div className="perfil-info-grid">
                                 <div className="perfil-info-item">
-                                    <h3>Cédula</h3>
-                                    <p>{userData?.cedula || "No especificado"}</p>
+                                    <label>Nueva Contraseña</label>
+                                    <input className="NuevaPass"
+                                        type="password"
+                                        name="newPassword"
+                                        value={passwordData.newPassword}
+                                        onChange={handleInputChange}
+                                    />
                                 </div>
                                 <div className="perfil-info-item">
-                                    <h3>Email</h3>
-                                    <p>{userData?.correo || "usuario@email.com"}</p>
+                                    <label>Confirmar Contraseña</label>
+                                    <input className="NuevaPass"
+                                        type="password"
+                                        name="confirmPassword"
+                                        value={passwordData.confirmPassword}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                            </div>
+                            <div className="perfil-actions">
+                                <button
+                                    className="btnPerfil"
+                                    onClick={() => setIsChangingPassword(false)}
+                                >
+                                    Cancelar
+                                </button>
+                                <button className="btnPerfil" onClick={handleModifyPassword}>
+                                    Guardar Contraseña
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {/* Formulario de edición */}
+                            <h2 id="H2FormEdi">Editar Información Personal</h2>
+                            <div className="perfil-info-grid">
+                                <div className="perfil-info-item">
+                                    <label>Cédula</label>
+                                    <input className="Cedula"
+                                        type="text"
+                                        name="cedula"
+                                        value={formData.cedula || ""}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, [e.target.name]: e.target.value })
+                                        }
+                                    />
                                 </div>
                                 <div className="perfil-info-item">
-                                    <h3>Teléfono</h3>
-                                    <p>{userData?.telefono || "+123 456 7890"}</p>
+                                    <label>Nombre</label>
+                                    <input className="Nombre"
+                                        type="text"
+                                        name="nombre"
+                                        value={formData.nombre || ""}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, [e.target.name]: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div className="perfil-info-item">
+                                    <label>Apellido</label>
+                                    <input className="Apellido"
+                                        type="text"
+                                        name="apellido"
+                                        value={formData.apellido || ""}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, [e.target.name]: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div className="perfil-info-item">
+                                    <label>Email</label>
+                                    <input className="Email"
+                                        type="email"
+                                        name="correo"
+                                        value={formData.correo || ""}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, [e.target.name]: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div className="perfil-info-item">
+                                    <label>Teléfono</label>
+                                    <input className="Telefono"
+                                        type="text"
+                                        name="telefono"
+                                        value={formData.telefono || ""}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, [e.target.name]: e.target.value })
+                                        }
+                                    />
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="perfil-actions">
-                            <button className="btnPerfil" onClick={() => setIsEditing(true)}>
-                                Modificar Datos
-                            </button>
-                            <button
-                                className="btnPerfil"
-                                onClick={() => setIsChangingPassword(true)}
-                            >
-                                Modificar Contraseña
-                            </button>
-                            <button className="btnPerfil" onClick={handleSuspendAccount}>
-                                Suspender Cuenta
-                            </button>
-                            <button
-                                className="btnDanger"
-                                onClick={() => {
-                                    localStorage.removeItem("token");
-                                    setAuthorized(false);
-                                    window.location.href = "/";
-                                }}
-                            >
-                                Cerrar Sesión
-                            </button>
-                        </div>
-                    </>
-                ) : isChangingPassword ? (
-                    <>
-                        {/* Formulario de cambio de contraseña */}
-                        <h2 id="H2FormEdi">Cambiar Contraseña</h2>
-                        <div className="perfil-info-grid">
-                            <div className="perfil-info-item">
-                                <label>Nueva Contraseña</label>
-                                <input className="NuevaPass"
-                                    type="password"
-                                    name="newPassword"
-                                    value={passwordData.newPassword}
-                                    onChange={handleInputChange}
-                                />
+                            <div className="perfil-actions">
+                                <button className="btnPerfil" onClick={() => setIsEditing(false)}>
+                                    Cancelar
+                                </button>
+                                <button className="btnPerfil" onClick={handleSaveChanges}>
+                                    Guardar Cambios
+                                </button>
                             </div>
-                            <div className="perfil-info-item">
-                                <label>Confirmar Contraseña</label>
-                                <input className="NuevaPass"
-                                    type="password"
-                                    name="confirmPassword"
-                                    value={passwordData.confirmPassword}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-                        <div className="perfil-actions">
-                            <button
-                                className="btnPerfil"
-                                onClick={() => setIsChangingPassword(false)}
-                            >
-                                Cancelar
-                            </button>
-                            <button className="btnPerfil" onClick={handleModifyPassword}>
-                                Guardar Contraseña
-                            </button>
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        {/* Formulario de edición */}
-                        <h2 id="H2FormEdi">Editar Información Personal</h2>
-                        <div className="perfil-info-grid">
-                            <div className="perfil-info-item">
-                                <label>Cédula</label>
-                                <input className="Cedula"
-                                    type="text"
-                                    name="cedula"
-                                    value={formData.cedula || ""}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, [e.target.name]: e.target.value })
-                                    }
-                                />
-                            </div>
-                            <div className="perfil-info-item">
-                                <label>Nombre</label>
-                                <input className="Nombre"
-                                    type="text"
-                                    name="nombre"
-                                    value={formData.nombre || ""}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, [e.target.name]: e.target.value })
-                                    }
-                                />
-                            </div>
-                            <div className="perfil-info-item">
-                                <label>Apellido</label>
-                                <input className="Apellido"
-                                    type="text"
-                                    name="apellido"
-                                    value={formData.apellido || ""}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, [e.target.name]: e.target.value })
-                                    }
-                                />
-                            </div>
-                            <div className="perfil-info-item">
-                                <label>Email</label>
-                                <input className="Email"
-                                    type="email"
-                                    name="correo"
-                                    value={formData.correo || ""}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, [e.target.name]: e.target.value })
-                                    }
-                                />
-                            </div>
-                            <div className="perfil-info-item">
-                                <label>Teléfono</label>
-                                <input className="Telefono"
-                                    type="text"
-                                    name="telefono"
-                                    value={formData.telefono || ""}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, [e.target.name]: e.target.value })
-                                    }
-                                />
-                            </div>
-                        </div>
-                        <div className="perfil-actions">
-                            <button className="btnPerfil" onClick={() => setIsEditing(false)}>
-                                Cancelar
-                            </button>
-                            <button className="btnPerfil" onClick={handleSaveChanges}>
-                                Guardar Cambios
-                            </button>
-                        </div>
-                    </>
-                )}
-            </div>
-        </main>
+                        </>
+                    )}
+                </div>
+            </main>
+        </>
     );
 }
 
