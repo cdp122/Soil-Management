@@ -154,10 +154,10 @@ function SuelosCRUD() {
             if(response.error){
                 toast.error("Ocurrió un error al eliminar las parcelas, inténtelo mas tarde.")
             }else{
-                toast.success("¡Parcelas eliminadas exitósamente!", {autoClose: 1900});
+                toast.success("¡Parcelas eliminadas exitósamente!", {autoClose: 1800});
                 setMostrarConfirmacion(false);
                 parcelasSeleccionadas.current = new Set();
-                setTimeout(() => handleZonaClick(zonaSeleccionada), 2300);
+                setTimeout(() => handleZonaClick(zonaSeleccionada), 2500);
                 
             }
         }

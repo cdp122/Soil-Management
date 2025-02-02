@@ -12,7 +12,7 @@ import salino from './assets/tipos_suelos/salino.jpeg';
 import volcanico from './assets/tipos_suelos/volcanico.jpeg';
 import Grafico from './components/Grafico';  // Importamos el gráfico
 import editIcon from './assets/edit.svg'; // Importamos el ícono de lápiz
-import { Icons } from 'react-toastify';
+import { Icons, toast } from 'react-toastify';
 import deleteIcon from './assets/delete.svg'; // Ícono de papelera en SVG
 
 const soilImages = {
@@ -113,10 +113,11 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 }
             } else {
                 alert('Error al cargar los datos actuales: ' + data.message);
+                // toast.info('No hay muestras registradas en la parcela, registre una'); Se vuelve a renderizar
             }
         } catch (error) {
             console.error('Error al cargar los datos actuales:', error);
-            alert('Error al conectar con la base de datos.');
+            toast.error('Error al conectar con la base de datos.');
         }
     };
     const handleImageClick = () => {
@@ -253,14 +254,14 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             console.log("Respuesta del servidor:", result); // Imprimir respuesta del backend
 
             if (response.ok) {
-                alert("Datos actualizados correctamente.");
+                toast.success("Datos actualizados correctamente.");
                 setIsEditing(false); // Deshabilitar edición después de actualizar
             } else {
                 alert("Error al actualizar los datos: " + (result.error || "Error desconocido en el servidor."));
             }
         } catch (error) {
             console.error("Error al actualizar los datos:", error);
-            alert("Error en la conexión con el servidor.");
+            toast.error("Error en la conexión con el servidor.");
         }
     };
 
@@ -278,15 +279,17 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             });
 
             if (response.ok) {
-                alert("Elemento eliminado correctamente.");
+                toast.success("Elemento eliminado correctamente.");
                 setElementosSeleccionados(prev => prev.filter(elemento => elemento.var_id !== var_id));
             } else {
                 const result = await response.json();
                 alert("Error al eliminar el elemento: " + (result.error || "Error desconocido en el servidor."));
+                toast.error("Error al eliminar el elemento, inténtelo más tarde");
             }
         } catch (error) {
             console.error("Error al eliminar el elemento:", error);
             alert("Error en la conexión con el servidor.");
+            toast.error("Error en la conexión con el servidor.");
         }
     };
 
@@ -300,7 +303,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             }));
 
         if (nuevosElementos.length === 0) {
-            alert("No hay nuevos elementos para añadir.");
+            toast.warning("No hay nuevos elementos para añadir.");
             return;
         }
 
@@ -325,15 +328,17 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             console.log("Respuesta del servidor:", result);
 
             if (response.ok) {
-                alert("Nuevos elementos añadidos correctamente.");
+                toast.success("Nuevos elementos añadidos correctamente.");
                 setDynamicFields([]); // Limpiar los campos dinámicos después de enviar
                 fetchDatosActuales(); // Refrescar datos después de añadir nuevos elementos
             } else {
                 alert("Error al añadir elementos: " + (result.error || "Error desconocido en el servidor."));
+                toast.error("Error al añadir elemento, ", result.error || "Inténtelo más tarde");
             }
         } catch (error) {
             console.error("Error al añadir los elementos:", error);
             alert("Error en la conexión con el servidor.");
+            toast.error("Error en la conexión con el servidor");
         }
     };
 
@@ -360,6 +365,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 "Error al obtener los elementos quimicos:",
                 error.message
             );
+            toast.error("Error al obtener los elementos quimicos: ",error.message);
         }
     };
     //Fetch para recibir los elementos que tiene una muestra mediante el id
@@ -393,6 +399,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
             setElementosOriginales(elementosFiltrados);
         } catch (error) {
             console.error('Error al obtener los elementos de la muestra:', error.message);
+            toast.error('Error al obtener los elementos de la muestra:', error.message);
         }
     };
     const soilImage = soilImages[parcelType] || '';

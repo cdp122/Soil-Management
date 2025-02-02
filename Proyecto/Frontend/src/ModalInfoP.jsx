@@ -144,14 +144,14 @@ function ModalInfoP({ isOpen, onClose, parcelID}) {
             }
         });
 
-        if(Object.keys(datosNuevos).length == 0){
+        if(Object.keys(datosNuevos).length < 1){
             toast.info("No se ha modificado ningún dato de la parcela.");
             return;
         }
 
         datosNuevos["parc_id"] = parcelData.parc_id;
         // datosNuevos["cons_id"] = parcelData.cons_id;
-        api.actualizarParcela(datosNuevos).then((response) => {
+        api.actualizarParcela(datosNuevos).then(response => {
             if(response.error){
                 toast.error("Ocurrió un error al actualizar los datos de la parcela, inténtelo mas tarde.");
             }else{
