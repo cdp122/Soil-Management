@@ -1,26 +1,24 @@
-import SuelosCRUD from "./SuelosCRUD"
-import Inicio from "./Inicio"
-import Contacto from "./Contacto"
-import Registro from "./Registro"
-import Login from "./Login"
-import Menu from "./Menu"
-import Perfil from "./Perfil"
+import SuelosCRUD from "./SuelosCRUD";
+import Inicio from "./Inicio";
+import Contacto from "./Contacto";
+import Perfil from "./Perfil";
+import Menu from "./Menu";
 
 function Tab({ selectedTab, onTabSelect }) {
     const renderContent = () => {
         switch (selectedTab) {
             case "inicio":
-                return <Inicio />
+                return <Inicio />;
             case "contacto":
-                return <Contacto />
+                return <Contacto />;
             case "suelos":
-                return <SuelosCRUD />
+                return <SuelosCRUD />;
             case "perfil":
-                return <Perfil />
+                return <Perfil />;
             default:
-                return <div>DEFAULT</div>
+                return <div>DEFAULT</div>;
         }
-    }
+    };
 
     return (
         <div className="tab-container">
@@ -28,8 +26,8 @@ function Tab({ selectedTab, onTabSelect }) {
             <div className="tab-content">
                 {renderContent()}
             </div>
-        </div> 
-    )
+        </div>
+    );
 }
 
-export default Tab
+export default Tab;

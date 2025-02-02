@@ -2,70 +2,65 @@
 .contacto-container {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    /* Asegura que ocupe el ancho completo */
-
-    min-height: 100vh;
-    /* Al menos la altura de la pantalla */
+    align-items: center;
+    min-height: calc(100vh - 150px);
     box-sizing: border-box;
-    /* Incluye padding y bordes en el tamaño total */
+    padding: 20px;
+    background-color: #f9f9f9;
 }
-
 
 /* Contenido principal */
 .contacto-main {
     display: flex;
     justify-content: space-between;
-    /* Separa el texto y la imagen */
     align-items: flex-start;
-    /* Alinea ambos elementos en la parte superior */
     padding: 20px;
     max-width: 1200px;
     width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .contacto-content {
     flex: 1;
-    /* Ocupa el 50% del ancho */
     margin-right: 20px;
-    /* Espaciado entre texto e imagen */
+}
+
+.contacto-content h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .contacto-content p {
     font-size: 16px;
     line-height: 1.6;
     margin-bottom: 15px;
-
+    color: #555;
 }
 
-.contacto-image {
-    flex: 1;
-}
-
-.placeholder-image {
-    width: 100%;
-    max-width: 600px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-
-}
-
-/* Footer */
-.contacto-footer {
-    width: 100%;
-
-    padding: 10px 20px;
-    text-align: left;
-}
-
-.contacto-footer ul {
+.contacto-info {
     list-style: none;
     padding: 0;
 }
 
-.contacto-footer li {
-    font-size: 14px;
-    margin-bottom: 5px;
+.contacto-info li {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.contacto-info strong {
+    color: #000;
+}
+
+.contacto-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .contacto-img {
@@ -74,18 +69,8 @@
     background-position: center;
     background-repeat: no-repeat;
     width: 100%;
-    max-width: 600px;
-    height: 500px;
+    max-width: 800px;
+    height: 430px;
     border: 3px solid #090909;
     border-radius: 10px;
-}
-
-.contacto-image {
-    flex: 1;
-    /* Ocupa el 50% del ancho */
-    display: flex;
-    justify-content: center;
-    /* Centra la imagen horizontalmente */
-    align-items: center;
-    /* Centra la imagen verticalmente */
 }

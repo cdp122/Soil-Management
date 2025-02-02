@@ -70,7 +70,8 @@ function SuelosCRUD() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    setZonas(data);
+                    setZonas(data.zonas);
+                    console.log(data);
                     setError('');
                 } else if (data.error === "No se encontraron zonas para el usuario") {
                     setError("No tienes ninguna zona. Crea una nueva.");

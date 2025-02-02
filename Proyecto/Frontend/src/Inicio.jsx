@@ -9,7 +9,7 @@ function Inicio() {
                 <div className="full-inner">
                     <div className="ini-content">
                         <h1>Gestión Química de Suelos</h1>
-                        <a href="#miTexto">Más información</a>
+                        <a href="#informacion">Más información</a>
                     </div>
                 </div>
             </section>
@@ -17,7 +17,7 @@ function Inicio() {
             {/* Sección de texto */}
             <div className="texto">
                 <section className="seccion">
-                    <p id="miTexto">
+                    <p id="informacion">
                         <h2>Soil Management</h2>
                         Es un software innovador diseñado para la gestión eficiente de suelos agrícolas,
                         enfocado en el análisis de variables químicas y la administración inteligente de parcelas y zonas.
@@ -29,33 +29,52 @@ function Inicio() {
                         análisis químicos detallados y comparar los resultados entre parcelas de forma sencilla e intuitiva.
                         Nuestro objetivo es ayudar a los usuarios a tomar decisiones informadas que optimicen el rendimiento
                         de los cultivos y promuevan una gestión sostenible de los recursos del suelo.
-                        <ul><h2>Funcionalidades Destacadas</h2>
-
-                            <li><b>Gestión de Parcelas y Zonas</b></li>
-                            Permite registrar y visualizar parcelas, organizarlas en zonas específicas y gestionar información clave de cada área.
-                            La división en zonas facilita la planificación y el análisis, ofreciendo una visión estructurada del terreno.
-                            <li><b>Análisis Químico del Suelo</b></li>
-                            Integra herramientas para registrar variables químicas como pH, niveles de nutrientes, salinidad, materia orgánica, entre otros.
-                            Los datos recopilados se presentan en reportes visuales y comparativos, permitiendo identificar las fortalezas y debilidades de cada parcela.
-                            <li><b>Comparación entre Parcelas</b></li>
-                            Funcionalidad avanzada para comparar parcelas en función de sus variables químicas y datos de rendimiento.
-                            Ideal para identificar áreas de mejora y tomar decisiones personalizadas sobre fertilización, riego u otras prácticas agrícolas.
-                            <li><b>Interfaz Intuitiva y de Fácil Uso</b></li>
-                            Diseñado con una interfaz amigable, accesible para usuarios con distintos niveles de experiencia tecnológica.
-                            Todo el sistema es altamente visual, facilitando el acceso a la información relevante y la ejecución de tareas.
-                        </ul>
                     </p>
                 </section>
             </div>
-            <div className="texto">
-                <footer>
-                    <p>Todos los derechos Reservados para Soil Management | Ibarra - Ecuador 2025 </p>
-                </footer>
 
+            {/* Sección de videos */}
+            <div className="videos-section">
+                <h2>Videos Informativos</h2>
+                <div className="video-container">
+                    <div className="video-frame">
+                        <iframe
+                            width="560"
+                            height="315"
+                            src="https://www.youtube.com/embed/zMBZb9kmiMM?si=IBVXBxDRUNNZ6K0Q"
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                        <div className="video-details">
+                            <p className="video-description">Un video que expone todas las propiedades químicas que tienen los suelos. Es fundamental conocerlas para crear muestras en la aplicación.</p>
+                            <p className="video-citation">Autor: SENA - 13 de Junio de 2020</p>
+                        </div>
+                    </div>
+                    <div className="video-frame">
+                        <iframe
+                            width="560"
+                            height="315"
+                            src="https://www.youtube.com/embed/ie9vwS4mDGQ?si=KcbeBxCLZOat_yyx"
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                        <div className="video-details">
+                            <p className="video-description">Este video muestra algunos tipos de suelos fundamentales que aparecen en la aplicación, debes conocerlos al momento de crear una nueva parcela.</p>
+                            <p className="video-citation">Autor: Conocimiento - 25 de Noviembre de 2024</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            {/* Footer */}
+            <footer className="footer">
+                <p>© 2025 Soil Management. Todos los derechos reservados.</p><br></br><p>Ibarra - Ecuador</p>
+            </footer>
         </div>
-
     );
 }
 

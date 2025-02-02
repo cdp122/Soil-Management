@@ -4,7 +4,7 @@
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
     color: white; /* Color de texto blanco */
-    height: calc(100vh -100px); /* Altura ajustada */
+    height: calc(100vh - 100px); /* Altura ajustada */
     overflow-y: auto; /* Habilitar scroll vertical */
 }
 
@@ -48,14 +48,16 @@
 }
 
 .zonas-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
-    cursor: pointer;
     border-bottom: 1px solid #ccc;
-    transition: background-color 0.3s; /* Transición suave */
 }
 
 .zonas-item:hover {
     background-color: #66bb6a; /* Color de fondo al hacer hover */
+    cursor: pointer;
 }
 
 .zonas-item-home {
@@ -66,4 +68,46 @@
 
 .zonas-home-icon {
     margin-right: 8px;
+}
+
+.zonas-item-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.zonas-edit, .zonas-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.delete-icon {
+    width: 23px;
+    height: 23px;
+}
+
+.edit-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.delete-icon:hover {
+    transition-duration: 0.3s;
+    transform: scale(1.5); /* Efecto de escala al hacer hover */
+}
+
+.edit-icon:hover {
+    transition-duration: 0.3s;
+    transform: scale(1.5); /* Efecto de escala al hacer hover */
+}
+
+.delete-icon:not(:hover) {
+    transition-duration: 0.3s;
+    transform: scale(1)
+}
+
+.edit-icon:not(:hover) {
+    transition-duration: 0.3s;
+    transform: scale(1)
 }

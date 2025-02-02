@@ -1,16 +1,47 @@
 import React, { useState } from "react";
-import Modal from "./Modal"; // Importamos el Modal
+import Modal from "./Modal";
+import ModalEDZona from "./ModalEDZona";
 import "./styles/Zonas.css";
+import editIcon from './assets/edit.svg';
+import deleteIcon from './assets/delete.svg';
 
 function Zonas({ zonas, onZonaClick, userId, setZonas }) {
-    const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
+    const [showModal, setShowModal] = useState(false);
+    const [showEDModal, setShowEDModal] = useState(false);
+    const [selectedZona, setSelectedZona] = useState(null);
+    const [modalMode, setModalMode] = useState('edit');
+    const [activeZona, setActiveZona] = useState(null); // Estado para la zona activa
 
     const handleAddZonaClick = () => {
-        setShowModal(true); // Mostrar el modal cuando se hace clic en "Añadir Zona"
+        setShowModal(true);
     };
 
     const handleCloseModal = () => {
-        setShowModal(false); // Cerrar el modal
+        setShowModal(false);
+    };
+
+    const handleEditZonaClick = (zona) => {
+        setSelectedZona(zona);
+        setModalMode('edit');
+        setShowEDModal(true);
+    };
+
+    const handleDeleteZonaClick = (zona) => {
+        setSelectedZona(zona);
+        setModalMode('delete');
+        setShowEDModal(true);
+    };
+
+    const handleZonaClick = (zonaId) => {
+        if (activeZona === zonaId) {
+            return; // No hacer nada si la zona ya está activa
+        }
+        setActiveZona(zonaId);
+        onZonaClick(zonaId);
+    };
+
+    const handleCloseEDModal = () => {
+        setShowEDModal(false);
     };
 
     const refreshZonas = async () => {
@@ -39,21 +70,34 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
                 <h2 className="zonas-title">Zonas</h2>
                 <button className="zonas-add" onClick={handleAddZonaClick}>+</button>
             </div>
+            <hr></hr>
             <ul className="zonas-list">
                 {zonas.map((zona) => (
-                    <li
-                        key={zona.cons_id}
-                        className="zonas-item"
-                        onClick={() => onZonaClick(zona.cons_id)}
-                    >
+                    <li key={zona.cons_id} className="zonas-item" onClick={() => handleZonaClick(zona.cons_id)}>
                         {zona.cons_nombre}
+                        <div className="zonas-item-buttons">
+                            <button className="zonas-edit" onClick={(e) => { e.stopPropagation(); handleEditZonaClick(zona); }}>
+                                <img src={editIcon} alt="Editar" className="edit-icon" />
+                            </button>
+                            <button className="zonas-delete" onClick={(e) => { e.stopPropagation(); handleDeleteZonaClick(zona); }}>
+                                <img src={deleteIcon} alt="Eliminar" className="delete-icon" />
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>
 
-            {/* Mostrar el Modal si el estado showModal es verdadero */}
             {showModal && (
                 <Modal onClose={handleCloseModal} refreshZonas={refreshZonas} userId={userId} />
+            )}
+            {showEDModal && selectedZona && (
+                <ModalEDZona
+                    isOpen={showEDModal}
+                    onClose={handleCloseEDModal}
+                    zona={selectedZona}
+                    refreshZonas={refreshZonas}
+                    mode={modalMode}
+                />
             )}
         </div>
     );

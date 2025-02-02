@@ -34,9 +34,9 @@
     z-index: 1001; /* Asegurarse de que el loading esté por encima del modal */
 }
 
-.loading-gif {
-    width: 150px; /* Ajustar el tamaño del GIF */
-    height: 150px; /* Ajustar el tamaño del GIF */
+.loading-gif-addz {
+    width: 700px; /* Ajustar el tamaño del GIF */
+    height: 700px; /* Ajustar el tamaño del GIF */
 }
 
 @keyframes fadeIn {

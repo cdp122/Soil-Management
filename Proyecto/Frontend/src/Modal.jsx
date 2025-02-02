@@ -111,7 +111,7 @@ function Modal({ onClose, refreshZonas, userId }) {
         <div className="modal-addz-overlay">
             {loading && (
                 <div className="loading-overlay">
-                    <img src={LoadingGif} alt="Cargando..." className="loading-gif" />
+                    <img src={LoadingGif} alt="Cargando..." className="loading-gif-addz" />
                 </div>
             )}
             {!loading && (
@@ -187,7 +187,7 @@ function Modal({ onClose, refreshZonas, userId }) {
                                     <div className="form-addz-group">
                                         <label htmlFor="coordLa">Coordenada Latitud</label>
                                         <input
-                                            type="text"
+                                            type="number"
                                             id="coordLa"
                                             value={parcela.coordLa}
                                             onChange={(e) => setParcela({ ...parcela, coordLa: e.target.value })}
@@ -198,7 +198,7 @@ function Modal({ onClose, refreshZonas, userId }) {
                                     <div className="form-addz-group">
                                         <label htmlFor="coordLo">Coordenada Longitud</label>
                                         <input
-                                            type="text"
+                                            type="number"
                                             id="coordLo"
                                             value={parcela.coordLo}
                                             onChange={(e) => setParcela({ ...parcela, coordLo: e.target.value })}

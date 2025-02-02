@@ -8,9 +8,13 @@
 .full {
     width: 100%;
     height: 100vh;
-    background: url("../assets/ImgInicio.webp") no-repeat center center;
+    background: url('../assets/ImgInicio.webp') no-repeat center center;
     background-size: cover;
-    display: table;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
     margin: 0;
     position: relative;
 }
@@ -19,10 +23,13 @@
     width: 100%;
     display: table-cell;
     vertical-align: middle;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
 }
 
 .ini-content {
-    max-width: 300px;
+    max-width: 530px;
     margin: auto;
     text-align: center;
     background: rgba(0, 0, 0, 0.5); /* Slightly gray background */
@@ -36,25 +43,26 @@
 }
 
 .ini-content h1 {
-    font-size: 30px;
+    font-size: 3em;
     font-weight: bold;
     color: #f9f3f4;
     text-shadow: 0 0 15px rgb(0, 0, 0);
+    margin-bottom: 20px;
 }
 
 .ini-content a {
     background-color: rgba(0, 0, 0, 0.726);
     border-radius: 9px;
     text-decoration: none;
-    color: #f9f3f4;
+    color: #fff;
     font-weight: bold;
     border: 3px solid;
-    padding: 7px 13px;
-    transition: color 1s;
+    padding: 10px 20px;
+    transition: background 0.3s;
 }
 
 .ini-content a:hover {
-    color: aquamarine;
+    background: #45a049;
 }
 
 /* Sección de texto */
@@ -64,8 +72,8 @@
     align-items: center;
     margin: 25px;
     font-size: 1.6rem;
-    color: #fff;
-    background: #403d3d;
+    color: #333;
+    background: #f9f9f9;
     padding: 20px;
     border-radius: 10px;
 }
@@ -81,4 +89,68 @@ p {
     .texto {
         flex-direction: column;
     }
+}
+
+.seccion {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.videos-section {
+    padding: 20px;
+    background: #fff;
+    color: #333;
+}
+
+.video-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.video-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 560px;
+}
+
+.video-details {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.video-description {
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.video-citation {
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Footer */
+.footer {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #9c9c9c;
+    color: #000000;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    height: 200px;
+}
+
+.footer p {
+    text-align: center;
+}
+
+#informacion h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 10px;
 }

@@ -4,19 +4,16 @@ import Login from "./Login";
 import Inicio from "./Inicio";
 import Contacto from "./Contacto";
 import Registro from "./Registro";
-import "./styles/Auth.css";
 import RecoverPass from "./RecoverPass";
-
+import "./styles/Auth.css";
 
 function Auth() {
-    const [selectedTab, setSelectedTab] = useState("inicio"); // Estado para la pestaña seleccionada
+    const [selectedTab, setSelectedTab] = useState("inicio");
 
-    // Función para manejar la selección de pestañas
     const onTabSelect = (tab) => {
-        setSelectedTab(tab); // Cambiar la pestaña seleccionada
+        setSelectedTab(tab);
     };
 
-    // Renderizar el contenido según la pestaña seleccionada
     const renderContent = () => {
         switch (selectedTab) {
             case "inicio":
@@ -39,8 +36,10 @@ function Auth() {
 
     return (
         <div className="au-container">
-            <MenuInicio onTabSelect={onTabSelect} /> {/* Pasar la función como prop */}
-            <div className="au-content">{renderContent()}</div>
+            <MenuInicio onTabSelect={onTabSelect} />
+            <div className={`au-content ${selectedTab === "inicio" ? "inicio-background" : ""}`}>
+                {renderContent()}
+            </div>
         </div>
     );
 }

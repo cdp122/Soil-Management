@@ -1,63 +1,31 @@
-
+import React from "react";
 import "./styles/Contacto.css";
 
 function Contacto() {
     return (
         <div className="contacto-container">
-            {/* Contenido principal */}
             <main className="contacto-main">
                 <div className="contacto-content">
+                    <h2>Contacto</h2>
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor a
-                        lorem eget pharetra. Donec sollicitudin magna nec libero fermentum
-                        vehicula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-                        posuere cubilia curae; Donec nec maximus diam. Etiam sed turpis quam. Nulla
-                        convallis, ex at pellentesque maximus, lacus enim imperdiet dolor, non
-                        pharetra sem ligula quis elit. Fusce sit amet tempus turpis, et feugiat
-                        metus. Pellentesque suscipit venenatis metus, vel sodales ipsum fringilla
-                        et. Nulla auctor vehicula cursus.
+                        Si tienes alguna pregunta o necesitas más información sobre nuestros servicios,
+                        no dudes en ponerte en contacto con nosotros. Estamos aquí para ayudarte.
                     </p>
                     <p>
-                        Praesent scelerisque nisi ut eros luctus vestibulum. Donec elementum turpis
-                        mauris, ut ullamcorper mauris convallis ac. Pellentesque eget vulputate
-                        ante, quis tincidunt quam. Nam nec ultrices justo. Morbi tincidunt mi odio,
-                        eget volutpat ante euismod sed. Proin tristique sed mi sollicitudin
-                        malesuada.
+                        Puedes comunicarte con nosotros a través de los siguientes medios:
                     </p>
-                    <p>
-                        Praesent scelerisque nisi ut eros luctus vestibulum. Donec elementum turpis
-                        mauris, ut ullamcorper mauris convallis ac. Pellentesque eget vulputate
-                        ante, quis tincidunt quam. Nam nec ultrices justo. Morbi tincidunt mi odio,
-                        eget volutpat ante euismod sed. Proin tristique sed mi sollicitudin
-                        malesuada.
-                    </p>
-                    <p>
-                        Praesent scelerisque nisi ut eros luctus vestibulum. Donec elementum turpis
-                        mauris, ut ullamcorper mauris convallis ac. Pellentesque eget vulputate
-                        ante, quis tincidunt quam. Nam nec ultrices justo. Morbi tincidunt mi odio,
-                        eget volutpat ante euismod sed. Proin tristique sed mi sollicitudin
-                        malesuada.
-                    </p>
-
+                    <ul className="contacto-info">
+                        <li><strong>Celular:</strong> +593 99 123 4567</li>
+                        <li><strong>Teléfono:</strong> +593 2 123 4567</li>
+                        <li><strong>Dirección:</strong> Av. Siempre Viva 123, Ibarra, Ecuador</li>
+                        <li><strong>Soporte:</strong> soporte@soilmanagement.com</li>
+                        <li><strong>Email:</strong> info@soilmanagement.com</li>
+                    </ul>
                 </div>
                 <div className="contacto-image">
-                    <div
-                        className="contacto-img"
-                    />
+                    <div className="contacto-img" />
                 </div>
             </main>
-            <div className="texto">
-                {/* Información de contacto */}
-                <footer className="contacto-footer">
-                    <ul>
-                        <li>Celular</li>
-                        <li>Teléfono</li>
-                        <li>Dirección</li>
-                        <li>Soporte</li>
-                        <li>Email</li>
-                    </ul>
-                </footer>
-            </div>
         </div>
     );
 }
