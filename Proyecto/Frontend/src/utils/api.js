@@ -47,32 +47,63 @@ class Api {
         }
     }
 
-    async eliminarParcelas(zona_id, parcelas){
-        const data = {
-            cons_id: zona_id,
-            parcelas: parcelas
+    async eliminarParcelas(parcelas){
+        let data = {};
+        if(parcelas.length == 0){
+            return;
         }
 
-        console.log(JSON.stringify(data));
-        // try {
-        //     const response = await fetch(`${this.api_url}/muestras`, {
-        //         method: "DELETE",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             'Authorization': localStorage.getItem('token')
-        //         },
-        //         body: JSON.stringify(data),
-        //     });
+        if (parcelas.length == 1){
+            data = {
+                parc_id: parcelas[0]
+            }
+        }else{
+            data = {
+                parcelas: parcelas
+            }
+        }
+
+        try {
+            const response = await fetch(`${this.api_url}/parcelas`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': localStorage.getItem('token')
+                },
+                body: JSON.stringify(data),
+            });
     
-        //     if (!response.ok) {
-        //         const errorData = await response.json();
-        //         throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
-        //     }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+            }
     
-        //     return await response.json();
-        // } catch (error) {
-        //     return { error: true, message: error.message };
-        // }
+            return await response.json();
+        } catch (error) {
+            return { error: true, message: error.message };
+        }
+    }
+
+    async actualizarParcela(data){
+        try {
+            const response = await fetch(`${this.api_url}/parcelas`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': localStorage.getItem('token')
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+            }
+    
+            return await response.json();
+        } catch (error) {
+            return { error: true, message: error.message };
+        }
     }
 
     

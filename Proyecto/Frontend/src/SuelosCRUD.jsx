@@ -147,17 +147,22 @@ function SuelosCRUD() {
         } else {
             parcelasSeleccionadas.current.delete(idParcela);
         }
-        console.log(parcelasSeleccionadas.current);
     };
 
     const eliminarParcelas = () => {
-        // api.eliminarParcelas(zonaSeleccionada, Array.from(parcelasSeleccionadas.current));   
-        toast.success("Parcelas eliminadas exitósamente", {autoClose: 1900});
-        setMostrarConfirmacion(false);
-        parcelasSeleccionadas.current = new Set();
-        setTimeout(() => {
-            handleZonaClick(zonaSeleccionada);
-        }, 2000);
+        api.eliminarParcelas(Array.from(parcelasSeleccionadas.current)).then((response) =>{
+            if(response.error){
+                toast.error("Ocurrió un error al eliminar las parcelas, inténtelo mas tarde.")
+            }else{
+                toast.success("¡Parcelas eliminadas exitósamente!", {autoClose: 1900});
+                setMostrarConfirmacion(false);
+                parcelasSeleccionadas.current = new Set();
+                setTimeout(() => handleZonaClick(zonaSeleccionada), 2300);
+                
+            }
+        }
+        )
+        
     }
 
     const mostrarConfirmacionClick = () =>{
