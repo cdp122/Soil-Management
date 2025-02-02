@@ -54,6 +54,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* flex-wrap: wrap; */
+    gap: 10px;
 }
 
 .sueloscrud-search {
@@ -73,7 +75,7 @@
 .sueloscrud-buttons {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .sueloscrud-buttons .sueloscrud-btn {
@@ -515,6 +517,101 @@
     width: 24px;
     height: 24px;
 }
+
+.sueloscrud-btn i{
+    display: none;
+}
+
+/* RESPONSIVO */
+@media (min-width: 769px) and (max-width: 1240px){
+    .sueloscrud-header-controls{
+        flex-wrap: wrap;
+    }
+
+    .sueloscrud-search{
+        width: 100%;
+    }
+}
+
+
+@media (min-width: 626px) and (max-width: 768px) {
+    .btn-show-zonas-sidebar{
+        left: 15px;
+    }
+
+    .sueloscrud-title{
+        font-size: 1rem;
+    }
+
+    .sueloscrud-header-controls{
+        gap: 10px;
+    }
+
+    .sueloscrud-header-controls{
+        flex-direction: column;
+    }
+
+    .sueloscrud-search{
+        width: 100%;
+    }
+
+    .sueloscrud-buttons{
+        width: 100%;
+        gap: 5px;
+        justify-content: flex-end;
+    }
+
+    /* .zonas-sidebar{
+        position: absolute;
+        left: -300px;
+    } */
+}
+
+@media (max-width: 625px) {
+    .btn-show-zonas-sidebar{
+        left: 15px;
+    }
+
+    .sueloscrud-title{
+        font-size: 1rem;
+    }
+
+    .sueloscrud-header-controls{
+        gap: 10px;
+    }
+
+    .sueloscrud-header-controls{
+        flex-direction: column;
+    }
+
+    .sueloscrud-search{
+        width: 100%;
+    }
+
+    .sueloscrud-buttons{
+        width: 100%;
+        gap: 5px;
+        justify-content: flex-end;
+    }
+
+    /* .zonas-sidebar{
+        position: absolute;
+        left: -300px;
+    } */
+
+    .sueloscrud-buttons > button{
+        width: 40px;
+    }
+
+    .sueloscrud-btn span{
+        display: none;
+    }
+    .sueloscrud-btn i{
+        display: block;
+        display: initial;
+    }
+}
+
 
 .containerButton {
     display: inline-block;

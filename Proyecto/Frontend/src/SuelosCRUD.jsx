@@ -180,7 +180,7 @@ function SuelosCRUD() {
     return (
         <div className="sueloscrud-container">
             <Confirmacion titulo="Eliminando parcelas" texto="¿Está seguro de eliminar la parcela/s?. Recuerde que si no quedan parcelas, la zona también se eliminará. Confirme la acción." isActivo={mostrarConfirmacion}  setActivo={setMostrarConfirmacion} action={eliminarParcelas}/>
-            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas} />
+            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas} className="Hola"/>
             <div className="sueloscrud-content">
                 {loading ? (
                     <div className="sueloscrud-loading"><img src={Loading} alt="Cargando..." className="sueloscrud-loading" /></div>
@@ -204,8 +204,8 @@ function SuelosCRUD() {
                                     />
                                 </div>
                                 <div className="sueloscrud-buttons">
-                                    <button className='sueloscrud-btn btn-eliminar-parcela' onClick={mostrarConfirmacionClick}>Eliminar parcela/s</button>
-                                    <button className="sueloscrud-btn">Comparar Parcelas</button>
+                                    <button className='sueloscrud-btn btn-eliminar-parcela' onClick={mostrarConfirmacionClick}><span>Eliminar parcela/s</span><i className="fa-solid fa-trash"></i></button>
+                                    <button className="sueloscrud-btn"><span>Comparar Parcelas</span><i className="fa-solid fa-code-compare"></i></button>
                                     <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick}/>
                                 </div>
                             </div>

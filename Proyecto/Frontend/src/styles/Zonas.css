@@ -1,14 +1,18 @@
 .zonas-sidebar {
+    position: relative;
     width: 250px; /* Ancho aumentado */
     background-color: #4CAF50; /* Color de fondo verde */
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
     color: white; /* Color de texto blanco */
     height: calc(100vh - 100px); /* Altura ajustada */
-    overflow-y: auto; /* Habilitar scroll vertical */
+    /* overflow-y: auto; */
+    /* overflow-x: ; */
+    transition: all .5s;
 }
 
 .zonas-header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -110,4 +114,15 @@
 .edit-icon:not(:hover) {
     transition-duration: 0.3s;
     transform: scale(1)
+}
+
+.btn-show-zonas-sidebar{
+    position: absolute;
+    top: 0;
+    right: -35px;
+    /* left: -50px; */
+    background-color: #e71616;
+    width: 35px;
+    height: 35px;
+    transition: all .5s;
 }
