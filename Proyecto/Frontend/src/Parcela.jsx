@@ -365,7 +365,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 "Error al obtener los elementos quimicos:",
                 error.message
             );
-            toast.error("Error al obtener los elementos quimicos: ",error.message);
+            toast.error("Error al obtener los elementos quimicos: ", error.message);
         }
     };
     //Fetch para recibir los elementos que tiene una muestra mediante el id
@@ -416,10 +416,14 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 <div className="sueloscrud-parcel-image">
                     <img src={soilImage} alt={parcelType} onClick={handleImageClick} />
                 </div>
-                <label className="sueloscrud-parcel-label">
-                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler} /> {parcelName}
+                <label className="containerButton">
+                    <input type="checkbox" checked={checbox} onChange={parcelaCheckHandler} />
+                    <div className="checkmark"></div>
+                    <span>{parcelName}</span>
                 </label>
-                <button className="entrarParcela" onClick={handleEnterClick}>Entrar</button>
+                <button className="entrarParcela" onClick={handleEnterClick}>
+                    <p>Entrar</p>
+                </button>
                 {isModalOpen && (
                     <ModalInfoP isOpen={isModalOpen} onClose={handleCloseModal} parcelID={parcelID} />
                 )}
