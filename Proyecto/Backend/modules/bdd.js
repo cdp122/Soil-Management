@@ -47,8 +47,7 @@ const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_U
 
 let sequelize = null;
 
-var PermisosUsuarios, TiposSuelos, Parcelas, Consultas, Elementos, Muestras, Problemas, Unidades, VariablesSecundarias, TiposUsuarios, Usuarios;
-
+var PermisosUsuarios, TiposSuelos, Parcelas, Consultas, Elementos, Muestras, Problemas, Unidades, VariablesSecundarias, TiposUsuarios, Usuarios, Rangos;
 async function Conectar() {
     try {
         console.log("BDD >> Intentando conectar a Azure");
@@ -115,41 +114,6 @@ async function DefinirTiposUsuarios() {
         timestamps: false,
     });
 
-    PermisosUsuarios.hasMany(TiposUsuarios, {
-        foreignKey: 'perus_id',
-        sourceKey: 'perus_id',
-        onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT',
-    });
-
-    return TiposUsuarios;
-}
-
-async function DefinirTiposUsuarios() {
-    TiposUsuarios = sequelize.define('TiposUsuarios', {
-        tipus_id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false,
-        },
-        perus_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: PermisosUsuarios,
-                key: 'perus_id',
-            }
-        },
-        tipus_detalles: {
-            type: DataTypes.STRING(50),
-            allowNull: false,
-        }
-    }, {
-        tableName: 'tipos_usuarios',
-        timestamps: false,
-    });
-
     TiposUsuarios.belongsTo(PermisosUsuarios, {
         foreignKey: 'perus_id',
         targetKey: 'perus_id',
@@ -165,29 +129,6 @@ async function DefinirTiposUsuarios() {
     });
 
     return TiposUsuarios;
-}
-
-async function DefinirTiposSuelos() {
-    TiposSuelos = sequelize.define('TiposSuelos', {
-        tipos_id: {
-            type: DataTypes.STRING(5),
-            primaryKey: true,
-            allowNull: false,
-        },
-        tipos_nombre: {
-            type: DataTypes.STRING(30),
-            allowNull: false,
-        },
-        tipos_descripcion: {
-            type: DataTypes.STRING(100),
-            allowNull: false,
-        }
-    }, {
-        tableName: 'sm_f_tipossuelos',
-        timestamps: false,
-    });
-
-    return TiposSuelos;
 }
 
 async function DefinirProblemas() {
@@ -234,15 +175,19 @@ async function DefinirConsultas() {
         tableName: 'sm_q_consultas',
         timestamps: false,
     });
-    Consultas.hasMany(Problemas, {
-        foreignKey: 'cons_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
+
+    Consultas.belongsTo(Problemas, {
+        foreignKey: 'prob_id',
+        targetKey: 'prob_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
     });
 
-    // Definición del modelo de Problemas
-    Problemas.belongsTo(Consultas, {
-        foreignKey: 'cons_id'
+    Problemas.hasMany(Consultas, {
+        foreignKey: 'prob_id',
+        sourceKey: 'prob_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
     });
 
     return Consultas;
@@ -277,11 +222,15 @@ async function DefinirElementos() {
             type: DataTypes.STRING(50),
             allowNull: false,
         },
-        elem_valor_min_rec: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
+        uni_simbolo: {
+            type: DataTypes.STRING(7),
+            allowNull: false,
+            references: {
+                model: Unidades,
+                key: 'uni_simbolo',
+            }
         },
-        elem_valor_max_rec: {
+        elem_peso: {
             type: DataTypes.FLOAT,
             allowNull: true,
         }
@@ -289,9 +238,17 @@ async function DefinirElementos() {
         tableName: 'sm_q_elementos',
         timestamps: false,
     });
+
     Elementos.belongsTo(Unidades, {
         foreignKey: 'elem_simbolo',
         targetKey: 'uni_simbolo',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    Unidades.hasMany(Elementos, {
+        foreignKey: 'uni_simbolo',
+        sourceKey: 'uni_simbolo',
         onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
     });
@@ -394,7 +351,7 @@ async function DefinirParcelas() {
             type: DataTypes.INTEGER,
             allowNull: true,
             references: {
-                model: 'usuarios',
+                model: Usuarios,
                 key: 'user_id',
             }
         },
@@ -402,7 +359,7 @@ async function DefinirParcelas() {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'sm_q_consultas',
+                model: Consultas,
                 key: 'cons_id',
             }
         },
@@ -431,15 +388,15 @@ async function DefinirParcelas() {
         timestamps: false,
     });
 
-    Parcelas.belongsTo(TiposSuelos, {
-        foreignKey: 'tipos_id',
-        targetKey: 'tipos_id',
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
-    });
     Parcelas.belongsTo(Usuarios, {
         foreignKey: 'user_id',
         targetKey: 'user_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+    Usuarios.hasMany(Parcelas, {
+        foreignKey: 'user_id',
+        sourceKey: 'user_id',
         onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
     });
@@ -456,8 +413,45 @@ async function DefinirParcelas() {
         onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
     });
+    Parcelas.belongsTo(TiposSuelos, {
+        foreignKey: 'tipos_id',
+        targetKey: 'tipos_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
 
+    TiposSuelos.hasMany(Parcelas, {
+        foreignKey: 'tipos_id',
+        sourceKey: 'tipos_id',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
     return Parcelas;
+}
+
+async function DefinirTiposSuelos() {
+    TiposSuelos = sequelize.define('TiposSuelos', {
+        tipos_id: {
+            type: DataTypes.STRING(5),
+            primaryKey: true,
+            allowNull: false,
+        },
+        tipos_nombre: {
+            type: DataTypes.STRING(30),
+            allowNull: false,
+        },
+        tipos_descripcion: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_f_tipossuelos',
+        timestamps: false,
+    });
+
+    
+
+    return TiposSuelos;
 }
 
 async function DefinirMuestras() {
@@ -499,6 +493,10 @@ async function DefinirMuestras() {
         mue_fecha_registro: {
             type: DataTypes.DATE,
             allowNull: false,
+        },
+        mue_nota: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
         }
     }, {
         tableName: 'sm_q_muestras',
@@ -569,11 +567,79 @@ async function DefinirVariables() {
         onUpdate: 'CASCADE',
     });
 
+    VariablesSecundarias.belongsTo(Elementos, {
+        foreignKey: 'elem_simbolo',
+        targetKey: 'elem_simbolo',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    Elementos.hasMany(VariablesSecundarias, {
+        foreignKey: 'elem_simbolo',
+        sourceKey: 'elem_simbolo',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
     return VariablesSecundarias;
+}
+
+async function DefinirRangos() {
+    Rangos = sequelize.define('Rangos', {
+        rang_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        elem_simbolo: {
+            type: DataTypes.STRING(5),
+            allowNull: false,
+            references: {
+                model: Elementos,
+                key: 'elem_simbolo',
+            }
+        },
+        rang_mod_min: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        rang_opt_min: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        rang_opt_max: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        rang_mod_max: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        }
+    }, {
+        tableName: 'sm_q_rangos',
+        timestamps: false,
+    });
+
+    Elementos.hasMany(Rangos, {
+        foreignKey: 'elem_simbolo',
+        sourceKey: 'elem_simbolo',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    Rangos.belongsTo(Elementos, {
+        foreignKey: 'elem_simbolo',
+        targetKey: 'elem_simbolo',
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
+
+    return Rangos;
 }
 
 module.exports = {
     sequelize, Conectar, DefinirPermisos, DefinirTiposUsuarios, DefinirTiposSuelos,
     DefinirProblemas, DefinirConsultas, DefinirUnidades, DefinirElementos, DefinirUsuarios,
-    DefinirParcelas, DefinirMuestras, DefinirVariables
+    DefinirParcelas, DefinirMuestras, DefinirVariables, DefinirRangos
 };

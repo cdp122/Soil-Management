@@ -15,15 +15,16 @@ async function TestBDD() {
         BDD = await conexion.Conectar();
         PermisosUsuarios = await conexion.DefinirPermisos();
         TiposUsuarios = await conexion.DefinirTiposUsuarios();
-        TiposSuelos = await conexion.DefinirTiposSuelos();
         Problemas = await conexion.DefinirProblemas();
         Consultas = await conexion.DefinirConsultas();
-        Unidades = await conexion.DefinirUnidades();
-        Elementos = await conexion.DefinirElementos();
         Usuarios = await conexion.DefinirUsuarios();
+        TiposSuelos = await conexion.DefinirTiposSuelos();
         Parcelas = await conexion.DefinirParcelas();
+        Unidades = await conexion.DefinirUnidades();
         Muestras = await conexion.DefinirMuestras();
+        Elementos = await conexion.DefinirElementos();
         VariablesSecundarias = await conexion.DefinirVariables();
+        Rangos = await conexion.DefinirRangos();
         console.log("RUTAS >> TESTBDD > BDD Conectada y Sincronizada!");
     }
     return;
@@ -386,7 +387,10 @@ router.delete('/variables/:var_id', validateToken, async (req, res) => {
     console.log("RUTAS >> VARIABLES > Eliminando variable", req.params.var_id);
 
     try {
-        await VariablesSecundarias.destroy({ where: { anpar_varsec: req.params.var_id } });
+        const vars = await VariablesSecundarias.findOne({ where: { anpar_varsec: req.params.var_id } });
+        let muestra = await Muestras.findOne({ where: { mue_id: vars.mue_id } });
+        vars.destroy();
+        muestra.save();
 
         console.log("RUTAS >> VARIABLES > Variable eliminada correctamente");
         res.json({ status: "OK" });
