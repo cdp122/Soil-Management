@@ -36,17 +36,34 @@ router.get('/zonas', validateToken, async (req, res) => {
     if (!req.query.userid || req.query.userid == null) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
     try {
-        const zonas = await Consultas.findAll({
+        const totalZonas = await Consultas.findAll({
             include: [{
                 model: Parcelas,
                 where: { user_id: req.query.userid },
                 attributes: []
-            }],
-            attributes: ['cons_id', 'cons_nombre']
+            }]
         });
 
+        var zonas = [];
+        let zonaTemp;
+
+        for (var zona of totalZonas) {
+            zonaTemp = await Consultas.findOne({
+                include: [{
+                    model: Problemas,
+                    attributes: ['prob_detalle']
+                }],
+                where: { cons_id: zona.cons_id }, 
+                attributes: ['cons_id', 'cons_nombre']
+            });
+
+            zonaTemp = { "cons_id": zonaTemp.cons_id, "cons_nombre": zonaTemp.cons_nombre, "prob_detalle": zonaTemp.Problema.prob_detalle };
+
+            zonas.push(zonaTemp);
+        }
+
         console.log("RUTAS >> ZONAS > Consulta de zonas realizada del usuario", req.query.userid);
-        if (zonas.length > 0) res.json(zonas);
+        if (zonas.length > 0) res.json({ zonas });
         else res.status(400).json({ error: "No se encontraron zonas para el usuario" });
     } catch (error) {
         console.error("RUTAS >> ZONAS > Error al consultar zonas:", error);
@@ -381,6 +398,7 @@ router.delete('/parcelas',validateToken, async (req, res) => {
     }
 });
 
+//Para eliminar las variables *
 router.delete('/variables/:var_id', validateToken, async (req, res) => {
     if (!req.params.var_id) { res.status(400).json({ error: "No se ha proporcionado el/los id de la(s) variable(s)" }); return; }
 
@@ -400,7 +418,8 @@ router.delete('/variables/:var_id', validateToken, async (req, res) => {
     }
 });
 
-router.delete('/zonas/:zonaid', async (req, res) => {
+//Para eliminar las muestras *
+router.delete('/zonas/:zonaid', validateToken, async (req, res) => {
     if (!req.params.zonaid) { res.status(400).json({ error: "No se ha proporcionado el id de la zona" }); return; }
 
     try {
@@ -416,6 +435,7 @@ router.delete('/zonas/:zonaid', async (req, res) => {
     }
 });
 
+//Para modificar las zonas *
 router.put('/zonas/:zona_id', validateToken, async (req, res) => {
     if (!req.params.zona_id) { res.status(400).json({ error: "No se ha proporcionado el id de la zona" }); return; }
     if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
@@ -438,6 +458,29 @@ router.put('/zonas/:zona_id', validateToken, async (req, res) => {
     } catch (error) {
         console.error("RUTAS >> ZONAS > Error al actualizar la zona:", error);
         res.status(500).json({ error: "Error al actualizar la zona", detalles: error.original?.detail || error.message });
+    }
+});
+
+//Para modificar las parcelas *
+router.put('/parcelas', validateToken, async (req, res) => {
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
+
+    try {
+        var parcela = await Parcelas.findOne({ where: { parc_id: req.body.parc_id } });
+        if (req.body.tipos_id) parcela.tipos_id = req.body.tipos_id;
+        if (req.body.cons_id) parcela.cons_id = req.body.cons_id;
+        if (req.body.nombre) parcela.parc_nombre = req.body.nombre;
+        if (req.body.area) parcela.parc_area = req.body.area;
+        if (req.body.coord_la) parcela.parc_coord_la = req.body.coord_la;
+        if (req.body.coord_lo) parcela.parc_coord_lo = req.body.coord_lo;
+        if (req.body.descripcion) parcela.parc_descripcion = req.body.descripcion;
+
+        await parcela.save();
+        console.log("RUTAS >> PARCELAS > Parcela actualizada correctamente");
+    } catch (error) {
+        console.error("RUTAS >> PARCELAS > Error al actualizar la parcela:", error);
+        res.status(500).json({ error: "Error al actualizar la parcela", detalles: error.original?.detail || error.message });
     }
 });
 //#endregion
