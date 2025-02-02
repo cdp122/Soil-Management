@@ -395,6 +395,47 @@ router.delete('/variables/:var_id', validateToken, async (req, res) => {
         res.status(500).json({ error: "Error al eliminar variables", detalles: error.original?.detail || error.message });
     }
 });
+
+router.delete('/zonas/:zonaid', async (req, res) => {
+    if (!req.params.zonaid) { res.status(400).json({ error: "No se ha proporcionado el id de la zona" }); return; }
+
+    try {
+        var zona = await Consultas.findOne({ where: { cons_id: req.params.zonaid } });
+
+        await Problemas.destroy({ where: { prob_id: zona.prob_id } });
+
+        console.log("RUTAS >> ZONAS > Zona eliminada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.log("RUTAS >> ZONAS > Error al eliminar la zona:", error);
+        res.status(500).json({ error: "Error al eliminar la zona", detalles: error.original?.detail || error.message });
+    }
+});
+
+router.put('/zonas/:zona_id', validateToken, async (req, res) => {
+    if (!req.params.zona_id) { res.status(400).json({ error: "No se ha proporcionado el id de la zona" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body.nombreConsulta) { res.status(400).json({ error: "No se ha proporcionado el nuevo nombre de la consulta" }); return; }
+    if (!req.body.probDetalle) { res.status(400).json({ error: "No se ha proporcionado el nuevo detalle del problema" }); return; }
+
+    try {
+        var zona = await Consultas.findOne({ where: { cons_id: req.params.zona_id } });
+        zona.cons_nombre = req.body.nombreConsulta;
+        var problema = await Problemas.findOne({ where: { prob_id: req.params.zona_id } });
+        problema.prob_detalle = req.body.probDetalle;
+
+        BDD.transaction(async (t) => {
+            await zona.save({ transaction: t });
+            await problema.save({ transaction: t });
+        });
+
+        console.log("RUTAS >> ZONAS > Zona actualizada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> ZONAS > Error al actualizar la zona:", error);
+        res.status(500).json({ error: "Error al actualizar la zona", detalles: error.original?.detail || error.message });
+    }
+});
 //#endregion
 
 //#region Rutas relativas a usuarios

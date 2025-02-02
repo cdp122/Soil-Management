@@ -234,11 +234,15 @@ async function DefinirConsultas() {
         tableName: 'sm_q_consultas',
         timestamps: false,
     });
-    Consultas.belongsTo(Problemas, {
-        foreignKey: 'prob_id',
-        targetKey: 'prob_id',
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
+    Consultas.hasMany(Problemas, {
+        foreignKey: 'cons_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    });
+
+    // Definición del modelo de Problemas
+    Problemas.belongsTo(Consultas, {
+        foreignKey: 'cons_id'
     });
 
     return Consultas;
