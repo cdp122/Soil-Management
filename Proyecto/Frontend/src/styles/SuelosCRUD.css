@@ -193,7 +193,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    padding: 10px;
+    padding: 5px;
     border: rgb(16, 215, 56) solid 0.15em;
     border-radius: 0.25em;
     color: rgb(58, 250, 0);
@@ -203,7 +203,7 @@
     overflow: hidden;
     transition: border 300ms, color 300ms;
     user-select: none;
-    height: 15px;
+    height: 10px;
 }
 
 .entrarParcela p {

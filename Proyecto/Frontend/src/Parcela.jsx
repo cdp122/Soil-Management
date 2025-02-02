@@ -94,31 +94,42 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                 }
             );
             const data = await response.json();
+
             if (response.ok) {
                 console.log("Muestras obtenidas:", data);
+
+                // Verificar si no hay muestras en la parcela
+                if (!data || data.length === 0) {
+                    console.warn("No hay muestras registradas en la parcela.");
+                    return false; // Retornar false para indicar que no hay muestras
+                }
+
                 setHistorial(data);
-                const muestrasOrdenadas = data.sort((a, b) => {// Ordenar primero por fecha más reciente, luego por ID descendente
+
+                // Ordenar primero por fecha más reciente, luego por ID descendente
+                const muestrasOrdenadas = data.sort((a, b) => {
                     const fechaA = new Date(a.mue_fecha_registro);
                     const fechaB = new Date(b.mue_fecha_registro);
-                    if (fechaB - fechaA !== 0) { // Comparar fechas primero
-                        return fechaB - fechaA; // Más reciente primero
-                    }
-                    return b.mue_id - a.mue_id; // Si las fechas son iguales, ordenar por ID de muestra (descendente)
+                    return fechaB - fechaA || b.mue_id - a.mue_id;
                 });
-                const muestraMasReciente = muestrasOrdenadas[0];                // Tomar la muestra más reciente y con ID más alto
+
+                // Tomar la muestra más reciente y con ID más alto
+                const muestraMasReciente = muestrasOrdenadas[0];
                 if (muestraMasReciente) {
                     setDatosActuales(muestraMasReciente);
                     setFechaSeleccionada(muestraMasReciente.mue_fecha_registro);
-                    getElementosMuestra(muestraMasReciente.mue_id); // Obtener variables secundarias de la muestra más reciente
+                    getElementosMuestra(muestraMasReciente.mue_id);
                 }
+
+                return true; // Retornar true si hay muestras
             } else {
-                alert('Error al cargar los datos actuales: ' + data.message);
-                // toast.info('No hay muestras registradas en la parcela, registre una'); Se vuelve a renderizar
+                alert('No hay muestras en la parcela: crea muestas');
             }
         } catch (error) {
-            console.error('Error al cargar los datos actuales:', error);
-            toast.error('Error al conectar con la base de datos.');
+            alert('Error al cargar los datos actuales: 2', error);
+
         }
+        return false; // En caso de error, retornar false
     };
     const handleImageClick = () => {
         setIsModalOpen(true);
@@ -126,10 +137,23 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-    const handleEnterClick = () => {
+    // Modificar handleEnterClick para verificar si hay muestras
+    const handleEnterClick = async () => {
+        const hayMuestras = await fetchDatosActuales();
+
+        if (!hayMuestras) {
+            // Si no hay muestras, abrir el modal para agregar una nueva muestra
+            toast.info("No hay muestras en esta parcela. Registre una nueva.");
+            setIsParcelaViewOpen(false); // Asegurar que la vista de parcela no se abra
+            setTimeout(() => {
+                document.querySelector(".button.is-primary").click(); // Simular clic en el botón de agregar muestra
+            }, 500);
+            return;
+        }
+
+        // Si hay muestras, abrir la vista de la parcela normalmente
         setIsParcelaViewOpen(true);
         getElementosQuimicos();
-        fetchDatosActuales(); // Cargar muestra más reciente al abrir la parcela        
     };
     const handleCloseView = () => {
         setIsParcelaViewOpen(false);  // Cierra la vista
