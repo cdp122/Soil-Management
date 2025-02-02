@@ -49,6 +49,12 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
     const [checbox, setCheckbox] = useState(isParcelaSeleccionada);
 
     useEffect(() => {
+        if (datosActuales?.mue_nota !== undefined) {
+            // Asegurarse de que `mue_nota` es un número válido
+            const nuevaCalidad = Math.max(0, Math.min(100, Number(datosActuales.mue_nota)));
+            setCalidadSuelo(nuevaCalidad);
+        }
+
         if (!isOpen) return;
         const validateToken = async () => {
             if (!token) {
@@ -122,6 +128,10 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                     setDatosActuales(muestraMasReciente);
                     setFechaSeleccionada(muestraMasReciente.mue_fecha_registro);
                     getElementosMuestra(muestraMasReciente.mue_id);
+
+                    // Actualizar la barra de progreso
+                    const nuevaCalidad = Math.max(0, Math.min(100, Number(muestraMasReciente.mue_nota)));
+                    setCalidadSuelo(nuevaCalidad);
                 }
 
                 return true; // Retornar true si hay muestras
@@ -476,7 +486,7 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                         <p>Porcentaje de Fertilidad</p>
                         <div className="progress-container">
                             <progress className="progress-bar" value={calidadSuelo} max="100"></progress>
-                            <span>{calidadSuelo}% Calidad de Suelo</span>
+                            <span>{calidadSuelo.toFixed(2)}% Calidad de Suelo</span>
                         </div>
                         <div className="parcela-content">
                             <div className="grupoInput">
@@ -503,7 +513,8 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                                         key !== "mue_id" &&
                                         key !== "parc_id" &&
                                         key !== "mue_ph" &&
-                                        key !== "mue_porc_mat_org"
+                                        key !== "mue_porc_mat_org" &&
+                                        key !== "mue_nota"
                                     )
                                     .map(([key, value]) => {
                                         const nombresCampos = {
