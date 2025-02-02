@@ -379,6 +379,22 @@ router.delete('/parcelas',validateToken, async (req, res) => {
         res.status(500).json({ error: "Error al eliminar parcelas", detalles: error.original?.detail || error.message });
     }
 });
+
+router.delete('/variables/:var_id', validateToken, async (req, res) => {
+    if (!req.params.var_id) { res.status(400).json({ error: "No se ha proporcionado el/los id de la(s) variable(s)" }); return; }
+
+    console.log("RUTAS >> VARIABLES > Eliminando variable", req.params.var_id);
+
+    try {
+        await VariablesSecundarias.destroy({ where: { anpar_varsec: req.params.var_id } });
+
+        console.log("RUTAS >> VARIABLES > Variable eliminada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> VARIABLES > Error al eliminar variables:", error);
+        res.status(500).json({ error: "Error al eliminar variables", detalles: error.original?.detail || error.message });
+    }
+});
 //#endregion
 
 //#region Rutas relativas a usuarios
