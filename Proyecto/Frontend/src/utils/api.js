@@ -48,11 +48,11 @@ class Api {
     }
 
     async eliminarParcelas(parcelas){
-        let data = {};
         if(parcelas.length == 0){
             return;
         }
-
+        
+        let data = {};
         if (parcelas.length == 1){
             data = {
                 parc_id: parcelas[0]

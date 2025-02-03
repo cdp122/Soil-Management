@@ -115,7 +115,7 @@ function ModalInfoP({ isOpen, onClose, parcelID}) {
                 fetchParcela();
             }
         });
-    }, [isOpen, token, parcelID, cedula, authorized]);
+    }, [isOpen, token, parcelID, cedula, authorized, isEditando]);
 
     if (!isOpen) return null;
 
@@ -154,12 +154,15 @@ function ModalInfoP({ isOpen, onClose, parcelID}) {
         api.actualizarParcela(datosNuevos).then(response => {
             if(response.error){
                 toast.error("Ocurrió un error al actualizar los datos de la parcela, inténtelo mas tarde.");
-            }else{
-                toast.success("¡Datos de la parcela actualizada exitósamente!");
-                setIsEditando(false);
-                setLoading(false);
             }
         })
+
+        setTimeout(()=>{
+            toast.success("¡Datos de la parcela actualizada exitósamente!");
+        }, 200)
+        setTimeout(() =>{
+            setIsEditando(false);
+        }, 2300);
     }
 
 
