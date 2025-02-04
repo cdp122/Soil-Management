@@ -26,6 +26,8 @@ function SuelosCRUD() {
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
     const [mostrarComparacion, setMostrarComparacion] = useState(false);
     const [parcelasComparacion, setParcelasComparacion] = useState([]);
+    const [nombresParcelasSeleccionadas, setNombresParcelasSeleccionadas] = useState([]);
+
     var [elements, setElements] = useState([]);
     var [muestras, setMuestras] = useState([]);
 
@@ -179,6 +181,11 @@ function SuelosCRUD() {
             return;
         }
 
+        const nombresParcelas = parcelas
+            .filter(parcela => parcelasSeleccionadasArray.includes(parcela.parc_id))
+            .map(parcela => parcela.parc_nombre);
+
+        setNombresParcelasSeleccionadas(nombresParcelas);
         setParcelasComparacion(muestrasParcelas);
         setMostrarComparacion(true);
     };
@@ -291,6 +298,8 @@ function SuelosCRUD() {
                                         parcelas={parcelasComparacion}
                                         muestras={muestras}
                                         elements={elements}
+                                        nombresParcelas={nombresParcelasSeleccionadas}
+
                                     />
                                     <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick} />
                                 </div>

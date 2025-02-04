@@ -4,7 +4,7 @@ import Grafico from "./components/Grafico"; // Importamos el gráfico
 
 
 
-const ModalComparacion = ({ isOpen, onClose, parcelas, elements, muestras }) => {
+const ModalComparacion = ({ isOpen, onClose, parcelas, elements, muestras, nombresParcelas }) => {
     if (!isOpen || parcelas.length !== 2) return null;
 
     //deputacion de muestras
@@ -28,7 +28,7 @@ const ModalComparacion = ({ isOpen, onClose, parcelas, elements, muestras }) => 
                     {/* Primera parcela */}
                     <div className="parcelacomp">
                         <div className="nombrePar">
-                            <h3>{parcelas[0].parc_nombre}Parcela 1</h3>
+                            <h3>{nombresParcelas[0]}</h3>
                         </div>
                         <h3>Nivel pH: {parcelas[0].mue_ph}</h3>
                         <h3>Calidad Suelo: {parcelas[0].mue_nota}</h3>
@@ -43,7 +43,7 @@ const ModalComparacion = ({ isOpen, onClose, parcelas, elements, muestras }) => 
                     {/* Segunda parcela */}
                     <div className="parcelacomp">
                         <div className="nombrePar">
-                            <h3>{parcelas[1].parc_nombre}Parcela 2</h3>
+                            <h3>{nombresParcelas[1]}</h3>
                         </div>
                         <h3>Nivel pH: {parcelas[1].mue_ph}</h3>
                         <h3>Calidad Suelo: {parcelas[1].mue_nota}</h3>
