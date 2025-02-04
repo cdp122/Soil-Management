@@ -154,11 +154,11 @@ function SuelosCRUD() {
 
     const zonaSeleccionadaNombre = zonas.find((z) => z.cons_id === zonaSeleccionada)?.cons_nombre;
 
-    const parcelasSeleccionadasHandler = (idParcela, isChecked, parcelName) => {
+    const parcelasSeleccionadasHandler = (idParcela, isChecked) => {
         if (isChecked) {
-            setParcelasComparacion((prev) => [...prev, { parc_id: idParcela, parc_nombre: parcelName }]);
+            parcelasSeleccionadas.current.add(idParcela);
         } else {
-            setParcelasComparacion((prev) => prev.filter(p => p.parc_id !== idParcela));
+            parcelasSeleccionadas.current.delete(idParcela);
         }
     };
 
