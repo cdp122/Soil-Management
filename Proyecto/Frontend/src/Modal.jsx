@@ -179,8 +179,9 @@ function Modal({ onClose, refreshZonas, userId }) {
                                             type="number"
                                             id="area"
                                             value={parcela.area}
+                                            step="0.001"
                                             onChange={(e) => setParcela({ ...parcela, area: e.target.value })}
-                                            placeholder="Ingrese el área en m²"
+                                            placeholder="Área en m²"
                                             required
                                         />
                                     </div>
@@ -189,9 +190,12 @@ function Modal({ onClose, refreshZonas, userId }) {
                                         <input
                                             type="number"
                                             id="coordLa"
+                                            min={-90}
+                                            max={90}
                                             value={parcela.coordLa}
+                                            step="0.000001"
                                             onChange={(e) => setParcela({ ...parcela, coordLa: e.target.value })}
-                                            placeholder="Ingrese la coordenada de latitud en grados °"
+                                            placeholder="Coordenada de latitud en grados °"
                                             required
                                         />
                                     </div>
@@ -200,9 +204,12 @@ function Modal({ onClose, refreshZonas, userId }) {
                                         <input
                                             type="number"
                                             id="coordLo"
+                                            min={-180}
+                                            max={180}
                                             value={parcela.coordLo}
+                                            step="0.000001"
                                             onChange={(e) => setParcela({ ...parcela, coordLo: e.target.value })}
-                                            placeholder="Ingrese la coordenada de longitud en grados °"
+                                            placeholder="Coordenada de longitud en grados °"
                                             required
                                         />
                                     </div>
