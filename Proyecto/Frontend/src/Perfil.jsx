@@ -3,6 +3,8 @@ import Loading from "./assets/loading.gif";
 import "./styles/Perfil.css";
 import Icon from "./assets/user.svg";
 import { ToastContainer, toast } from "react-toastify";
+import Swal from 'sweetalert2';
+
 
 function Perfil() {
     const [authorized, setAuthorized] = useState(false);
@@ -59,13 +61,23 @@ function Perfil() {
     const handleSuspendAccount = async () => {
         if (!cedula || !token) {
             alert("No se puede suspender la cuenta. Faltan datos necesarios.");
+            toast.warning("No se puede suspender la cuenta.");
             return;
         }
 
-        const confirmDelete = window.confirm(
-            "¿Estás seguro de que deseas suspender tu cuenta? Esta acción no se puede deshacer."
-        );
-        if (!confirmDelete) return;
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Estás seguro de que deseas suspender tu cuenta? Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, suspender cuenta',
+            cancelButtonText: 'Cancelar'
+        });
+
+
+        if (!result.isConfirmed) return;
 
         try {
             const response = await fetch(
@@ -80,16 +92,20 @@ function Perfil() {
             );
 
             if (response.ok) {
-                alert("La cuenta ha sido suspendida con éxito.");
+                toast.success("La cuenta ha sido suspendida con éxito");
                 localStorage.removeItem("token");
                 setAuthorized(false);
                 window.location.href = "/";
             } else {
                 alert("Error al suspender la cuenta. Inténtalo de nuevo.");
+                toast.sucess("Error al suspender la cuenta. Inténtalo de nuevo.");
+
             }
         } catch (error) {
             console.error("Error al suspender la cuenta:", error);
             alert("Hubo un error al procesar tu solicitud.");
+            toast.warning("hubo un error al suspender la cuenta. Inténtalo de nuevo.");
+
         }
     };
 
