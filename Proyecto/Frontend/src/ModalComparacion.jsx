@@ -28,7 +28,7 @@ const ModalComparacion = ({ isOpen, onClose, parcelas, elements, muestras }) => 
                     {/* Primera parcela */}
                     <div className="parcelacomp">
                         <div className="nombrePar">
-                            <h3>{parcelas[0].parc_nombre}parcela 1</h3>
+                            <h3>{parcelas[0].parc_nombre}Parcela 1</h3>
                         </div>
                         <h3>Nivel pH: {parcelas[0].mue_ph}</h3>
                         <h3>Calidad Suelo: {parcelas[0].mue_nota}</h3>
