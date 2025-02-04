@@ -9,7 +9,7 @@ import Confirmacion from './components/notification/confirmacion';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'; // Para redirecciones
 import api from './utils/api';
-import ModalComparacion from './modalcomparacion';
+import ModalComparacion from './ModalComparacion';
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -28,6 +28,7 @@ function SuelosCRUD() {
     const [parcelasComparacion, setParcelasComparacion] = useState([]);
     var [elements, setElements] = useState([]);
     var [muestras, setMuestras] = useState([]);
+
 
 
 
@@ -153,11 +154,11 @@ function SuelosCRUD() {
 
     const zonaSeleccionadaNombre = zonas.find((z) => z.cons_id === zonaSeleccionada)?.cons_nombre;
 
-    const parcelasSeleccionadasHandler = (idParcela, isChecked) => {
+    const parcelasSeleccionadasHandler = (idParcela, isChecked, parcelName) => {
         if (isChecked) {
-            parcelasSeleccionadas.current.add(idParcela);
+            setParcelasComparacion((prev) => [...prev, { parc_id: idParcela, parc_nombre: parcelName }]);
         } else {
-            parcelasSeleccionadas.current.delete(idParcela);
+            setParcelasComparacion((prev) => prev.filter(p => p.parc_id !== idParcela));
         }
     };
 

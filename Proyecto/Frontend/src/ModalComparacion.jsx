@@ -9,12 +9,12 @@ const ModalComparacion = ({ isOpen, onClose, parcelas, elements, muestras }) => 
 
     //deputacion de muestras
 
-    console.log("MUESTRAS");
-    console.table(muestras);
-    console.log("PARCELAS");
-    console.table(parcelas);
-    console.log("ELEMENTS");
-    console.table(elements);
+    //console.log("MUESTRAS");
+    //console.table(muestras);
+    //console.log("PARCELAS");
+    //console.table(parcelas);
+    //console.log("ELEMENTS");
+    //console.table(elements);
 
     return (
         <div className="modalOverlay">
