@@ -465,6 +465,68 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
     };
 
 
+
+    const handleEliminarMuestra = async () => {
+        if (!datosActuales.mue_id) {
+            toast.warn("No hay una muestra seleccionada para eliminar.");
+            return;
+        }
+
+        // Confirmación con SweetAlert2
+        const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/muestras/${datosActuales.mue_id}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "application/json"
+                    },
+                });
+
+                if (response.ok) {
+                    toast.success("Muestra eliminada correctamente.");
+
+                    // Remover la muestra del historial
+                    setHistorial(prev => prev.filter(muestra => muestra.mue_id !== datosActuales.mue_id));
+
+                    // Si no hay más muestras, limpiar los datos
+                    if (historial.length > 1) {
+                        const nuevaMuestra = historial.find(m => m.mue_id !== datosActuales.mue_id);
+                        if (nuevaMuestra) {
+                            handleSeleccionarMuestra(nuevaMuestra); // Seleccionamos la siguiente muestra disponible
+                        } else {
+                            // Si no queda ninguna muestra, limpiar la vista
+                            setDatosActuales({});
+                            setCalidadSuelo(0);
+                        }
+                    } else {
+                        // Si es la última muestra, limpiar
+                        setDatosActuales({});
+                        setCalidadSuelo(0);
+                    }
+                } else {
+                    const result = await response.json();
+                    toast.error("Error al eliminar la muestra: " + (result.error || "Inténtelo más tarde"));
+                }
+            } catch (error) {
+                toast.error("Error en la conexión con el servidor.");
+            }
+        }
+    };
+
+
+
     return (
         <>
 
@@ -607,6 +669,11 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
                                 <button className="actualizar-btn" onClick={handleAgregarNuevosElementos}>
                                     Añadir Nuevos Elementos
                                 </button>
+                                <button className="borrar-btn" onClick={handleEliminarMuestra}>
+                                    <img src={deleteIcon} alt="Eliminar" style={{ width: "20px", height: "20px", cursor: "pointer" }} />
+                                    Eliminar Muestra
+                                </button>
+
 
                                 {/*<button className="borrar-btn" onClick={handleBorrarHistorial}>Borrar Historial</button>*/}
 
