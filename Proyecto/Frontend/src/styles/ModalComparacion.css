@@ -1,0 +1,81 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modalcontent {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    height: 80vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Botón de cierre en la parte superior derecha */
+.modalclose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Contenedor principal con 3 columnas */
+.containerComp {
+
+    display: flex;
+    flex-direction: row;
+    /* Ahora es en filas para generar columnas */
+    width: 100%;
+    height: 100%;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 30px;
+}
+
+/* Cada parcela y la comparación en una columna */
+.parcelacomp,
+.comparacion {
+    background-color: #8edd8c;
+    width: 32%;
+    height: 90%;
+    /* Cada columna ocupa un 30% del ancho */
+    padding: 8px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Comparación con un borde más notorio */
+.comparacion {
+
+    border: 2px solid black;
+    background: #8edd8c;
+    font-weight: bold;
+
+}
+
+#titulo {
+    color: #000000;
+}

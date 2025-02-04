@@ -5,7 +5,7 @@ import "./styles/Zonas.css";
 import editIcon from './assets/edit.svg';
 import deleteIcon from './assets/delete.svg';
 
-function Zonas({ zonas, onZonaClick, userId, setZonas}) {
+function Zonas({ zonas, onZonaClick, userId, setZonas }) {
     const [showModal, setShowModal] = useState(false);
     const [showEDModal, setShowEDModal] = useState(false);
     const [selectedZona, setSelectedZona] = useState(null);
@@ -67,7 +67,7 @@ function Zonas({ zonas, onZonaClick, userId, setZonas}) {
 
 
     return (
-        <div className={`zonas-sidebar ${mostrarSidebar? "mostrar-zonas":""}`}>
+        <div className={`zonas-sidebar ${mostrarSidebar ? "mostrar-zonas" : ""}`}>
             {/* <button className="btn-show-zonas-sidebar" onClick={showZona}><i className="fas fa-list"></i></button> */}
             <div className="zonas-header">
                 <h2 className="zonas-title">Zonas</h2>

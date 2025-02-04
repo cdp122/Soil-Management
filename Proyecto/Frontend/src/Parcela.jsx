@@ -208,6 +208,12 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
         setDatosOriginales(muestra); // Guardar datos originales
         setElementosSeleccionados([]); // Limpiar elementos previos antes de cargar nuevos datos
         getElementosMuestra(muestra.mue_id);
+
+        // Actualizar la barra de progreso con la nueva calidad de suelo
+        if (muestra.mue_nota !== undefined) {
+            const nuevaCalidad = Math.max(0, Math.min(100, Number(muestra.mue_nota)));
+            setCalidadSuelo(nuevaCalidad);
+        }
     };
     const handleDynamicFieldChange = (index, field, value) => {
         const updatedFields = [...dynamicFields];
@@ -455,8 +461,9 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
     const parcelaCheckHandler = (e) => {
         const seleccionado = e.target.checked;
         setCheckbox(seleccionado);
-        parcelasSeleccionadasHandler(parcelID, seleccionado);
+        parcelasSeleccionadasHandler(parcelID, seleccionado, parcelName); // Pasamos el nombre de la parcela también
     };
+
 
     return (
         <>
@@ -591,7 +598,8 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
 
                             <div className="historial-container">
                                 <h3>Gráfico de Calidad de Suelo</h3>
-                                <Grafico data={datosActuales.graficoData || []} />
+                                <Grafico data={historial.map(({ mue_id, mue_nota }) => ({ mue_id, mue_nota }))} />
+
 
                                 <button className="actualizar-btn" onClick={handleActualizarDatos} disabled={!isEditing}>
                                     Actualizar Datos
@@ -604,14 +612,14 @@ function Parcela({ parcelID, parcelName, parcelType, isOpen, isParcelaSelecciona
 
                                 <h3>Historial De Muestras</h3>
                                 <div className="historial-buttons">
-                                    {historial.map((muestra, index) => (
+                                    {historial.map((muestra) => (
                                         <button
-                                            key={index}
+                                            key={muestra.mue_id}
                                             onClick={() => handleSeleccionarMuestra(muestra)}
                                             className="historial-btn"
                                             style={{
-                                                backgroundColor: fechaSeleccionada === muestra.mue_fecha_registro ? "#007bff" : "#f1f1f1",
-                                                color: fechaSeleccionada === muestra.mue_fecha_registro ? "white" : "black",
+                                                backgroundColor: datosActuales.mue_id === muestra.mue_id ? "#007bff" : "#f1f1f1",
+                                                color: datosActuales.mue_id === muestra.mue_id ? "white" : "black",
                                                 margin: "5px",
                                                 padding: "10px",
                                                 border: "1px solid #ccc",

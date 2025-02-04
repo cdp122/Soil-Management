@@ -518,44 +518,44 @@
     height: 24px;
 }
 
-.sueloscrud-btn i{
+.sueloscrud-btn i {
     display: none;
 }
 
 /* RESPONSIVO */
-@media (min-width: 769px) and (max-width: 1240px){
-    .sueloscrud-header-controls{
+@media (min-width: 769px) and (max-width: 1240px) {
+    .sueloscrud-header-controls {
         flex-wrap: wrap;
     }
 
-    .sueloscrud-search{
+    .sueloscrud-search {
         width: 100%;
     }
 }
 
 
 @media (min-width: 626px) and (max-width: 768px) {
-    .btn-show-zonas-sidebar{
+    .btn-show-zonas-sidebar {
         left: 15px;
     }
 
-    .sueloscrud-title{
+    .sueloscrud-title {
         font-size: 1rem;
     }
 
-    .sueloscrud-header-controls{
+    .sueloscrud-header-controls {
         gap: 10px;
     }
 
-    .sueloscrud-header-controls{
+    .sueloscrud-header-controls {
         flex-direction: column;
     }
 
-    .sueloscrud-search{
+    .sueloscrud-search {
         width: 100%;
     }
 
-    .sueloscrud-buttons{
+    .sueloscrud-buttons {
         width: 100%;
         gap: 5px;
         justify-content: flex-end;
@@ -568,27 +568,27 @@
 }
 
 @media (max-width: 625px) {
-    .btn-show-zonas-sidebar{
+    .btn-show-zonas-sidebar {
         left: 15px;
     }
 
-    .sueloscrud-title{
+    .sueloscrud-title {
         font-size: 1rem;
     }
 
-    .sueloscrud-header-controls{
+    .sueloscrud-header-controls {
         gap: 10px;
     }
 
-    .sueloscrud-header-controls{
+    .sueloscrud-header-controls {
         flex-direction: column;
     }
 
-    .sueloscrud-search{
+    .sueloscrud-search {
         width: 100%;
     }
 
-    .sueloscrud-buttons{
+    .sueloscrud-buttons {
         width: 100%;
         gap: 5px;
         justify-content: flex-end;
@@ -599,14 +599,15 @@
         left: -300px;
     } */
 
-    .sueloscrud-buttons > button{
+    .sueloscrud-buttons>button {
         width: 40px;
     }
 
-    .sueloscrud-btn span{
+    .sueloscrud-btn span {
         display: none;
     }
-    .sueloscrud-btn i{
+
+    .sueloscrud-btn i {
         display: block;
         display: initial;
     }

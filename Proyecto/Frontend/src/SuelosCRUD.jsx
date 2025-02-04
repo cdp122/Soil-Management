@@ -9,6 +9,7 @@ import Confirmacion from './components/notification/confirmacion';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'; // Para redirecciones
 import api from './utils/api';
+import ModalComparacion from './modalcomparacion';
 
 function SuelosCRUD() {
     const [authorized, setAuthorized] = useState(false);
@@ -23,6 +24,13 @@ function SuelosCRUD() {
     const [error, setError] = useState(''); // Estado para el mensaje de error
     const parcelasSeleccionadas = useRef(new Set());
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    const [mostrarComparacion, setMostrarComparacion] = useState(false);
+    const [parcelasComparacion, setParcelasComparacion] = useState([]);
+    var [elements, setElements] = useState([]);
+    var [muestras, setMuestras] = useState([]);
+
+
+
     // Validar el token y cargar datos del usuario
     useEffect(() => {
         const validateToken = async () => {
@@ -46,7 +54,7 @@ function SuelosCRUD() {
                 }
             } catch (error) {
                 console.error('Error al validar el token:', error);
-                
+
                 setAuthorized(false);
                 navigate('/');
             } finally {
@@ -91,7 +99,7 @@ function SuelosCRUD() {
 
         if (authorized) {
             fetchZonas();
-            
+
         }
     }, [authorized, token, userData.id]);
 
@@ -153,34 +161,102 @@ function SuelosCRUD() {
         }
     };
 
+
+    const validarSeleccionParcelas = async () => {
+        const parcelasSeleccionadasArray = Array.from(parcelasSeleccionadas.current);
+
+        if (parcelasSeleccionadasArray.length !== 2) {
+            toast.warning("Debe seleccionar exactamente 2 parcelas para comparar.");
+            return;
+        }
+
+        // Obtener muestras más recientes y elementos secundarios
+        const muestrasParcelas = await obtenerMuestrasParcelas(parcelasSeleccionadasArray);
+
+        if (muestrasParcelas.length < 2) {
+            toast.warning("No se pueden comparar parcelas sin muestras.");
+            return;
+        }
+
+        setParcelasComparacion(muestrasParcelas);
+        setMostrarComparacion(true);
+    };
+
     const eliminarParcelas = () => {
-        api.eliminarParcelas(Array.from(parcelasSeleccionadas.current)).then((response) =>{
-            if(response.error){
+        api.eliminarParcelas(Array.from(parcelasSeleccionadas.current)).then((response) => {
+            if (response.error) {
                 toast.error("Ocurrió un error al eliminar las parcelas, inténtelo mas tarde.")
-            }else{
-                toast.success("¡Parcelas eliminadas exitósamente!", {autoClose: 1800});
+            } else {
+                toast.success("¡Parcelas eliminadas exitósamente!", { autoClose: 1800 });
                 setMostrarConfirmacion(false);
                 parcelasSeleccionadas.current = new Set();
                 setTimeout(() => handleZonaClick(zonaSeleccionada), 2500);
-                
+
             }
         }
         )
-        
+
     }
 
-    const mostrarConfirmacionClick = () =>{
-        if(parcelasSeleccionadas.current.size < 1){
+    const mostrarConfirmacionClick = () => {
+        if (parcelasSeleccionadas.current.size < 1) {
             toast.warning("Para eliminar seleccione al menos una parcela");
             return;
         }
         setMostrarConfirmacion(true);
     }
 
+
+    const obtenerMuestrasParcelas = async (parcelasSeleccionadasArray) => {
+        try {
+            const muestrasParcelas = await Promise.all(parcelasSeleccionadasArray.map(async (parc_id) => {
+                const response = await fetch(`https://soil-management-4-soft-utn.onrender.com/muestras?parc_id=${parc_id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: token,
+                    },
+                });
+
+                if (!response.ok) {
+                    toast.error(`Error al obtener muestras de la parcela ${parc_id}`);
+                    return null;
+                }
+
+                const data = await response.json();
+                if (!data || data.length === 0) {
+                    toast.warn(`No hay muestras registradas en la parcela ${parc_id}`);
+                    return null;
+                }
+
+                // Ordenar por fecha más reciente y obtener la última muestra
+                const muestraReciente = data.sort((a, b) => new Date(b.mue_fecha_registro) - new Date(a.mue_fecha_registro))[0];
+                console.log(muestraReciente);
+                setMuestras(muestraReciente);
+                // Obtener los elementos de la muestra
+                const elementosResponse = await fetch(`https://soil-management-4-soft-utn.onrender.com/variables?mue_id=${muestraReciente.mue_id}`, {
+                    method: 'GET',
+                    headers: { Authorization: token },
+                });
+
+                elements = elementosResponse.ok ? await elementosResponse.json() : [];
+                setElements(elements);
+                console.log(elements);
+                return { ...muestraReciente, elements };
+            }));
+
+            return muestrasParcelas.filter(muestra => muestra !== null);
+        } catch (error) {
+            console.error("Error al obtener muestras:", error);
+            toast.error("Error al obtener las muestras para la comparación.");
+            return [];
+        }
+    };
+
     return (
         <div className="sueloscrud-container">
-            <Confirmacion titulo="Eliminando parcelas" texto="¿Está seguro de eliminar la parcela/s?. Recuerde que si no quedan parcelas, la zona también se eliminará. Confirme la acción." isActivo={mostrarConfirmacion}  setActivo={setMostrarConfirmacion} action={eliminarParcelas}/>
-            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas}/>
+            <Confirmacion titulo="Eliminando parcelas" texto="¿Está seguro de eliminar la parcela/s?. Recuerde que si no quedan parcelas, la zona también se eliminará. Confirme la acción." isActivo={mostrarConfirmacion} setActivo={setMostrarConfirmacion} action={eliminarParcelas} />
+            <Zonas zonas={zonas} onZonaClick={handleZonaClick} userId={userData.id} setZonas={setZonas} />
             <div className="sueloscrud-content">
                 {loading ? (
                     <div className="sueloscrud-loading"><img src={Loading} alt="Cargando..." className="sueloscrud-loading" /></div>
@@ -192,7 +268,7 @@ function SuelosCRUD() {
                                     Parcelas - {zonaSeleccionadaNombre}
                                 </h2>
                             </div>
-                            
+
                             <div className='sueloscrud-header-controls'>
                                 <div className="sueloscrud-search">
                                     <input
@@ -205,15 +281,24 @@ function SuelosCRUD() {
                                 </div>
                                 <div className="sueloscrud-buttons">
                                     <button className='sueloscrud-btn btn-eliminar-parcela' onClick={mostrarConfirmacionClick}><span>Eliminar parcela/s</span><i className="fa-solid fa-trash"></i></button>
-                                    <button className="sueloscrud-btn"><span>Comparar Parcelas</span><i className="fa-solid fa-code-compare"></i></button>
-                                    <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick}/>
+                                    <button className="sueloscrud-btn" onClick={validarSeleccionParcelas}>
+                                        <span>Comparar Parcelas</span><i className="fa-solid fa-code-compare"></i>
+                                    </button>
+                                    <ModalComparacion
+                                        isOpen={mostrarComparacion}
+                                        onClose={() => setMostrarComparacion(false)}
+                                        parcelas={parcelasComparacion}
+                                        muestras={muestras}
+                                        elements={elements}
+                                    />
+                                    <FormParcela idZona={zonaSeleccionada} idUser={userData.id} actualizarZonas={handleZonaClick} />
                                 </div>
                             </div>
                         </div>
                         <div className="sueloscrud-parcels">
                             {filteredParcelas.length > 0 ? (
                                 filteredParcelas.map((parcela) => (
-                                    <Parcela key={parcela.parc_id} parcelID={parcela.parc_id} parcelName={parcela.parc_nombre} parcelType={parcela.tipos_id} isParcelaSeleccionada={parcelasSeleccionadas.current.has(parcela.parc_id)} parcelasSeleccionadasHandler={parcelasSeleccionadasHandler}/>
+                                    <Parcela key={parcela.parc_id} parcelID={parcela.parc_id} parcelName={parcela.parc_nombre} parcelType={parcela.tipos_id} isParcelaSeleccionada={parcelasSeleccionadas.current.has(parcela.parc_id)} parcelasSeleccionadasHandler={parcelasSeleccionadasHandler} />
                                 ))
                             ) : (
                                 <div className="sueloscrud-placeholder2">
@@ -228,6 +313,7 @@ function SuelosCRUD() {
                     </div>
                 )}
             </div>
+
         </div>
     );
 }
