@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import './styles/ModalEDZona.css';
 
-function ModalEDZona({ isOpen, onClose, zona, refreshZonas, mode }) {
+function ModalEDZona({ isOpen, onClose, zona, refreshZonas, mode, activeZona }) {
     const [nombre, setNombre] = useState(zona.cons_nombre);
     const [problema, setProblema] = useState(zona.prob_detalle);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); // Inicializar navigate
 
     useEffect(() => {
         if (isOpen) {
@@ -53,6 +55,10 @@ function ModalEDZona({ isOpen, onClose, zona, refreshZonas, mode }) {
             if (response.ok) {
                 await refreshZonas();
                 onClose();
+                console.log(zona.cons_id, " ", activeZona);
+                if (zona.cons_id === activeZona) {
+                    window.location.reload(); // Refrescar la página si la zona eliminada es la activa
+                }
             } else {
                 console.error('Error al eliminar la zona');
             }

@@ -10,7 +10,7 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
     const [showEDModal, setShowEDModal] = useState(false);
     const [selectedZona, setSelectedZona] = useState(null);
     const [modalMode, setModalMode] = useState('edit');
-    const [activeZona, setActiveZona] = useState(null); // Estado para la zona activa
+    const [activeZona, setActiveZona] = useState(0); // Estado para la zona activa
     const mostrarSidebar = useRef(false);
 
     const handleAddZonaClick = () => {
@@ -28,6 +28,7 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
     };
 
     const handleDeleteZonaClick = (zona) => {
+        console.log(activeZona);
         setSelectedZona(zona);
         setModalMode('delete');
         setShowEDModal(true);
@@ -37,8 +38,9 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
         if (activeZona === zonaId) {
             return; // No hacer nada si la zona ya está activa
         }
-        setActiveZona(zonaId);
         onZonaClick(zonaId);
+        setActiveZona(zonaId);
+        console.log(activeZona);
     };
 
     const handleCloseEDModal = () => {
@@ -64,7 +66,6 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
             console.error('Error al cargar las zonas:', error);
         }
     };
-
 
     return (
         <div className={`zonas-sidebar ${mostrarSidebar ? "mostrar-zonas" : ""}`}>
@@ -100,6 +101,7 @@ function Zonas({ zonas, onZonaClick, userId, setZonas }) {
                     zona={selectedZona}
                     refreshZonas={refreshZonas}
                     mode={modalMode}
+                    activeZona={activeZona}
                 />
             )}
         </div>
