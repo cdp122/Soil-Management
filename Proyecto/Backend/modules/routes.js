@@ -445,7 +445,7 @@ router.put('/zonas/:zona_id', validateToken, async (req, res) => {
     try {
         var zona = await Consultas.findOne({ where: { cons_id: req.params.zona_id } });
         zona.cons_nombre = req.body.nombreConsulta;
-        var problema = await Problemas.findOne({ where: { prob_id: req.params.zona_id } });
+        var problema = await Problemas.findOne({ where: { prob_id: zona.prob_id } });
         problema.prob_detalle = req.body.probDetalle;
 
         BDD.transaction(async (t) => {
