@@ -118,7 +118,7 @@ router.get('/parcelas', validateToken, async (req, res) => {
 router.post('/registrarzona', validateToken, async (req, res) => {
     console.log(req.body);
 
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
     if (!req.body["nombreConsulta"]) { res.status(400).json({ error: "No se ha proporcionado el nombre de la consulta" }); return; }
     if (!req.body["probDetalle"]) { res.status(400).json({ error: "No se ha proporcionado el detalle del problema" }); return; }
 
@@ -157,7 +157,7 @@ router.get('/tipos', validateToken, async(req, res) => {
 
 //Para crear una parcela *
 router.post('/nuevaparcela', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
     if (!req.body["tipos_id"]) { res.status(400).json({ error: "No se ha proporcionado el id del tipo de suelo" }); return; }
     if (!req.body["user_id"]) { res.status(400).json({ error: "No se ha proporcionado el id del usuario" }); return; }
     if (!req.body["cons_id"]) { res.status(400).json({ error: "No se ha proporcionado el id de la Zona" }); return; }
@@ -205,10 +205,10 @@ router.get('/elementos', validateToken, async (req, res) => {
 
 //Para registrar una nueva muestra *
 router.post('/muestras', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
     if (!req.body.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
     if (!req.body.ph) { res.status(400).json({ error: "No se ha proporcionado el coeficiente de ph" }); return; }
-    if (!req.body.mat_org) { res.status(400).json({ error: "No se ha proporcionado el porcentaje de cantidad orgánica" }); return; }
+    if (!req.body.mat_org) { res.status(400).json({ error: "No se ha proporcionado el porcentaje de cantidad orgï¿½nica" }); return; }
     if (!req.body.fecha_registro) { res.status(400).json({ error: "No se ha proporcionado la fecha de registro" }); return; }
 
     console.log("RUTAS >> MUESTRAS > Registrando nueva muestra...");
@@ -219,7 +219,7 @@ router.post('/muestras', validateToken, async (req, res) => {
         var elem;
         for (var elems in req.body.elems) {
             elem = req.body.elems[elems];
-            if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el símbolo del elemento en el registro " + (elems + 1) }); return; }
+            if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el sï¿½mbolo del elemento en el registro " + (elems + 1) }); return; }
             if (!elem.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento en el registro " + (elems + 1) }); return; }
         }
         console.log("RUTAS >> MUESTRAS > Estructura de elementos correcta. Iniciando con el registro...");
@@ -252,14 +252,14 @@ router.post('/muestras', validateToken, async (req, res) => {
 
 //Para registrar nuevas variables secundarias *
 router.post('/variables', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; } 
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; } 
     if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
-    if (!req.body.elems) { res.status(400).json({ error: "No se ha proporcionado información de las nuevas variables" }); return; }
+    if (!req.body.elems) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n de las nuevas variables" }); return; }
 
     var elem;
     for (var elems in req.body.elems) {
         elem = req.body.elems[elems];
-        if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el símbolo del elemento en el registro " + (elems + 1) }); return; }
+        if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el sï¿½mbolo del elemento en el registro " + (elems + 1) }); return; }
         if (!elem.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento en el registro " + (elems + 1) }); return; }
     }
     console.log("RUTAS >> VARIABLES > Registro de variables secundarias a la muestra", req.body.mue_id);
@@ -304,14 +304,14 @@ router.put('/muestras', validateToken, async (req, res) => {
     if (!req.body.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
     //Si hay variables secundarias debe de comprobarse de la buena estructura del json
     if (req.body.elems) {
-        console.log("RUTAS >> MUESTRAS > Se identificaron elementos en la actualización de muestras. Comprobando estructura de elementos...");
+        console.log("RUTAS >> MUESTRAS > Se identificaron elementos en la actualizaciï¿½n de muestras. Comprobando estructura de elementos...");
         var elem;
         for (var elems in req.body.elems) {
             elem = req.body.elems[elems];
-            if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el símbolo del elemento en el registro " + (elems + 1) }); return; }
+            if (!elem.simb_elem) { res.status(400).json({ error: "No se ha proporcionado el sï¿½mbolo del elemento en el registro " + (elems + 1) }); return; }
             if (!elem.cant_elem) { res.status(400).json({ error: "No se ha proporcionado la cantidad del elemento en el registro " + (elems + 1) }); return; }
         }
-        console.log("RUTAS >> MUESTRAS > Estructura de elementos correcta. Iniciando con la actualización...");
+        console.log("RUTAS >> MUESTRAS > Estructura de elementos correcta. Iniciando con la actualizaciï¿½n...");
     }
 
     try {
@@ -344,7 +344,7 @@ router.put('/muestras', validateToken, async (req, res) => {
                         variable.anpar_elem_cant = elem.cant_elem;
                         await variable.save({ transaction: t });
                     }
-                    else { throw new Error("No se encontró la variable con id " + elem.var_id); }
+                    else { throw new Error("No se encontrï¿½ la variable con id " + elem.var_id); }
                 }
                 await muestras.save({ transaction: t });
             }
@@ -374,7 +374,7 @@ router.get('/variables', validateToken, async (req, res) => {
 
 //Para eliminar las muestras *
 router.delete('/parcelas',validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
     if (!req.body.parc_id && !req.body.parcelas) { res.status(400).json({ error: "No se ha proporcionado el/los id de la(s) parcela(s)" }); return; }
 
     try {
@@ -438,7 +438,7 @@ router.delete('/zonas/:zonaid', validateToken, async (req, res) => {
 //Para modificar las zonas *
 router.put('/zonas/:zona_id', validateToken, async (req, res) => {
     if (!req.params.zona_id) { res.status(400).json({ error: "No se ha proporcionado el id de la zona" }); return; }
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
     if (!req.body.nombreConsulta) { res.status(400).json({ error: "No se ha proporcionado el nuevo nombre de la consulta" }); return; }
     if (!req.body.probDetalle) { res.status(400).json({ error: "No se ha proporcionado el nuevo detalle del problema" }); return; }
 
@@ -463,13 +463,12 @@ router.put('/zonas/:zona_id', validateToken, async (req, res) => {
 
 //Para modificar las parcelas *
 router.put('/parcelas', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
     if (!req.body.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
 
     try {
         var parcela = await Parcelas.findOne({ where: { parc_id: req.body.parc_id } });
         if (req.body.tipos_id) parcela.tipos_id = req.body.tipos_id;
-        if (req.body.cons_id) parcela.cons_id = req.body.cons_id;
         if (req.body.nombre) parcela.parc_nombre = req.body.nombre;
         if (req.body.area) parcela.parc_area = req.body.area;
         if (req.body.coord_la) parcela.parc_coord_la = req.body.coord_la;
@@ -481,6 +480,19 @@ router.put('/parcelas', validateToken, async (req, res) => {
     } catch (error) {
         console.error("RUTAS >> PARCELAS > Error al actualizar la parcela:", error);
         res.status(500).json({ error: "Error al actualizar la parcela", detalles: error.original?.detail || error.message });
+    }
+});
+
+router.delete('/muestras/:mue_id', validateToken, async (req, res) => {
+    if (!req.params.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
+
+    try {
+        await Muestras.destroy({ where: { mue_id: req.params.mue_id } });
+        console.log("RUTAS >> MUESTRAS > Muestra eliminada correctamente");
+        res.json({ status: "OK" });
+    } catch (error) {
+        console.error("RUTAS >> MUESTRAS > Error al eliminar la muestra:", error);
+        res.status(500).json({ error: "Error al eliminar la muestra", detalles: error.original?.detail || error.message });
     }
 });
 //#endregion
@@ -507,14 +519,14 @@ router.get('/roles', async (req, res) => {
 
 //Registro de Usuario
 router.post('/register', async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body["rol"] && typeof req.body["rol"] !== string) { res.status(400).json({ error: "No se ha proporcionado el rol o rol inválido" }); return; }
-    if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
+    if (!req.body["rol"] && typeof req.body["rol"] !== string) { res.status(400).json({ error: "No se ha proporcionado el rol o rol invï¿½lido" }); return; }
+    if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cï¿½dula" }); return; }
     if (!req.body["nombre"]) { res.status(400).json({ error: "No se ha proporcionado el nombre" }); return; }
     if (!req.body["apellido"]) { res.status(400).json({ error: "No se ha proporcionado el apellido" }); return; }
     if (!req.body["correo"]) { res.status(400).json({ error: "No se ha proporcionado el correo" }); return; }
-    if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseña" }); return; }
-    if (!req.body["telefono"]) { res.status(400).json({ error: "No se ha proporcionado el número de teléfono" }); return; }
+    if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseï¿½a" }); return; }
+    if (!req.body["telefono"]) { res.status(400).json({ error: "No se ha proporcionado el nï¿½mero de telï¿½fono" }); return; }
     console.log("RUTAS >> USUARIOS > Registrando nuevo usuario...");
 
     const usuario = req.body;
@@ -551,12 +563,12 @@ router.post('/register', async (req, res) => {
     }
 });
 
-//Iniciar Sesión
+//Iniciar Sesiï¿½n
 router.post('/login', async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
-    if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseña" }); return; }
-    console.log("RUTAS >> LOGIN > Iniciando sesión...");
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
+    if (!req.body["cedula"]) { res.status(400).json({ error: "No se ha proporcionado la cï¿½dula" }); return; }
+    if (!req.body["password"]) { res.status(400).json({ error: "No se ha proporcionado la contraseï¿½a" }); return; }
+    console.log("RUTAS >> LOGIN > Iniciando sesiï¿½n...");
 
     const cedula = req.body["cedula"];
     const password = req.body["password"];
@@ -565,7 +577,7 @@ router.post('/login', async (req, res) => {
         const usuario = await Usuarios.findOne({ where: { user_cedula: cedula } });
         res.setHeader('charset', 'utf-8');
         if (!usuario) {
-            console.log("RUTAS >> LOGIN > No se encontró el usuario");
+            console.log("RUTAS >> LOGIN > No se encontrï¿½ el usuario");
             res.status(401).json({ error: "Usuario no encontrado" });
             return;
         }
@@ -575,7 +587,7 @@ router.post('/login', async (req, res) => {
             return;
         }
         if (usuario.tipus_id != 1 && usuario.tipus_id != 2 && usuario.tipus_id != 3) {
-            console.log("RUTAS >> LOGIN > Usuario de otro módulo detectado. Impidiendo inicio de sesión");
+            console.log("RUTAS >> LOGIN > Usuario de otro mï¿½dulo detectado. Impidiendo inicio de sesiï¿½n");
             res.status(401).json({ error: "Usuario no autorizado" });
         }
 
@@ -584,12 +596,12 @@ router.post('/login', async (req, res) => {
             console.log("RUTAS >> LOGIN > Usuario autenticado");
             res.json({ token: generateAccessToken({ username: usuario.user_cedula }) });
         } else {    
-            console.log("RUTAS >> LOGIN > Contraseña incorrecta");
-            res.status(401).json({ error: "Contraseña incorrecta" });
+            console.log("RUTAS >> LOGIN > Contraseï¿½a incorrecta");
+            res.status(401).json({ error: "Contraseï¿½a incorrecta" });
         }
     } catch (error) {
-        console.error("RUTAS >> LOGIN > Error al iniciar sesión:", error);
-        res.status(500).json({ error: "Error al iniciar sesión", detalles: error.original?.detail || error.message});
+        console.error("RUTAS >> LOGIN > Error al iniciar sesiï¿½n:", error);
+        res.status(500).json({ error: "Error al iniciar sesiï¿½n", detalles: error.original?.detail || error.message});
     }
 });
 
@@ -637,7 +649,7 @@ router.get('/profile', validateToken, async (req, res) => {
 
 //Actualizar la cuenta *
 router.put('/account', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
 
     try {
         let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
@@ -661,7 +673,7 @@ router.put('/account', validateToken, async (req, res) => {
 //Deshabilitar la cuenta *
 router.delete('/account', validateToken, async (req, res) => {
     if (!req.query.cedula) {
-        res.status(400).json({ error: "No se proporcionó el id de la cuenta" });
+        res.status(400).json({ error: "No se proporcionï¿½ el id de la cuenta" });
         return;
     }
 
@@ -683,11 +695,11 @@ router.delete('/account', validateToken, async (req, res) => {
     }
 });
 
-//Cambiar Contraseña *
+//Cambiar Contraseï¿½a *
 router.put('/password', validateToken, async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body.cedula) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
-    if (!req.body.password) { res.status(400).json({ error: "No se ha proporcionado la nueva contraseña" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
+    if (!req.body.cedula) { res.status(400).json({ error: "No se ha proporcionado la cï¿½dula" }); return; }
+    if (!req.body.password) { res.status(400).json({ error: "No se ha proporcionado la nueva contraseï¿½a" }); return; }
 
     try {
         let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
@@ -695,27 +707,27 @@ router.put('/password', validateToken, async (req, res) => {
         usuario.updated_at = new Date();
         await usuario.save();
 
-        console.log("RUTAS >> CAMBIAR CONTRASEÑA > Contraseña cambiada correctamente");
+        console.log("RUTAS >> CAMBIAR CONTRASEï¿½A > Contraseï¿½a cambiada correctamente");
     } catch (error) {
-        console.error("RUTAS >> CAMBIAR CONTRASEÑA > Error al cambiar la contraseña:", error);
-        res.status(500).json({ error: "Error al cambiar la contraseña", detalles: error.original?.detail || error.message });
+        console.error("RUTAS >> CAMBIAR CONTRASEï¿½A > Error al cambiar la contraseï¿½a:", error);
+        res.status(500).json({ error: "Error al cambiar la contraseï¿½a", detalles: error.original?.detail || error.message });
     }
 });
 
 //Recuperar la cuenta, primer paso. Encontrar la cuenta
 router.get('/recover', async (req, res) => {
-    if (!req.query.cedula) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
+    if (!req.query.cedula) { res.status(400).json({ error: "No se ha proporcionado la cï¿½dula" }); return; }
     if (!req.query.email) { res.status(400).json({ error: "No se ha proporcionado el correo" }); return; }
-    if (!req.query.telefono) { res.status(400).json({ error: "No se ha proporcionado el número de teléfono" }); return; }
+    if (!req.query.telefono) { res.status(400).json({ error: "No se ha proporcionado el nï¿½mero de telï¿½fono" }); return; }
 
     try {
         let usuario = await Usuarios.findOne({ where: { user_cedula: req.query.cedula, user_email: req.query.email, user_telefono: req.query.telefono } });
         if (!usuario) {
-            res.status(404).json({ error: "Error: Datos incorrectos o inválidos" });
+            res.status(404).json({ error: "Error: Datos incorrectos o invï¿½lidos" });
             return;
         }
 
-        console.log("RUTAS >> RECUPERAR CUENTA [1] > Cuenta para recuperación encontrada exitosamente");
+        console.log("RUTAS >> RECUPERAR CUENTA [1] > Cuenta para recuperaciï¿½n encontrada exitosamente");
         res.json({ valid: true });
     } catch (error) {
         console.error("RUTAS >> RECUPERAR CUENTA [1]> Error al recuperar la cuenta:", error);
@@ -723,11 +735,11 @@ router.get('/recover', async (req, res) => {
     }
 });
 
-//Recuperar la cuenta, segundo paso. Cambiar la contraseña
+//Recuperar la cuenta, segundo paso. Cambiar la contraseï¿½a
 router.put('/recover', async (req, res) => {
-    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado información" }); return; }
-    if (!req.body.cedula) { res.status(400).json({ error: "No se ha proporcionado la cédula" }); return; }
-    if (!req.body.password) { res.status(400).json({ error: "No se ha proporcionado la nueva contraseña" }); return; }
+    if (!req.body) { res.status(400).json({ error: "No se ha proporcionado informaciï¿½n" }); return; }
+    if (!req.body.cedula) { res.status(400).json({ error: "No se ha proporcionado la cï¿½dula" }); return; }
+    if (!req.body.password) { res.status(400).json({ error: "No se ha proporcionado la nueva contraseï¿½a" }); return; }
 
     try {
         let usuario = await Usuarios.findOne({ where: { user_cedula: req.body.cedula } });
