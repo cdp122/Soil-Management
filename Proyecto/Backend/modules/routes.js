@@ -36,31 +36,13 @@ router.get('/zonas', validateToken, async (req, res) => {
     if (!req.query.userid || req.query.userid == null) { res.status(400).json({ error: "No se ha proporcionado un ID de usuario" }); return; }
 
     try {
-        const totalZonas = await Consultas.findAll({
-            include: [{
-                model: Parcelas,
-                where: { user_id: req.query.userid },
-                attributes: []
-            }]
-        });
-
-        var zonas = [];
-        let zonaTemp;
-
-        for (var zona of totalZonas) {
-            zonaTemp = await Consultas.findOne({
-                include: [{
-                    model: Problemas,
-                    attributes: ['prob_detalle']
-                }],
-                where: { cons_id: zona.cons_id }, 
-                attributes: ['cons_id', 'cons_nombre']
-            });
-
-            zonaTemp = { "cons_id": zonaTemp.cons_id, "cons_nombre": zonaTemp.cons_nombre, "prob_detalle": zonaTemp.Problema.prob_detalle };
-
-            zonas.push(zonaTemp);
-        }
+        const zonas = await BDD.query(
+            `SELECT cons_id, cons_nombre, prob_detalle FROM vista_zonas_usuario WHERE user_id = :userid`,
+            {
+                replacements: { userid: req.query.userid },
+                type: BDD.QueryTypes.SELECT
+            }
+        );
 
         console.log("RUTAS >> ZONAS > Consulta de zonas realizada del usuario", req.query.userid);
         if (zonas.length > 0) res.json({ zonas });
@@ -76,30 +58,22 @@ router.get('/parcelas', validateToken, async (req, res) => {
     try {
         let parcelas;
         if (req.query.zonaid) {
-            parcelas = await Parcelas.findAll({
-                where: { cons_id: req.query.zonaid }
-            });
+            parcelas = await BDD.query(
+                `SELECT * FROM vista_parcelas_zona WHERE cons_id = :zonaid`,
+                {
+                    replacements: { zonaid: req.query.zonaid },
+                    type: BDD.QueryTypes.SELECT
+                }
+            );
             console.log("RUTAS >> ZONAS > Consulta de parcelas realizada de la zona", req.query.zonaid);
         } else if (req.query.idparcela) {
-            parcelas = await Parcelas.findOne({
-                attributes: ['parc_id', 'user_id', 'cons_id', 'parc_nombre', 'parc_area', 'parc_coord_lo', 'parc_coord_la', 'parc_descripcion'],
-                include: [{
-                    model: TiposSuelos,
-                    attributes: ['tipos_nombre']
-                }],
-                where: { parc_id: req.query.idparcela }
-            });
-            parcelas = {
-                "parc_id": parcelas.parc_id,
-                "tipos_suelo": parcelas.TiposSuelo.tipos_nombre,
-                "user_id": parcelas.user_id,
-                "cons_id": parcelas.cons_id,
-                "parc_nombre": parcelas.parc_nombre,
-                "parc_area": parcelas.parc_area,
-                "parc_coord_lo": parcelas.parc_coord_lo,
-                "parc_coord_la": parcelas.parc_coord_la,
-                "parc_descripcion": parcelas.parc_descripcion
-            }
+            parcelas = await BDD.query(
+                `SELECT * FROM vista_parcelas_zona WHERE parc_id = :idparcela`,
+                {
+                    replacements: { idparcela: req.query.idparcela },
+                    type: BDD.QueryTypes.SELECT
+                }
+            );
             console.log("RUTAS >> ZONAS > Consulta de la parcela de id", req.query.idparcela);
         } else {
             res.status(400).json({ error: "No se ha proporcionado un ID de zona o de parcela" });
@@ -187,13 +161,12 @@ router.post('/nuevaparcela', validateToken, async (req, res) => {
 //Para conseguir los elementos registrados en la BDD *
 router.get('/elementos', validateToken, async (req, res) => {
     try {
-        const elementos = await Elementos.findAll({
-            attributes: [
-                'elem_simbolo',
-                'elem_nombre',
-                'uni_simbolo'
-            ]
-        });
+        const elementos = await BDD.query(
+            `SELECT * FROM vista_elementos`,
+            {
+                type: BDD.QueryTypes.SELECT
+            }
+        );
         console.log("RUTAS >> ELEMENTOS > Consulta de elementos realizada");
         if (elementos.length > 0) res.json(elementos);
         else res.status(400).json({ error: "No se encontraron elementos" });
@@ -288,7 +261,13 @@ router.get('/muestras', validateToken, async (req, res) => {
     if (!req.query.parc_id) { res.status(400).json({ error: "No se ha proporcionado el id de la parcela" }); return; }
 
     try {
-        const muestras = await Muestras.findAll({ where: { parc_id: req.query.parc_id } });
+        const muestras = await BDD.query(
+            `SELECT * FROM vista_muestras_parcela WHERE parc_id = :parc_id`,
+            {
+                replacements: { parc_id: req.query.parc_id },
+                type: BDD.QueryTypes.SELECT
+            }
+        );
 
         console.log("RUTAS >> MUESTRAS > Consulta de muestras realizada de la parcela", req.query.parc_id);
         if (muestras.length > 0) res.json(muestras);
@@ -358,11 +337,17 @@ router.put('/muestras', validateToken, async (req, res) => {
 });
 
 //Para conseguir las variables de acuerdo a las muestras *
-router.get('/variables', validateToken, async (req, res) => {
+router.get('/variables',  async (req, res) => {
     if (!req.query.mue_id) { res.status(400).json({ error: "No se ha proporcionado el id de la muestra" }); return; }
 
     try {
-        const variables = await VariablesSecundarias.findAll({ where: { mue_id: req.query.mue_id } });
+        const variables = await BDD.query(
+            `SELECT * FROM vista_variables_muestra WHERE mue_id = :mue_id`,
+            {
+                replacements: { mue_id: req.query.mue_id },
+                type: BDD.QueryTypes.SELECT
+            }
+        );
         console.log("RUTAS >> VARIABLES > Consulta de variables realizada de la muestra", req.query.mue_id);
         if (variables.length > 0) res.json(variables);
         else res.status(400).json({ error: "No se encontraron variables" });

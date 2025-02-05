@@ -45,7 +45,7 @@ const sequelizeLocal = new Sequelize(process.env.DB_NAME_LOCAL, process.env.DB_U
     }
 });
 
-let sequelize = null;
+let sequelize = null
 
 var PermisosUsuarios, TiposSuelos, Parcelas, Consultas, Elementos, Muestras, Problemas, Unidades, VariablesSecundarias, TiposUsuarios, Usuarios, Rangos;
 async function Conectar() {
